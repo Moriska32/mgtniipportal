@@ -2,13 +2,15 @@ package routes
 
 import (
 	api "ProtalMGTNIIP/api"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 func Routes(router *gin.Engine) {
 	router.GET("/", welcome)
 	router.GET("/dep/:id", api.Dep)
+	router.GET("/deps", api.Deps)
 
 }
 

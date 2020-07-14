@@ -32,3 +32,25 @@ func Dep(c *gin.Context) {
 	return
 
 }
+func Deps(c *gin.Context) {
+	dbConnect := config.Connect()
+	todo := "SELECT dep_id, name, parent_id FROM public.tdep;"
+	rows, err := dbConnect.Query(todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status":  http.StatusNotFound,
+			"message": "Todo not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status":  http.StatusOK,
+		"message": "Single Todo",
+		"data":    jsonify.Jsonify(rows),
+	})
+	return
+
+}
