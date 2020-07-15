@@ -11,6 +11,11 @@ func Routes(router *gin.Engine) {
 	router.GET("/", welcome)
 	router.GET("/dep/:id", api.Dep)
 	router.GET("/deps", api.Deps)
+	router.GET("/img", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "select_file.html", gin.H{})
+	})
+	router.POST("/upload", api.Upload)
+	router.StaticFS("/file", http.Dir("public"))
 
 }
 
