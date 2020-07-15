@@ -67,17 +67,17 @@ func Deps(c *gin.Context) {
 
 //Load Files
 func Upload(c *gin.Context) {
-	file, header, err := c.Request.FormFile("file")
+	file, _, err := c.Request.FormFile("file")
 	name := c.PostForm("name")
+	folder := c.PostForm("folder")
 	if err != nil {
 		c.String(http.StatusBadRequest, fmt.Sprintf("file err : %s", err.Error()))
 		return
 	}
-	filename := header.Filename
 
-	os.Mkdir(fmt.Sprintf("public/%s/", name), os.ModePerm)
+	os.Mkdir(fmt.Sprintf("public/%s/", folder), os.ModePerm)
 
-	out, err := os.Create(fmt.Sprintf("public/%s/%s", name, filename))
+	out, err := os.Create(fmt.Sprintf("public/%s/%s", folder, name))
 	if err != nil {
 		log.Fatal("Create file : %s", err)
 	}
@@ -86,7 +86,7 @@ func Upload(c *gin.Context) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	filepath := fmt.Sprintf("/file/%s/%s", name, filename)
+	filepath := fmt.Sprintf("/file/%s/%s", folder, name)
 	c.JSON(http.StatusOK, gin.H{"filepath": filepath})
 }
 
