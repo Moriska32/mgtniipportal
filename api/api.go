@@ -195,7 +195,7 @@ func Newnews(c *gin.Context) {
 func Mkrmfolder(c *gin.Context) {
 	doit := c.PostForm("doit")
 	folder := c.PostForm("folder")
-	subfolder := c.PostFormArray("subfolders[]")
+	subfolder := c.PostFormArray("subfolders")
 	print(subfolder)
 	switch {
 	case doit == "rm":
