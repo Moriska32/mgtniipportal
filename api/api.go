@@ -195,20 +195,23 @@ func Newnews(c *gin.Context) {
 func Mkrmfolder(c *gin.Context) {
 	doit := c.PostForm("doit")
 	folder := c.PostForm("folder")
-	subfolder := c.PostFormArray("subfolders")
+	subfolders := c.PostFormArray("subfolders")
 	print(subfolder)
 	switch {
 	case doit == "rm":
-		err := os.Remove(fmt.Sprintf("public/%s/%s", folder, subfolder))
-		if err != nil {
-			log.Fatal(err)
+		for _, subfolder := range subfolders {
+			err := os.Remove(fmt.Sprintf("public/%s/%s", folder, subfolder))
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 	case doit == "mk":
-		err := os.Mkdir(fmt.Sprintf("public/%s/%s", folder, subfolder), os.ModePerm)
-		if err != nil {
-			log.Fatal(err)
+		for _, subfolder := range subfolders {
+			err := os.Mkdir(fmt.Sprintf("public/%s/%s", folder, subfolder), os.ModePerm)
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 	}
-	print(subfolder)
 
 }
