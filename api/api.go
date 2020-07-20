@@ -4,13 +4,14 @@ import (
 	config "ProtalMGTNIIP/config"
 	"encoding/json"
 	"fmt"
-	"github.com/bdwilliams/go-jsonify/jsonify"
-	"github.com/gin-gonic/gin"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
+
+	"github.com/bdwilliams/go-jsonify/jsonify"
+	"github.com/gin-gonic/gin"
 )
 
 var print = fmt.Println
@@ -24,7 +25,7 @@ func Dep(c *gin.Context) {
 	ID := c.Param("id")
 	todo := "SELECT dep_id, name, parent_id FROM public.tdep where parent_id = " + ID + ";"
 	rows, err := dbConnect.Query(todo)
-
+	dbConnect.Close()
 	if err != nil {
 		log.Printf("Error while getting a single todo, Reason: %v\n", err)
 		c.JSON(http.StatusNotFound, gin.H{
@@ -46,7 +47,7 @@ func Deps(c *gin.Context) {
 	dbConnect := config.Connect()
 	todo := "SELECT dep_id, name, parent_id FROM public.tdep;"
 	rows, err := dbConnect.Query(todo)
-
+	dbConnect.Close()
 	if err != nil {
 		log.Printf("Error while getting a single todo, Reason: %v\n", err)
 		c.JSON(http.StatusNotFound, gin.H{
@@ -66,18 +67,18 @@ func Deps(c *gin.Context) {
 }
 
 //Load Files
-func Upload(c *gin.Context) {
-	file, _, err := c.Request.FormFile("file")
+func Uploadtest(c *gin.Context) {
+	file, header, err := c.Request.FormFile("file")
 	name := c.PostForm("name")
-	folder := c.PostForm("folder")
 	if err != nil {
 		c.String(http.StatusBadRequest, fmt.Sprintf("file err : %s", err.Error()))
 		return
 	}
+	filename := header.Filename
 
-	os.Mkdir(fmt.Sprintf("public/%s/", folder), os.ModePerm)
+	os.Mkdir(fmt.Sprintf("public/%s/", name), os.ModePerm)
 
-	out, err := os.Create(fmt.Sprintf("public/%s/%s", folder, name))
+	out, err := os.Create(fmt.Sprintf("public/%s/%s", name, filename))
 	if err != nil {
 		log.Fatal("Create file : %s", err)
 	}
@@ -86,14 +87,14 @@ func Upload(c *gin.Context) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	filepath := fmt.Sprintf("/file/%s/%s", folder, name)
+	filepath := fmt.Sprintf("/file/%s/%s", name, filename)
 	c.JSON(http.StatusOK, gin.H{"filepath": filepath})
 }
 
-func Uploadmany(c *gin.Context) {
+func Upload(c *gin.Context) {
 
 	type Filepaths struct {
-		Filepaths []string
+		Filepath []string
 	}
 
 	var paths []string
@@ -105,38 +106,78 @@ func Uploadmany(c *gin.Context) {
 		return
 	}
 
-	files := form.File["files"]
-	name := c.PostForm("name")
+	files := form.File["files[]"]
 
-	os.Mkdir(fmt.Sprintf("public/%s/", name), os.ModePerm)
+	folder := c.PostForm("folder")
+	subfolder := c.PostForm("subfolder")
+
+	print(subfolder, len(files))
+
+	os.Mkdir(fmt.Sprintf("public/%s/", folder), os.ModePerm)
 
 	for _, file := range files {
-		filename := filepath.Base(file.Filename)
-		out, err := os.Create(fmt.Sprintf("public/%s/%s", name, filename))
-		if err != nil {
-			log.Fatal("Create file : %s", err)
-		}
-		defer out.Close()
 
-		if err := c.SaveUploadedFile(file, filename); err != nil {
+		if err := c.SaveUploadedFile(file, fmt.Sprintf("public/%s/%s", folder, file.Filename)); err != nil {
 			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 			return
 		}
 
-		paths := append(paths, fmt.Sprintf("/file/%s/%s", name, filename))
-		_ = paths
+		paths = append(paths, fmt.Sprintf("/file/%s/%s", folder, file.Filename))
 
 	}
-
-	filepaths := Filepaths{
-
-		Filepaths: paths,
+	filepath := Filepaths{
+		Filepath: paths,
 	}
 
-	var jsonData []byte
-	jsonData, err = json.Marshal(filepaths)
+	jsonData, err := json.Marshal(filepath)
+	_ = jsonData
 	if err != nil {
 		log.Println(err)
 	}
-	c.JSON(http.StatusOK, gin.H{"filepath": jsonData})
+
+	c.JSON(http.StatusOK, gin.H{"filepath": string(jsonData)})
+
+}
+
+func Fileslist(c *gin.Context) {
+
+	var files []string
+
+	folder := c.PostForm("folder")
+	subfolder := c.PostForm("subfolder")
+
+	switch {
+	case len(string(subfolder)) < 1:
+		root := fmt.Sprintf("public/%s/%s/", folder, subfolder)
+		err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+			files = append(files, path)
+			return nil
+		})
+		if err != nil {
+			panic(err)
+		}
+		c.JSON(http.StatusOK, gin.H{"filepath": files})
+	case len(string(subfolder)) > 0:
+		root := fmt.Sprintf("public/%s/", folder)
+		err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+			files = append(files, path)
+			return nil
+		})
+		if err != nil {
+			panic(err)
+		}
+		c.JSON(http.StatusOK, gin.H{"filepath": files})
+	}
+
+}
+
+func Newnews(c *gin.Context) {
+
+	dbConnect := config.Connect()
+
+	todo := "SELECT max(n_id) FROM public.tnews;"
+	_ = todo
+	rows, _ := dbConnect.Exec(todo)
+
+	print(rows)
 }
