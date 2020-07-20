@@ -148,7 +148,7 @@ func Fileslist(c *gin.Context) {
 
 	switch {
 	case len(string(subfolder)) < 1:
-		root := fmt.Sprintf("public/%s/%s/", folder, subfolder)
+		root := fmt.Sprintf("file/%s/%s/", folder, subfolder)
 		err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 			files = append(files, path)
 			return nil
@@ -158,7 +158,7 @@ func Fileslist(c *gin.Context) {
 		}
 		c.JSON(http.StatusOK, gin.H{"filepath": files})
 	case len(string(subfolder)) > 0:
-		root := fmt.Sprintf("public/%s/", folder)
+		root := fmt.Sprintf("file/%s/", folder)
 		err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 			files = append(files, path)
 			return nil
@@ -175,9 +175,39 @@ func Newnews(c *gin.Context) {
 
 	dbConnect := config.Connect()
 
-	todo := "SELECT max(n_id) FROM public.tnews;"
+	todo := "SELECT max(n_id) as n_id FROM public.tnews;"
 	_ = todo
-	rows, _ := dbConnect.Exec(todo)
+	rows, _ := dbConnect.Query(todo)
 
+	defer rows.Close()
 	print(rows)
+	var n_id string
+	for rows.Next() {
+		if err := rows.Scan(&n_id); err != nil {
+			// Check for a scan error.
+			// Query rows will be closed with defer.cd
+			log.Fatal(err)
+		}
+		print(n_id)
+	}
+}
+
+func Mkrmfolder(c *gin.Context) {
+	doit := c.PostForm("doit")
+	folder := c.PostForm("folder")
+	subfolder := c.PostFormArray("subfolder")
+	switch {
+	case doit == "rm":
+		err := os.Remove(fmt.Sprintf("public/%s/%s", folder, subfolder))
+		if err != nil {
+			log.Fatal(err)
+		}
+	case doit == "mk":
+		err := os.Mkdir(fmt.Sprintf("public/%s/%s", folder, subfolder), os.ModePerm)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	print(subfolder)
+
 }
