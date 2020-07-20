@@ -195,7 +195,8 @@ func Newnews(c *gin.Context) {
 func Mkrmfolder(c *gin.Context) {
 	doit := c.PostForm("doit")
 	folder := c.PostForm("folder")
-	subfolder := c.PostFormArray("subfolder")
+	subfolder := c.PostFormArray("subfolders[]")
+	print(subfolder)
 	switch {
 	case doit == "rm":
 		err := os.Remove(fmt.Sprintf("public/%s/%s", folder, subfolder))
