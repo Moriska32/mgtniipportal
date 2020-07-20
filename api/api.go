@@ -196,10 +196,11 @@ func Mkrmfolder(c *gin.Context) {
 	doit := c.PostForm("doit")
 	folder := c.PostForm("folder")
 	subfolders := c.PostFormArray("subfolders")
-	print(subfolder)
+
 	switch {
 	case doit == "rm":
 		for _, subfolder := range subfolders {
+			print(subfolder)
 			err := os.Remove(fmt.Sprintf("public/%s/%s", folder, subfolder))
 			if err != nil {
 				log.Fatal(err)
@@ -207,6 +208,7 @@ func Mkrmfolder(c *gin.Context) {
 		}
 	case doit == "mk":
 		for _, subfolder := range subfolders {
+			print(subfolder)
 			err := os.Mkdir(fmt.Sprintf("public/%s/%s", folder, subfolder), os.ModePerm)
 			if err != nil {
 				log.Fatal(err)
