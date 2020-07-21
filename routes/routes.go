@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+//Routes pool of func
 func Routes(router *gin.Engine) {
 	router.GET("/", welcome)
 	router.GET("/dep/:id", api.Dep)
@@ -20,6 +21,7 @@ func Routes(router *gin.Engine) {
 	router.POST("/mkrm", api.Mkrm)
 	router.POST("/postnews", api.Postnews)
 	router.GET("/getnews", api.Getnews)
+	router.POST("/newuser", api.Newuser)
 
 }
 
