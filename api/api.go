@@ -258,6 +258,7 @@ func Getnews(c *gin.Context) {
 	return
 }
 
+//Deletenews delete news by id
 func Deletenews(c *gin.Context) {
 
 	nid := c.PostForm("n_id")
@@ -441,4 +442,32 @@ func Newuser(c *gin.Context) {
 		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 	}
 
+}
+
+//Loginpass check login and pass
+func Loginpass(c *gin.Context) {
+
+	login := c.PostForm("login")
+	pass := c.PostForm("pass")
+
+	dbConnect := config.Connect()
+
+	loginpass := fmt.Sprintf("SELECT user_id FROM public.tuser where login = %s AND pass = %s;", login, pass)
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, loginpass)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+
+	return
 }

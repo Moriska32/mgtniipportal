@@ -23,6 +23,7 @@ func Routes(router *gin.Engine) {
 	router.GET("/getnews", api.Getnews)
 	router.POST("/newuser", api.Newuser)
 	router.POST("/deletenews", api.Deletenews)
+	router.POST("/loginpass", api.Loginpass)
 
 }
 
