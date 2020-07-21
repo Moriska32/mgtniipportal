@@ -5,10 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
-	"path/filepath"
+	"strings"
 
 	"github.com/bdwilliams/go-jsonify/jsonify"
 	"github.com/gin-gonic/gin"
@@ -18,6 +19,36 @@ var print = fmt.Println
 
 type Filetypes struct {
 	Filetype string `json: "filetype"`
+}
+
+func OSReadDir(root string) ([]string, error) {
+	var files []string
+	fileInfo, err := ioutil.ReadDir(root)
+	if err != nil {
+		return files, err
+	}
+
+	for _, file := range fileInfo {
+		if !strings.Contains(file.Name(), ".") {
+			files = append(files, file.Name())
+		}
+	}
+	return files, nil
+}
+
+func OSReadFile(root string) ([]string, error) {
+	var files []string
+	fileInfo, err := ioutil.ReadDir(root)
+	if err != nil {
+		return files, err
+	}
+
+	for _, file := range fileInfo {
+		if strings.Contains(file.Name(), ".") {
+			files = append(files, file.Name())
+		}
+	}
+	return files, nil
 }
 
 func Dep(c *gin.Context) {
@@ -132,7 +163,7 @@ func Upload(c *gin.Context) {
 	jsonData, err := json.Marshal(filepath)
 	_ = jsonData
 	if err != nil {
-		log.Println(err)
+		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 	}
 
 	c.JSON(http.StatusOK, gin.H{"filepath": string(jsonData)})
@@ -141,32 +172,40 @@ func Upload(c *gin.Context) {
 
 func Fileslist(c *gin.Context) {
 
-	var files []string
-
 	folder := c.PostForm("folder")
 	subfolder := c.PostForm("subfolder")
 
 	switch {
 	case len(string(subfolder)) < 1:
-		root := fmt.Sprintf("file/%s/%s/", folder, subfolder)
-		err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
-			files = append(files, path)
-			return nil
-		})
+		root := fmt.Sprintf("public/%s/", folder)
+
+		dir, err := OSReadDir(root)
+
 		if err != nil {
-			panic(err)
+			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 		}
-		c.JSON(http.StatusOK, gin.H{"filepath": files})
+
+		files, err := OSReadFile(root)
+
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+		}
+		c.JSON(http.StatusOK, gin.H{"folder": dir, "files": files})
 	case len(string(subfolder)) > 0:
-		root := fmt.Sprintf("file/%s/", folder)
-		err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
-			files = append(files, path)
-			return nil
-		})
+
+		root := fmt.Sprintf("public/%s/%s/", folder, subfolder)
+		dir, err := OSReadDir(root)
+
 		if err != nil {
-			panic(err)
+			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 		}
-		c.JSON(http.StatusOK, gin.H{"filepath": files})
+
+		files, err := OSReadFile(root)
+
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+		}
+		c.JSON(http.StatusOK, gin.H{"folder": dir, "files": files})
 	}
 
 }
@@ -186,24 +225,24 @@ func Newnews(c *gin.Context) {
 		if err := rows.Scan(&n_id); err != nil {
 			// Check for a scan error.
 			// Query rows will be closed with defer.cd
-			log.Fatal(err)
+			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 		}
 		print(n_id)
 	}
 }
 
-func Mkrmfolder(c *gin.Context) {
+func Mkrm(c *gin.Context) {
 	doit := c.PostForm("doit")
 	folder := c.PostForm("folder")
 	subfolders := c.PostFormArray("subfolders")
-
+	file := c.PostFormArray("file")
 	switch {
 	case doit == "rm":
 		for _, subfolder := range subfolders {
 			print(subfolder)
 			err := os.Remove(fmt.Sprintf("public/%s/%s", folder, subfolder))
 			if err != nil {
-				log.Fatal(err)
+				c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 			}
 		}
 	case doit == "mk":
@@ -211,7 +250,14 @@ func Mkrmfolder(c *gin.Context) {
 			print(subfolder)
 			err := os.Mkdir(fmt.Sprintf("public/%s/%s", folder, subfolder), os.ModePerm)
 			if err != nil {
-				log.Fatal(err)
+				c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+			}
+		}
+	case doit == "rm" && len(file) > 0:
+		for _, subfolder := range subfolders {
+			err := os.Remove(fmt.Sprintf("public/%s/%s/", folder, subfolder, file))
+			if err != nil {
+				c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 			}
 		}
 	}
