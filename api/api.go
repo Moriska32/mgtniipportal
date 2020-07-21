@@ -255,7 +255,7 @@ func Mkrm(c *gin.Context) {
 		}
 	case doit == "rm" && len(file) > 0:
 		for _, subfolder := range subfolders {
-			err := os.Remove(fmt.Sprintf("public/%s/%s/", folder, subfolder, file))
+			err := os.Remove(fmt.Sprintf("public/%s/%s/%s", folder, subfolder, file))
 			if err != nil {
 				c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 			}
