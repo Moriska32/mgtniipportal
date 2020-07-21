@@ -17,10 +17,7 @@ import (
 
 var print = fmt.Println
 
-type Filetypes struct {
-	Filetype string `json: "filetype"`
-}
-
+//OSReadDir List of Folders
 func OSReadDir(root string) ([]string, error) {
 	var files []string
 	fileInfo, err := ioutil.ReadDir(root)
@@ -36,6 +33,7 @@ func OSReadDir(root string) ([]string, error) {
 	return files, nil
 }
 
+//OSReadFile List of Files
 func OSReadFile(root string) ([]string, error) {
 	var files []string
 	fileInfo, err := ioutil.ReadDir(root)
@@ -51,6 +49,7 @@ func OSReadFile(root string) ([]string, error) {
 	return files, nil
 }
 
+//Dep list if dep by id
 func Dep(c *gin.Context) {
 	dbConnect := config.Connect()
 	ID := c.Param("id")
@@ -74,6 +73,8 @@ func Dep(c *gin.Context) {
 	return
 
 }
+
+//Deps List all of deps
 func Deps(c *gin.Context) {
 	dbConnect := config.Connect()
 	todo := "SELECT dep_id, name, parent_id FROM public.tdep;"
@@ -97,7 +98,7 @@ func Deps(c *gin.Context) {
 
 }
 
-//Load Files
+//Uploadtest test Load Files
 func Uploadtest(c *gin.Context) {
 	file, header, err := c.Request.FormFile("file")
 	name := c.PostForm("name")
@@ -111,7 +112,7 @@ func Uploadtest(c *gin.Context) {
 
 	out, err := os.Create(fmt.Sprintf("public/%s/%s", name, filename))
 	if err != nil {
-		log.Fatal("Create file : %s", err)
+		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 	}
 	defer out.Close()
 	_, err = io.Copy(out, file)
@@ -122,6 +123,7 @@ func Uploadtest(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"filepath": filepath})
 }
 
+//Upload files on server
 func Upload(c *gin.Context) {
 
 	type Filepaths struct {
@@ -189,6 +191,7 @@ func Upload(c *gin.Context) {
 
 }
 
+//Fileslist of files on server
 func Fileslist(c *gin.Context) {
 
 	folder := c.PostForm("folder")
@@ -228,6 +231,8 @@ func Fileslist(c *gin.Context) {
 	}
 
 }
+
+//Getnews from bd
 func Getnews(c *gin.Context) {
 	dbConnect := config.Connect()
 	todo := "SELECT tnews.*, tnews_file.* FROM public.tnews tnews, public.tnews_file tnews_file WHERE tnews_file.n_id = tnews.n_id;"
@@ -247,6 +252,8 @@ func Getnews(c *gin.Context) {
 	})
 	return
 }
+
+//Postnews on BD
 func Postnews(c *gin.Context) {
 
 	form, err := c.MultipartForm()
@@ -296,16 +303,16 @@ func Postnews(c *gin.Context) {
 
 	defer rows.Close()
 	print(rows)
-	var n_id string
+	var Nid string
 	for rows.Next() {
-		if err := rows.Scan(&n_id); err != nil {
+		if err := rows.Scan(&Nid); err != nil {
 			// Check for a scan error.
 			// Query rows will be closed with defer.cd
 			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 		}
-		print(n_id)
+		print(Nid)
 	}
-	insertphoto := fmt.Sprintf("INSERT INTO public.tnews_file (n_id, nf_name, nf_path, nf_type) VALUES(%s, '%s', %s, 0);", n_id, filename, path)
+	insertphoto := fmt.Sprintf("INSERT INTO public.tnews_file (n_id, nf_name, nf_path, nf_type) VALUES(%s, '%s', '%s', 0);", Nid, filename, path)
 
 	_, err = dbConnect.Exec(insertphoto)
 
@@ -314,6 +321,7 @@ func Postnews(c *gin.Context) {
 	}
 }
 
+//Mkrm Remove and make folder and files
 func Mkrm(c *gin.Context) {
 	doit := c.PostForm("doit")
 	folder := c.PostForm("folder")
