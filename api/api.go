@@ -11,7 +11,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/bdwilliams/go-jsonify/jsonify"
+	"github.com/elgs/gosqljson"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -54,21 +55,21 @@ func Dep(c *gin.Context) {
 	dbConnect := config.Connect()
 	ID := c.Param("id")
 	todo := "SELECT dep_id, name, parent_id FROM public.tdep where parent_id = " + ID + ";"
-	rows, err := dbConnect.Query(todo)
-	dbConnect.Close()
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
 	if err != nil {
 		log.Printf("Error while getting a single todo, Reason: %v\n", err)
 		c.JSON(http.StatusNotFound, gin.H{
-			"status":  http.StatusNotFound,
-			"message": "Todo not found",
+			"status": http.StatusNotFound,
 		})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"status":  http.StatusOK,
-		"message": "Single Todo",
-		"data":    jsonify.Jsonify(rows),
+		"status": http.StatusOK,
+		"data":   data,
 	})
 	return
 
@@ -78,21 +79,21 @@ func Dep(c *gin.Context) {
 func Deps(c *gin.Context) {
 	dbConnect := config.Connect()
 	todo := "SELECT dep_id, name, parent_id FROM public.tdep;"
-	rows, err := dbConnect.Query(todo)
-	dbConnect.Close()
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
 	if err != nil {
 		log.Printf("Error while getting a single todo, Reason: %v\n", err)
 		c.JSON(http.StatusNotFound, gin.H{
-			"status":  http.StatusNotFound,
-			"message": "Todo not found",
+			"status": http.StatusNotFound,
 		})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"status":  http.StatusOK,
-		"message": "Single Todo",
-		"data":    jsonify.Jsonify(rows),
+		"status": http.StatusOK,
+		"data":   data,
 	})
 	return
 
@@ -236,8 +237,12 @@ func Fileslist(c *gin.Context) {
 func Getnews(c *gin.Context) {
 	dbConnect := config.Connect()
 	todo := "SELECT tnews.*, tnews_file.* FROM public.tnews tnews, public.tnews_file tnews_file WHERE tnews_file.n_id = tnews.n_id;"
-	rows, err := dbConnect.Query(todo)
-	dbConnect.Close()
+
+	defer dbConnect.Close()
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
 	if err != nil {
 		log.Printf("Error while getting a single todo, Reason: %v\n", err)
 		c.JSON(http.StatusNotFound, gin.H{
@@ -245,11 +250,11 @@ func Getnews(c *gin.Context) {
 		})
 		return
 	}
-
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
-		"data":   jsonify.Jsonify(rows),
+		"data":   data,
 	})
+
 	return
 }
 
