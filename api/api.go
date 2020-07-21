@@ -228,7 +228,25 @@ func Fileslist(c *gin.Context) {
 	}
 
 }
+func Getnews(c *gin.Context) {
+	dbConnect := config.Connect()
+	todo := "SELECT tnews.*, tnews_file.* FROM public.tnews tnews, public.tnews_file tnews_file WHERE tnews_file.n_id = tnews.n_id;"
+	rows, err := dbConnect.Query(todo)
+	dbConnect.Close()
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
 
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   jsonify.Jsonify(rows),
+	})
+	return
+}
 func Postnews(c *gin.Context) {
 
 	form, err := c.MultipartForm()
