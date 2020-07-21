@@ -45,7 +45,7 @@ func OSReadFile(root string) ([]string, error) {
 
 	for _, file := range fileInfo {
 		if strings.Contains(file.Name(), ".") {
-			files = append(files, file.Name())
+			files = append(files, strings.Replace(root, "public", "file", 1)+file.Name())
 		}
 	}
 	return files, nil
