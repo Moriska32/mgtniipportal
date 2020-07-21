@@ -190,7 +190,7 @@ func Fileslist(c *gin.Context) {
 		if err != nil {
 			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 		}
-		c.JSON(http.StatusOK, gin.H{"folder": dir, "files": files})
+		c.JSON(http.StatusOK, gin.H{"subfolder": dir, "files": files})
 	case len(string(subfolder)) > 0:
 
 		root := fmt.Sprintf("public/%s/%s/", folder, subfolder)
@@ -205,7 +205,7 @@ func Fileslist(c *gin.Context) {
 		if err != nil {
 			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 		}
-		c.JSON(http.StatusOK, gin.H{"folder": dir, "files": files})
+		c.JSON(http.StatusOK, gin.H{"subfolder": dir, "files": files})
 	}
 
 }
