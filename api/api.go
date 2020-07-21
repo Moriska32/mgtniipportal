@@ -258,6 +258,31 @@ func Getnews(c *gin.Context) {
 	return
 }
 
+func Deletenews(c *gin.Context) {
+
+	nid := c.PostForm("n_id")
+
+	dbConnect := config.Connect()
+
+	deletetnewsfile := fmt.Sprintf("DELETE FROM public.tnews_file WHERE n_id = %s;", nid)
+
+	deletetnews := fmt.Sprintf("DELETE FROM public.tnews WHERE n_id = %s;", nid)
+
+	_, err := dbConnect.Exec(deletetnewsfile)
+	if err != nil {
+		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+	}
+	_, err = dbConnect.Exec(deletetnews)
+	if err != nil {
+		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+	})
+
+}
+
 //Postnews on BD
 func Postnews(c *gin.Context) {
 
