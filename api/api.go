@@ -291,7 +291,7 @@ func Postnews(c *gin.Context) {
 
 	todo := "SELECT max(n_id) as n_id FROM public.tnews;"
 
-	insertnews := fmt.Sprintf("INSERT INTO public.tnews (n_date, autor, title, textshort, textfull, dep_id) VALUES('%s', '', '', '%s', '%s', 1);", date, title, text)
+	insertnews := fmt.Sprintf("INSERT INTO public.tnews (n_date, autor, title, textshort, textfull, dep_id) VALUES('%s', '', '%s', '', '%s', 1);", date, title, text)
 
 	_, err = dbConnect.Exec(insertnews)
 
