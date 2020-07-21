@@ -127,7 +127,8 @@ func Upload(c *gin.Context) {
 	type Filepaths struct {
 		Filepath []string
 	}
-
+	var filepath Filepaths
+	_ = filepath
 	var paths []string
 
 	form, err := c.MultipartForm()
@@ -146,18 +147,36 @@ func Upload(c *gin.Context) {
 
 	os.Mkdir(fmt.Sprintf("public/%s/", folder), os.ModePerm)
 
-	for _, file := range files {
+	switch {
+	case len(subfolder) < 1:
+		for _, file := range files {
 
-		if err := c.SaveUploadedFile(file, fmt.Sprintf("public/%s/%s", folder, file.Filename)); err != nil {
-			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
-			return
+			if err := c.SaveUploadedFile(file, fmt.Sprintf("public/%s/%s", folder, file.Filename)); err != nil {
+				c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+				return
+			}
+
+			paths = append(paths, fmt.Sprintf("/file/%s/%s", folder, file.Filename))
+
 		}
+		filepath = Filepaths{
+			Filepath: paths,
+		}
+	case len(subfolder) > 0:
+		os.Mkdir(fmt.Sprintf("public/%s/%s", folder, subfolder), os.ModePerm)
+		for _, file := range files {
 
-		paths = append(paths, fmt.Sprintf("/file/%s/%s", folder, file.Filename))
+			if err := c.SaveUploadedFile(file, fmt.Sprintf("public/%s/%s/%s", folder, subfolder, file.Filename)); err != nil {
+				c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+				return
+			}
 
-	}
-	filepath := Filepaths{
-		Filepath: paths,
+			paths = append(paths, fmt.Sprintf("/file/%s/%s/%s", folder, subfolder, file.Filename))
+
+		}
+		filepath = Filepaths{
+			Filepath: paths,
+		}
 	}
 
 	jsonData, err := json.Marshal(filepath)
