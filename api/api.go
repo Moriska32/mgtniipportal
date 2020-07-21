@@ -138,7 +138,7 @@ func Upload(c *gin.Context) {
 		return
 	}
 
-	files := form.File["files[]"]
+	files := form.File["files"]
 
 	folder := c.PostForm("folder")
 	subfolder := c.PostForm("subfolder")
@@ -229,12 +229,51 @@ func Fileslist(c *gin.Context) {
 
 }
 
-func Newnews(c *gin.Context) {
+func Postnews(c *gin.Context) {
+
+	form, err := c.MultipartForm()
+
+	if err != nil {
+		c.String(http.StatusBadRequest, fmt.Sprintf("get form err: %s", err.Error()))
+		return
+	}
+
+	files := form.File["file"]
+
+	folder := c.PostForm("folder")
+	subfolder := c.PostForm("subfolder")
+
+	os.Mkdir(fmt.Sprintf("public/%s/%s", folder, subfolder), os.ModePerm)
+	var path, filename string
+
+	for _, file := range files {
+
+		if err := c.SaveUploadedFile(file, fmt.Sprintf("public/%s/%s/%s", folder, subfolder, file.Filename)); err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+			return
+		}
+
+		path = fmt.Sprintf("/file/%s/%s/%s", folder, subfolder, file.Filename)
+		filename = file.Filename
+
+	}
+
+	date := c.PostForm("date")
+	title := c.PostForm("title")
+	text := c.PostForm("text")
 
 	dbConnect := config.Connect()
 
 	todo := "SELECT max(n_id) as n_id FROM public.tnews;"
-	_ = todo
+
+	insertnews := fmt.Sprintf("INSERT INTO public.tnews (n_date, autor, title, textshort, textfull, dep_id) VALUES('%s', '', '', '%s', '%s', 1);", date, title, text)
+
+	_, err = dbConnect.Exec(insertnews)
+
+	if err != nil {
+		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+	}
+
 	rows, _ := dbConnect.Query(todo)
 
 	defer rows.Close()
@@ -247,6 +286,13 @@ func Newnews(c *gin.Context) {
 			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 		}
 		print(n_id)
+	}
+	insertphoto := fmt.Sprintf("INSERT INTO public.tnews_file (n_id, nf_name, nf_path, nf_type) VALUES(%s, '%s', %s, 0);", n_id, filename, path)
+
+	_, err = dbConnect.Exec(insertphoto)
+
+	if err != nil {
+		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 	}
 }
 

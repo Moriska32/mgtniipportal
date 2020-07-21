@@ -18,7 +18,7 @@ func Routes(router *gin.Engine) {
 	router.StaticFS("/file", http.Dir("public"))
 	router.POST("/fileslist", api.Fileslist)
 	router.POST("/mkrm", api.Mkrm)
-	router.GET("/Newnews", api.Newnews)
+	router.POST("/Postnews", api.Postnews)
 
 }
 
