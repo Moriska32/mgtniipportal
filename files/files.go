@@ -182,11 +182,11 @@ func Fileslist(c *gin.Context) {
 }
 
 //Mkrm Remove and make folder and files
-func Mkrm(c *gin.Context) {
+func Mkrmfolders(c *gin.Context) {
 	doit := c.PostForm("doit")
 	folder := c.PostForm("folder")
 	subfolders := c.PostFormArray("subfolders")
-	file := c.PostFormArray("file")
+
 	switch {
 	case doit == "rm":
 		for _, subfolder := range subfolders {
@@ -204,12 +204,20 @@ func Mkrm(c *gin.Context) {
 				c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 			}
 		}
-	case doit == "rm" && len(file) > 0:
-		for _, subfolder := range subfolders {
-			err := os.Remove(fmt.Sprintf("public/%s/%s/%s", folder, subfolder, file))
-			if err != nil {
-				c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
-			}
+
+	}
+
+}
+
+//Mkrm Remove and make folder and files
+func Rmfiles(c *gin.Context) {
+
+	files := c.PostFormArray("files")
+	for _, file := range files {
+
+		err := os.Remove(strings.Replace(file, "file", "public", 1))
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 		}
 	}
 
