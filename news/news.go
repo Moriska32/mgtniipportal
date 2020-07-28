@@ -162,6 +162,7 @@ func Postnews(c *gin.Context) {
 			fmt.Printf("File copying failed: %q\n", err)
 		}
 		filename = strings.Split(filepath, "/")[len(strings.Split(filepath, "/"))]
+		print(filename)
 		path = destination + strings.Split(filepath, "/")[len(strings.Split(filepath, "/"))]
 	}
 
@@ -195,6 +196,77 @@ func Postnews(c *gin.Context) {
 
 	}
 	insertphoto := fmt.Sprintf("INSERT INTO public.tnews_file (n_id, nf_name, nf_path, nf_type) VALUES(%s, '%s', '%s', 0);", Nid, filename, path)
+
+	_, err = dbConnect.Exec(insertphoto)
+
+	if err != nil {
+		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+	}
+}
+
+//Updatenews news
+func Updatenews(c *gin.Context) {
+
+	form, err := c.MultipartForm()
+
+	if err != nil {
+		c.String(http.StatusBadRequest, fmt.Sprintf("get form err: %s", err.Error()))
+		return
+	}
+
+	nid := c.PostForm("n_id")
+
+	files := form.File["file"]
+	filepath := c.PostForm("filepath")
+	folder := c.PostForm("folder")
+	subfolder := c.PostForm("subfolder")
+	var path, filename string
+	switch {
+	case len(files) > 0:
+		os.Mkdir(fmt.Sprintf("public/%s/%s", folder, subfolder), os.ModePerm)
+
+		for _, file := range files {
+
+			if err := c.SaveUploadedFile(file, fmt.Sprintf("public/%s/%s/%s", folder, subfolder, file.Filename)); err != nil {
+				c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+				return
+			}
+
+			path = fmt.Sprintf("/file/%s/%s/%s", folder, subfolder, file.Filename)
+			filename = file.Filename
+
+		}
+	case len(filepath) > 1:
+		BUFFERSIZE, err := strconv.ParseInt("1000", 10, 64)
+		if err != nil {
+			fmt.Printf("Invalid buffer size: %q\n", err)
+			return
+		}
+		destination := "public/photos/Новости/"
+		err = Copy(filepath, destination, BUFFERSIZE)
+		if err != nil {
+			fmt.Printf("File copying failed: %q\n", err)
+		}
+		filename = strings.Split(filepath, "/")[len(strings.Split(filepath, "/"))]
+		print(filename)
+		path = destination + strings.Split(filepath, "/")[len(strings.Split(filepath, "/"))]
+	}
+
+	date := c.PostForm("date")
+	title := c.PostForm("title")
+	text := c.PostForm("text")
+
+	dbConnect := config.Connect()
+
+	insertnews := fmt.Sprintf("UPDATE public.tnews SET n_date='%s', autor='', title='%s', textshort='', textfull='%s' WHERE n_id= %s;", date, title, text, nid)
+
+	_, err = dbConnect.Exec(insertnews)
+
+	if err != nil {
+		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+	}
+
+	insertphoto := fmt.Sprintf("UPDATE public.tnews_file SET nf_name='%s', nf_path='%s' WHERE nf_id= %s;", filename, path, nid)
 
 	_, err = dbConnect.Exec(insertphoto)
 
