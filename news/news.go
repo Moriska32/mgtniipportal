@@ -210,9 +210,9 @@ func Updatenews(c *gin.Context) {
 		if err != nil {
 			fmt.Printf("File copying failed: %q\n", err)
 		}
-		filename = strings.Split(filepath, "/")[len(strings.Split(filepath, "/"))]
+
 		print(filename)
-		path = destination + strings.Split(filepath, "/")[len(strings.Split(filepath, "/"))]
+		path = destination + filename
 	}
 
 	date := c.PostForm("date")
