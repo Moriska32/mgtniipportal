@@ -204,7 +204,7 @@ func Updatenews(c *gin.Context) {
 		}
 
 		filepath = strings.Replace(filepath, "/file", "public", 1)
-		filename = strings.Split(filepath, "/")[len(strings.Split(filepath, "/"))]
+		filename = strings.Split(filepath, "/")[len(strings.Split(filepath, "/"))-1]
 		destination := "public/photos/Новости/" + filename
 		err = Copy(filepath, destination)
 		if err != nil {
