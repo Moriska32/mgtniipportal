@@ -3,11 +3,10 @@ package news
 import (
 	config "PortalMGTNIIP/config"
 	"fmt"
-	"io"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 	"strings"
 
 	"github.com/elgs/gosqljson"
@@ -15,49 +14,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//BUFFERSIZE buffer for file
-var BUFFERSIZE int64
-
 //Copy files
-func Copy(src, dst string, BUFFERSIZE int64) error {
-	sourceFileStat, err := os.Stat(src)
+func Copy(sourceFile, destinationFile string) error {
+	input, err := ioutil.ReadFile(sourceFile)
 	if err != nil {
-		return err
+		fmt.Println(err)
+
 	}
 
-	if !sourceFileStat.Mode().IsRegular() {
-		return fmt.Errorf("%s is not a regular file.", src)
-	}
-
-	source, err := os.Open(src)
+	err = ioutil.WriteFile(destinationFile, input, 0644)
 	if err != nil {
-		return err
-	}
-	defer source.Close()
+		fmt.Println("Error creating", destinationFile)
+		fmt.Println(err)
 
-	destination, err := os.Open(dst)
-	if err != nil {
-		return err
-	}
-	defer destination.Close()
-
-	if err != nil {
-		panic(err)
-	}
-
-	buf := make([]byte, BUFFERSIZE)
-	for {
-		n, err := source.Read(buf)
-		if err != nil && err != io.EOF {
-			return err
-		}
-		if n == 0 {
-			break
-		}
-
-		if _, err := destination.Write(buf[:n]); err != nil {
-			return err
-		}
 	}
 	return err
 }
@@ -146,13 +115,9 @@ func Postnews(c *gin.Context) {
 
 		}
 	case len(filepath) > 1:
-		BUFFERSIZE, err := strconv.ParseInt("1000", 10, 64)
-		if err != nil {
-			fmt.Printf("Invalid buffer size: %q\n", err)
-			return
-		}
+
 		destination := "public/photos/Новости/"
-		err = Copy(filepath, destination, BUFFERSIZE)
+		err = Copy(filepath, destination)
 		if err != nil {
 			fmt.Printf("File copying failed: %q\n", err)
 		}
@@ -232,14 +197,16 @@ func Updatenews(c *gin.Context) {
 
 		}
 	case len(filepath) > 1:
-		BUFFERSIZE, err := strconv.ParseInt("1000", 10, 64)
+
 		if err != nil {
 			fmt.Printf("Invalid buffer size: %q\n", err)
 			return
 		}
-		destination := "public/photos/Новости/"
+
 		filepath = strings.Replace(filepath, "/file", "public", 1)
-		err = Copy(filepath, destination, BUFFERSIZE)
+		filename = strings.Split(filepath, "/")[len(strings.Split(filepath, "/"))]
+		destination := "public/photos/Новости/" + filename
+		err = Copy(filepath, destination)
 		if err != nil {
 			fmt.Printf("File copying failed: %q\n", err)
 		}
