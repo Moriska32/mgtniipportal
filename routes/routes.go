@@ -22,7 +22,7 @@ func Routes(router *gin.Engine) {
 	router.StaticFS("/file", http.Dir("public"))
 	router.POST("/fileslist", files.Fileslist)
 	router.POST("/rmfiles", files.Rmfiles)
-	router.POST("/mkrmfolders", files.Mkrmfolders)
+	router.POST("/mkrmsubfolders", files.Mkrmsubfolders)
 	router.POST("/postnews", news.Postnews)
 	router.GET("/getnews", news.Getnews)
 	router.POST("/newuser", user.Newuser)
