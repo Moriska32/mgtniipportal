@@ -116,14 +116,21 @@ func Postnews(c *gin.Context) {
 		}
 	case len(filepath) > 1:
 
-		destination := "public/photos/Новости/"
+		if err != nil {
+			fmt.Printf("Invalid buffer size: %q\n", err)
+			return
+		}
+
+		filepath = strings.Replace(filepath, "/file", "public", 1)
+		filename = strings.Split(filepath, "/")[len(strings.Split(filepath, "/"))-1]
+		destination := "public/photos/Новости/" + filename
 		err = Copy(filepath, destination)
 		if err != nil {
 			fmt.Printf("File copying failed: %q\n", err)
 		}
-		filename = strings.Split(filepath, "/")[len(strings.Split(filepath, "/"))]
+
 		print(filename)
-		path = destination + strings.Split(filepath, "/")[len(strings.Split(filepath, "/"))]
+		path = destination + filename
 	}
 
 	date := c.PostForm("date")
