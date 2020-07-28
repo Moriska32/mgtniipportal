@@ -181,8 +181,8 @@ func Fileslist(c *gin.Context) {
 
 }
 
-//Mkrm Remove and make folder and files
-func Mkrmfolders(c *gin.Context) {
+//Mkrmsubfolders Remove and make folder and files
+func Mkrmsubfolders(c *gin.Context) {
 	doit := c.PostForm("doit")
 	folder := c.PostForm("folder")
 	subfolders := c.PostFormArray("subfolders")
@@ -193,7 +193,7 @@ func Mkrmfolders(c *gin.Context) {
 			print(subfolder)
 			err := os.Remove(fmt.Sprintf("public/%s/%s", folder, subfolder))
 			if err != nil {
-				c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+				c.String(http.StatusBadRequest, fmt.Sprintf("stat: %s", err.Error()))
 			}
 		}
 	case doit == "mk":
@@ -201,7 +201,7 @@ func Mkrmfolders(c *gin.Context) {
 			print(subfolder)
 			err := os.Mkdir(fmt.Sprintf("public/%s/%s", folder, subfolder), os.ModePerm)
 			if err != nil {
-				c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+				c.String(http.StatusBadRequest, fmt.Sprintf("stat: %s", err.Error()))
 			}
 		}
 
@@ -209,7 +209,7 @@ func Mkrmfolders(c *gin.Context) {
 
 }
 
-//Mkrm Remove and make folder and files
+//Rmfiles Remove and make folder and files
 func Rmfiles(c *gin.Context) {
 
 	files := c.PostFormArray("files")
@@ -217,7 +217,7 @@ func Rmfiles(c *gin.Context) {
 
 		err := os.Remove(strings.Replace(file, "file", "public", 1))
 		if err != nil {
-			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+			c.String(http.StatusBadRequest, fmt.Sprintf("stat: %s", err.Error()))
 		}
 	}
 
