@@ -3,15 +3,71 @@ package news
 import (
 	config "PortalMGTNIIP/config"
 	"fmt"
+	"io"
 	"log"
 	"net/http"
 	"os"
+	"strconv"
+	"strings"
 
 	"github.com/elgs/gosqljson"
 
 	"github.com/gin-gonic/gin"
 )
 
+//BUFFERSIZE buffer for file
+var BUFFERSIZE int64
+
+//Copy files
+func Copy(src, dst string, BUFFERSIZE int64) error {
+	sourceFileStat, err := os.Stat(src)
+	if err != nil {
+		return err
+	}
+
+	if !sourceFileStat.Mode().IsRegular() {
+		return fmt.Errorf("%s is not a regular file.", src)
+	}
+
+	source, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer source.Close()
+
+	_, err = os.Stat(dst)
+	if err == nil {
+		return fmt.Errorf("File %s already exists.", dst)
+	}
+
+	destination, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer destination.Close()
+
+	if err != nil {
+		panic(err)
+	}
+
+	buf := make([]byte, BUFFERSIZE)
+	for {
+		n, err := source.Read(buf)
+		if err != nil && err != io.EOF {
+			return err
+		}
+		if n == 0 {
+			break
+		}
+
+		if _, err := destination.Write(buf[:n]); err != nil {
+			return err
+		}
+	}
+	return err
+}
+
+//Getnews get news
 func Getnews(c *gin.Context) {
 	dbConnect := config.Connect()
 	todo := "SELECT tnews.*, tnews_file.* FROM public.tnews tnews, public.tnews_file tnews_file WHERE tnews_file.n_id = tnews.n_id;"
@@ -74,22 +130,39 @@ func Postnews(c *gin.Context) {
 
 	files := form.File["file"]
 
+	filepath := c.PostForm("filepath")
+
 	folder := c.PostForm("folder")
 	subfolder := c.PostForm("subfolder")
-
-	os.Mkdir(fmt.Sprintf("public/%s/%s", folder, subfolder), os.ModePerm)
 	var path, filename string
+	switch {
+	case len(files) > 0:
+		os.Mkdir(fmt.Sprintf("public/%s/%s", folder, subfolder), os.ModePerm)
 
-	for _, file := range files {
+		for _, file := range files {
 
-		if err := c.SaveUploadedFile(file, fmt.Sprintf("public/%s/%s/%s", folder, subfolder, file.Filename)); err != nil {
-			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+			if err := c.SaveUploadedFile(file, fmt.Sprintf("public/%s/%s/%s", folder, subfolder, file.Filename)); err != nil {
+				c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+				return
+			}
+
+			path = fmt.Sprintf("/file/%s/%s/%s", folder, subfolder, file.Filename)
+			filename = file.Filename
+
+		}
+	case len(filepath) > 1:
+		BUFFERSIZE, err := strconv.ParseInt("1000", 10, 64)
+		if err != nil {
+			fmt.Printf("Invalid buffer size: %q\n", err)
 			return
 		}
-
-		path = fmt.Sprintf("/file/%s/%s/%s", folder, subfolder, file.Filename)
-		filename = file.Filename
-
+		destination := "public/photos/Новости/"
+		err = Copy(filepath, destination, BUFFERSIZE)
+		if err != nil {
+			fmt.Printf("File copying failed: %q\n", err)
+		}
+		filename = strings.Split(filepath, "/")[len(strings.Split(filepath, "/"))]
+		path = destination + strings.Split(filepath, "/")[len(strings.Split(filepath, "/"))]
 	}
 
 	date := c.PostForm("date")
@@ -119,7 +192,7 @@ func Postnews(c *gin.Context) {
 			// Query rows will be closed with defer.cd
 			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 		}
-		print(Nid)
+
 	}
 	insertphoto := fmt.Sprintf("INSERT INTO public.tnews_file (n_id, nf_name, nf_path, nf_type) VALUES(%s, '%s', '%s', 0);", Nid, filename, path)
 
