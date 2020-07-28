@@ -1,7 +1,10 @@
 package routes
 
 import (
-	api "ProtalMGTNIIP/api"
+	api "PortalMGTNIIP/api"
+	files "PortalMGTNIIP/files"
+	news "PortalMGTNIIP/news"
+	user "PortalMGTNIIP/user"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -15,15 +18,15 @@ func Routes(router *gin.Engine) {
 	router.GET("/img", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "select_file.html", gin.H{})
 	})
-	router.POST("/upload", api.Upload)
+	router.POST("/upload", files.Upload)
 	router.StaticFS("/file", http.Dir("public"))
-	router.POST("/fileslist", api.Fileslist)
-	router.POST("/mkrm", api.Mkrm)
-	router.POST("/postnews", api.Postnews)
-	router.GET("/getnews", api.Getnews)
-	router.POST("/newuser", api.Newuser)
-	router.POST("/deletenews", api.Deletenews)
-	router.POST("/loginpass", api.Loginpass)
+	router.POST("/fileslist", files.Fileslist)
+	router.POST("/mkrm", files.Mkrm)
+	router.POST("/postnews", news.Postnews)
+	router.GET("/getnews", news.Getnews)
+	router.POST("/newuser", user.Newuser)
+	router.POST("/deletenews", news.Deletenews)
+	router.POST("/loginpass", user.Loginpass)
 
 }
 

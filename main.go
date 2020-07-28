@@ -1,7 +1,7 @@
 package main
 
 import (
-	routes "ProtalMGTNIIP/routes"
+	routes "PortalMGTNIIP/routes"
 	"log"
 	_ "os"
 
