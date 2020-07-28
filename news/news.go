@@ -243,6 +243,7 @@ func Updatenews(c *gin.Context) {
 			return
 		}
 		destination := "public/photos/Новости/"
+		filepath = strings.Replace(filepath, "file", "public", 1)
 		err = Copy(filepath, destination, BUFFERSIZE)
 		if err != nil {
 			fmt.Printf("File copying failed: %q\n", err)
