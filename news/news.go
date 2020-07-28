@@ -35,12 +35,7 @@ func Copy(src, dst string, BUFFERSIZE int64) error {
 	}
 	defer source.Close()
 
-	_, err = os.Stat(dst)
-	if err == nil {
-		return fmt.Errorf("File %s already exists.", dst)
-	}
-
-	destination, err := os.Create(dst)
+	destination, err := os.Open(dst)
 	if err != nil {
 		return err
 	}
