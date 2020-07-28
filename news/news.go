@@ -236,7 +236,7 @@ func Updatenews(c *gin.Context) {
 		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 	}
 
-	insertphoto := fmt.Sprintf("UPDATE public.tnews_file SET nf_name='%s', nf_path='%s' WHERE nf_id= %s;", filename, path, nid)
+	insertphoto := fmt.Sprintf("UPDATE public.tnews_file SET nf_name='%s', nf_path='%s' WHERE n_id= %s;", filename, path, nid)
 
 	_, err = dbConnect.Exec(insertphoto)
 
