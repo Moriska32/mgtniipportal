@@ -101,15 +101,16 @@ func Loginpass(c *gin.Context) {
 //Deleteuser Delete users
 func Deleteuser(c *gin.Context) {
 
-	user := c.PostForm("user_id")
+	users := c.PostFormArray("user_id")
+	for _, user := range users {
+		dbConnect := config.Connect()
 
-	dbConnect := config.Connect()
+		deletetuser := fmt.Sprintf("DELETE FROM public.tuser WHERE user_id = %s;", user)
 
-	deletetuser := fmt.Sprintf("DELETE FROM public.tuser WHERE user_id = %s;", user)
-
-	_, err := dbConnect.Exec(deletetuser)
-	if err != nil {
-		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+		_, err := dbConnect.Exec(deletetuser)
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{
