@@ -32,7 +32,7 @@ func Routes(router *gin.Engine) {
 	router.GET("/post/:id", api.Post)
 	router.GET("/posts", api.Posts)
 	router.GET("/objectstype", api.Objectstype)
-	router.POST("/deleteuser", user.Deleteuser)
+	router.POST("/deleteusers", user.Deleteuser)
 	router.POST("/updateuser", user.Updateuser)
 }
 
