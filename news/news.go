@@ -59,23 +59,23 @@ func Getnews(c *gin.Context) {
 //Deletenews delete news by id
 func Deletenews(c *gin.Context) {
 
-	nid := c.PostForm("n_id")
+	nids := c.PostFormArray("n_ids")
 
 	dbConnect := config.Connect()
+	for _, nid := range nids {
+		deletetnewsfile := fmt.Sprintf("DELETE FROM public.tnews_file WHERE n_id = %s;", nid)
 
-	deletetnewsfile := fmt.Sprintf("DELETE FROM public.tnews_file WHERE n_id = %s;", nid)
+		deletetnews := fmt.Sprintf("DELETE FROM public.tnews WHERE n_id = %s;", nid)
 
-	deletetnews := fmt.Sprintf("DELETE FROM public.tnews WHERE n_id = %s;", nid)
-
-	_, err := dbConnect.Exec(deletetnewsfile)
-	if err != nil {
-		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+		_, err := dbConnect.Exec(deletetnewsfile)
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+		}
+		_, err = dbConnect.Exec(deletetnews)
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+		}
 	}
-	_, err = dbConnect.Exec(deletetnews)
-	if err != nil {
-		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
-	}
-
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
 	})
