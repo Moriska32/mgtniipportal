@@ -29,7 +29,9 @@ func Routes(router *gin.Engine) {
 	router.POST("/updatenews", news.Updatenews)
 	router.POST("/deletenews", news.Deletenews)
 	router.POST("/loginpass", user.Loginpass)
-
+	router.GET("/post/:id", api.Post)
+	router.GET("/posts", api.Posts)
+	router.GET("/objectstype", api.Objectstype)
 }
 
 func welcome(c *gin.Context) {
