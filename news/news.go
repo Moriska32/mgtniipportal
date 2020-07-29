@@ -130,7 +130,7 @@ func Postnews(c *gin.Context) {
 		}
 
 		print(filename)
-		path = strings.Replace(destination, "public", "/file", 1) + filename
+		path = strings.Replace(destination, "public", "/file", 1)
 	}
 
 	date := c.PostForm("date")
@@ -219,7 +219,7 @@ func Updatenews(c *gin.Context) {
 		}
 
 		print(filename)
-		path = strings.Replace(destination, "public", "/file", 1) + filename
+		path = strings.Replace(destination, "public", "/file", 1)
 	}
 
 	date := c.PostForm("date")
