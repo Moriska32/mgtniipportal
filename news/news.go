@@ -235,7 +235,7 @@ func Updatenews(c *gin.Context) {
 	if err != nil {
 		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 	}
-	deletetnews := fmt.Sprintf("DELETE FROM public.tnews WHERE n_id = %s;", nid)
+	deletetnews := fmt.Sprintf("DELETE FROM public.tnews_file WHERE n_id = %s;", nid)
 	_, err = dbConnect.Exec(deletetnews)
 	if err != nil {
 		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
