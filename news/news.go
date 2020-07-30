@@ -52,7 +52,7 @@ func Getnews(c *gin.Context) {
 		"status": http.StatusOK,
 		"data":   data,
 	})
-
+	dbConnect.Close()
 	return
 }
 
@@ -79,6 +79,7 @@ func Deletenews(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
 	})
+	dbConnect.Close()
 
 }
 
@@ -169,6 +170,7 @@ func Postnews(c *gin.Context) {
 	if err != nil {
 		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 	}
+	dbConnect.Close()
 }
 
 //Updatenews news
@@ -247,4 +249,5 @@ func Updatenews(c *gin.Context) {
 	if err != nil {
 		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 	}
+	dbConnect.Close()
 }

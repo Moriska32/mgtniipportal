@@ -35,6 +35,7 @@ func Dep(c *gin.Context) {
 		"status": http.StatusOK,
 		"data":   data,
 	})
+	dbConnect.Close()
 	return
 
 }
@@ -59,6 +60,7 @@ func Deps(c *gin.Context) {
 		"status": http.StatusOK,
 		"data":   data,
 	})
+	dbConnect.Close()
 	return
 
 }
@@ -83,6 +85,7 @@ func Posts(c *gin.Context) {
 		"status": http.StatusOK,
 		"data":   data,
 	})
+	dbConnect.Close()
 	return
 
 }
@@ -108,6 +111,7 @@ func Post(c *gin.Context) {
 		"status": http.StatusOK,
 		"data":   data,
 	})
+	dbConnect.Close()
 	return
 
 }
@@ -132,6 +136,7 @@ func Objectstype(c *gin.Context) {
 		"status": http.StatusOK,
 		"data":   data,
 	})
+	dbConnect.Close()
 	return
 
 }
