@@ -159,10 +159,8 @@ func Updateuser(c *gin.Context) {
 	depid := c.PostForm("dep_id")
 	chief := c.PostForm("chief")
 	tel := c.PostForm("tel")
-	workplace := c.PostForm("workplace")
 	userrole := c.PostForm("userrole")
 	del := c.PostForm("del")
-	postid := c.PostForm("post_id")
 
 	dbConnect := config.Connect()
 
