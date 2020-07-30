@@ -33,6 +33,7 @@ func Routes(router *gin.Engine) {
 	router.GET("/posts", api.Posts)
 	router.GET("/cbrdaily", api.Cbrdaily)
 	router.GET("/weather", api.Weather)
+	router.GET("/weathersss", api.Weathers)
 	router.GET("/objectstype", api.Objectstype)
 	router.POST("/deleteusers", user.Deleteuser)
 	router.POST("/updateuser", user.Updateuser)

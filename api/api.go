@@ -10,7 +10,6 @@ import (
 	"net/http"
 
 	"github.com/elgs/gosqljson"
-
 	"github.com/gin-gonic/gin"
 )
 
@@ -222,6 +221,30 @@ func Weather(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
 		"data":   r,
+	})
+
+}
+
+//Weathers get Weather
+func Weathers(c *gin.Context) {
+
+	url := "api.openweathermap.org/data/2.5/weather?lat=55.7631&lon=37.6241&appid=1e0cab77972f211e662fccf809bafc72"
+
+	res, err := http.Get(url)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	body, err := ioutil.ReadAll(res.Body)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   body,
 	})
 
 }
