@@ -157,7 +157,7 @@ func Cbrdaily(c *gin.Context) {
 	print(cbr.Valute)
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
-		"data":   cbr,
+		"data":   cbr.Valute,
 	})
 
 }
