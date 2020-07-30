@@ -196,18 +196,24 @@ type Valute struct {
 //Weather get Weather
 func Weather(c *gin.Context) {
 
+	type Weatherget map[string]float64
+
 	url := "https://gridforecast.com/api/v1/forecast/49.8479;35.6541/202007301200?api_token=fi83J3miGOyofI5D"
 
-	req, _ := http.NewRequest("GET", url, nil)
+	res, err := http.Get(url)
 
-	res, _ := http.DefaultClient.Do(req)
+	if err != nil {
+		panic(err.Error())
+	}
 
-	defer res.Body.Close()
-	body, _ := ioutil.ReadAll(res.Body)
+	body, err := ioutil.ReadAll(res.Body)
+
+	var r Weatherget
+	err = json.Unmarshal(body, &r)
 
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
-		"data":   string(body),
+		"data":   r,
 	})
 
 }
