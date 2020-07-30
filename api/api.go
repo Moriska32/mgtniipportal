@@ -3,6 +3,7 @@ package api
 import (
 	config "PortalMGTNIIP/config"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 
@@ -196,22 +197,20 @@ type Valute struct {
 //Weather get Weather
 func Weather(c *gin.Context) {
 
-	url := "https://accuweatherstefan-skliarovv1.p.rapidapi.com/get24HoursConditionsByLocationKey"
+	url := "https://community-open-weather-map.p.rapidapi.com/weather?callback=test&id=2172797&units=%2522metric%2522%20or%20%2522imperial%2522&mode=xml%252C%20html&q=London%252Cuk"
 
-	req, _ := http.NewRequest("POST", url, nil)
+	req, _ := http.NewRequest("GET", url, nil)
 
-	req.Header.Add("x-rapidapi-host", "AccuWeatherstefan-skliarovV1.p.rapidapi.com")
+	req.Header.Add("x-rapidapi-host", "community-open-weather-map.p.rapidapi.com")
 	req.Header.Add("x-rapidapi-key", "7e8e2a23afmshf2deabcb8c7b3dfp177c0cjsne0b1f5d1b74e")
-	req.Header.Add("content-type", "application/x-www-form-urlencoded")
 
-	res, err := http.DefaultClient.Do(req)
-
-	if err != nil {
-		panic(err.Error())
-	}
+	res, _ := http.DefaultClient.Do(req)
 
 	defer res.Body.Close()
 	body, _ := ioutil.ReadAll(res.Body)
+
+	fmt.Println(res)
+	fmt.Println(string(body))
 
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
