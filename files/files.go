@@ -15,6 +15,25 @@ import (
 
 var print = fmt.Println
 
+//GetFileContentType check file type
+func GetFileContentType(out *os.File) (string, error) {
+
+	// Only the first 512 bytes are used to sniff the content type.
+	buffer := make([]byte, 512)
+
+	_, err := out.Read(buffer)
+	if err != nil {
+
+		return "", err
+	}
+
+	// Use the net/http package's handy DectectContentType function. Always returns a valid
+	// content-type by returning "application/octet-stream" if no others seemed to match.
+	contentType := http.DetectContentType(buffer)
+
+	return contentType, nil
+}
+
 //OSReadDir List of Folders
 func OSReadDir(root string) ([]string, error) {
 	var files []string
@@ -24,9 +43,18 @@ func OSReadDir(root string) ([]string, error) {
 	}
 
 	for _, file := range fileInfo {
-		if !strings.Contains(file.Name(), ".") {
+
+		f, _ := os.Open(root + file.Name())
+
+		defer f.Close()
+
+		_, err = GetFileContentType(f)
+
+		if err != nil {
 			files = append(files, file.Name())
+
 		}
+
 	}
 	return files, nil
 }
@@ -38,11 +66,18 @@ func OSReadFile(root string) ([]string, error) {
 	if err != nil {
 		return files, err
 	}
-
 	for _, file := range fileInfo {
-		if strings.Contains(file.Name(), ".") {
-			files = append(files, strings.Replace(root, "public", "file", 1)+file.Name())
+		f, _ := os.Open(root + file.Name())
+		defer f.Close()
+
+		_, err := GetFileContentType(f)
+
+		if err == nil {
+			path := strings.Replace(root, "public", "file", 1)
+			files = append(files, path+file.Name())
+
 		}
+
 	}
 	return files, nil
 }
@@ -191,7 +226,7 @@ func Mkrmsubfolders(c *gin.Context) {
 	case doit == "rm":
 		for _, subfolder := range subfolders {
 			print(subfolder)
-			err := os.Remove(fmt.Sprintf("public/%s/%s", folder, subfolder))
+			err := os.RemoveAll(fmt.Sprintf("public/%s/%s", folder, subfolder))
 			if err != nil {
 				c.String(http.StatusBadRequest, fmt.Sprintf("stat: %s", err.Error()))
 			}
