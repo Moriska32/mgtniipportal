@@ -192,3 +192,30 @@ type Valute struct {
 	Value    float64 `json:"Value"`
 	Previous float64 `json:"Previous"`
 }
+
+//Weather get Weather
+func Weather(c *gin.Context) {
+
+	url := "https://accuweatherstefan-skliarovv1.p.rapidapi.com/get24HoursConditionsByLocationKey"
+
+	req, _ := http.NewRequest("POST", url, nil)
+
+	req.Header.Add("x-rapidapi-host", "AccuWeatherstefan-skliarovV1.p.rapidapi.com")
+	req.Header.Add("x-rapidapi-key", "7e8e2a23afmshf2deabcb8c7b3dfp177c0cjsne0b1f5d1b74e")
+	req.Header.Add("content-type", "application/x-www-form-urlencoded")
+
+	res, err := http.DefaultClient.Do(req)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	defer res.Body.Close()
+	body, _ := ioutil.ReadAll(res.Body)
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   body,
+	})
+
+}
