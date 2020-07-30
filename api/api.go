@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
+	"time"
 
 	"net/http"
 
@@ -196,9 +197,11 @@ type Valute struct {
 //Weather get Weather
 func Weather(c *gin.Context) {
 
+	t := time.Now()
+
 	type Weatherget map[string]float64
 
-	url := "https://gridforecast.com/api/v1/forecast/55.7631;37.6241/202007301200?api_token=fi83J3miGOyofI5D"
+	url := "https://gridforecast.com/api/v1/forecast/55.7631;37.6241/" + t.Format("200601021500") + "?api_token=fi83J3miGOyofI5D"
 
 	res, err := http.Get(url)
 
