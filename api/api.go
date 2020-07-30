@@ -207,7 +207,7 @@ func Weather(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
-		"data":   body,
+		"data":   string(body),
 	})
 
 }
