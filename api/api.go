@@ -198,7 +198,7 @@ func Weather(c *gin.Context) {
 
 	type Weatherget map[string]float64
 
-	url := "https://gridforecast.com/api/v1/forecast/49.8479;35.6541/202007301200?api_token=fi83J3miGOyofI5D"
+	url := "https://gridforecast.com/api/v1/forecast/55.7631;37.6241/202007301200?api_token=fi83J3miGOyofI5D"
 
 	res, err := http.Get(url)
 
