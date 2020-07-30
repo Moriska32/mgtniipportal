@@ -2,6 +2,8 @@ package api
 
 import (
 	config "PortalMGTNIIP/config"
+	"encoding/json"
+	"io/ioutil"
 	"log"
 
 	"net/http"
@@ -131,4 +133,63 @@ func Objectstype(c *gin.Context) {
 	})
 	return
 
+}
+
+// Cbrdaily get values
+func Cbrdaily(c *gin.Context) {
+
+	url := "https://www.cbr-xml-daily.ru/daily_json.js"
+
+	res, err := http.Get(url)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	body, err := ioutil.ReadAll(res.Body)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	cbr, err := UnmarshalWelcome(body)
+
+	print(cbr.Valute)
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   cbr,
+	})
+
+}
+
+//UnmarshalWelcome get values
+func UnmarshalWelcome(data []byte) (Welcome, error) {
+	var r Welcome
+	err := json.Unmarshal(data, &r)
+	return r, err
+}
+
+//Marshal values
+func (r *Welcome) Marshal() ([]byte, error) {
+	return json.Marshal(r)
+}
+
+//Welcome values
+type Welcome struct {
+	Date         string            `json:"Date"`
+	PreviousDate string            `json:"PreviousDate"`
+	PreviousURL  string            `json:"PreviousURL"`
+	Timestamp    string            `json:"Timestamp"`
+	Valute       map[string]Valute `json:"Valute"`
+}
+
+//Valute valute
+type Valute struct {
+	ID       string  `json:"ID"`
+	NumCode  string  `json:"NumCode"`
+	CharCode string  `json:"CharCode"`
+	Nominal  int64   `json:"Nominal"`
+	Name     string  `json:"Name"`
+	Value    float64 `json:"Value"`
+	Previous float64 `json:"Previous"`
 }

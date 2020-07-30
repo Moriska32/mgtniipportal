@@ -31,6 +31,7 @@ func Routes(router *gin.Engine) {
 	router.POST("/loginpass", user.Loginpass)
 	router.GET("/post/:id", api.Post)
 	router.GET("/posts", api.Posts)
+	router.GET("/cbrdaily", api.Cbrdaily)
 	router.GET("/objectstype", api.Objectstype)
 	router.POST("/deleteusers", user.Deleteuser)
 	router.POST("/updateuser", user.Updateuser)
