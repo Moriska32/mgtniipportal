@@ -227,12 +227,13 @@ func Updatenews(c *gin.Context) {
 	case len(newfullname) > 1:
 
 		filepath = strings.Replace(filepath, "/file", "public", 1)
-		err := os.Rename(filepath, "/file/photos/Новости/"+newfullname)
+		err := os.Rename(filepath, "/public/photos/Новости/"+newfullname)
 
 		if err != nil {
 			log.Fatal(err)
 		}
 		filename = newfullname
+
 		path = "/file/photos/Новости/" + filename
 
 	}
