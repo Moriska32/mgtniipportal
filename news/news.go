@@ -226,7 +226,7 @@ func Updatenews(c *gin.Context) {
 
 	case len(newfullname) > 1:
 
-		filepath = strings.Replace(filepath, "public", "/file", 1)
+		filepath = strings.Replace(filepath, "/file", "public", 1)
 		err := os.Rename(filepath, newfullname)
 
 		if err != nil {
