@@ -206,7 +206,7 @@ func Updatenews(c *gin.Context) {
 			filename = file.Filename
 
 		}
-	case len(filepath) > 1:
+	case len(filepath) > 1 && len(newfullname) < 2:
 
 		if err != nil {
 			fmt.Printf("Invalid buffer size: %q\n", err)
