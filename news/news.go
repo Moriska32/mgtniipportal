@@ -189,6 +189,7 @@ func Updatenews(c *gin.Context) {
 	filepath := c.PostForm("filepath")
 	folder := c.PostForm("folder")
 	subfolder := c.PostForm("subfolder")
+	newfullname := c.PostForm("new_fullname")
 	var path, filename string
 	switch {
 	case len(files) > 0:
@@ -222,6 +223,17 @@ func Updatenews(c *gin.Context) {
 
 		print(filename)
 		path = strings.Replace(destination, "public", "/file", 1)
+
+	case len(newfullname) > 1:
+
+		err := os.Rename(filepath, newfullname)
+
+		if err != nil {
+			log.Fatal(err)
+		}
+		filename = newfullname
+		path = "/file/photos/Новости/" + filename
+
 	}
 
 	date := c.PostForm("date")
