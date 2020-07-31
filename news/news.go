@@ -254,14 +254,14 @@ func Updatenews(c *gin.Context) {
 	deletetnews := fmt.Sprintf("DELETE FROM public.tnews_file WHERE n_id = %s;", nid)
 	_, err = dbConnect.Exec(deletetnews)
 	if err != nil {
-		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+		c.String(http.StatusBadRequest, fmt.Sprintf("delete: %s", err.Error()))
 	}
 	insertphoto := fmt.Sprintf("INSERT INTO public.tnews_file (n_id, nf_name, nf_path, nf_type) VALUES(%s, '%s', '%s', 0);", nid, filename, path)
 
 	_, err = dbConnect.Exec(insertphoto)
 
 	if err != nil {
-		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+		c.String(http.StatusBadRequest, fmt.Sprintf("insert: %s", err.Error()))
 	}
 	dbConnect.Close()
 }
