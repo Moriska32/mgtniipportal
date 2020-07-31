@@ -31,8 +31,8 @@ func Copy(sourceFile, destinationFile string) error {
 	return err
 }
 
-//Getnews get news
-func Getnews(c *gin.Context) {
+//Getprojects get news
+func Getprojects(c *gin.Context) {
 	dbConnect := config.Connect()
 	todo := "SELECT tnews.*, tnews_file.* FROM public.tnews tnews, public.tnews_file tnews_file WHERE tnews_file.n_id = tnews.n_id;"
 
@@ -56,8 +56,8 @@ func Getnews(c *gin.Context) {
 	return
 }
 
-//Deletenews delete news by id
-func Deletenews(c *gin.Context) {
+//Deleteprojects delete news by id
+func Deleteprojects(c *gin.Context) {
 
 	nids := c.PostFormArray("n_ids")
 
@@ -83,8 +83,8 @@ func Deletenews(c *gin.Context) {
 
 }
 
-//Postnews on BD
-func Postnews(c *gin.Context) {
+//Postprojects on BD
+func Postprojects(c *gin.Context) {
 
 	form, err := c.MultipartForm()
 
@@ -173,8 +173,8 @@ func Postnews(c *gin.Context) {
 	dbConnect.Close()
 }
 
-//Updatenews news
-func Updatenews(c *gin.Context) {
+//Updateprojects news
+func Updateprojects(c *gin.Context) {
 
 	form, err := c.MultipartForm()
 

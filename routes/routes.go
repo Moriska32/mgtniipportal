@@ -4,6 +4,7 @@ import (
 	api "PortalMGTNIIP/api"
 	files "PortalMGTNIIP/files"
 	news "PortalMGTNIIP/news"
+	projects "PortalMGTNIIP/project"
 	user "PortalMGTNIIP/user"
 	"net/http"
 
@@ -37,6 +38,10 @@ func Routes(router *gin.Engine) {
 	router.GET("/objectstype", api.Objectstype)
 	router.POST("/deleteusers", user.Deleteuser)
 	router.POST("/updateuser", user.Updateuser)
+
+	router.POST("/updateprojects", projects.Updateprojects)
+	router.POST("/deleteprojects", projects.Deleteprojects)
+	router.POST("/postprojects", projects.Postprojects)
 }
 
 func welcome(c *gin.Context) {
