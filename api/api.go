@@ -17,7 +17,7 @@ import (
 func Dep(c *gin.Context) {
 	dbConnect := config.Connect()
 	ID := c.Param("id")
-	todo := "SELECT dep_id, name, parent_id FROM public.tdep where parent_id = " + ID + " and parent_id != 27;"
+	todo := "SELECT dep_id, name, parent_id FROM public.tdep where parent_id = " + ID + " and parent_id not in (3, 27, 29, 64, 67, 69);"
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
