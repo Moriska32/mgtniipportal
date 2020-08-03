@@ -174,3 +174,54 @@ func Updateuser(c *gin.Context) {
 	}
 
 }
+
+//Getusers get news
+func Getusers(c *gin.Context) {
+	dbConnect := config.Connect()
+	todo := "SELECT* FROM FROM public.tuser;"
+
+	defer dbConnect.Close()
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+	dbConnect.Close()
+	return
+}
+
+//Getuser get news
+func Getuser(c *gin.Context) {
+	id := c.PostForm("id")
+	dbConnect := config.Connect()
+	todo := fmt.Sprintf("SELECT * FROM FROM public.tuser where user_id = %s;", id)
+
+	defer dbConnect.Close()
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+	dbConnect.Close()
+	return
+}
