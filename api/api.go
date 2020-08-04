@@ -42,7 +42,7 @@ func Dep(c *gin.Context) {
 //Deps List all of deps
 func Deps(c *gin.Context) {
 	dbConnect := config.Connect()
-	todo := `select father.name, son.name, job.name from
+	todo := `select father.name as father, son.name as son , job.name as job from 
 	(SELECT * from tdep) as father,
 	(SELECT * from tdep) as son,
 	(SELECT * from tdep) as job
