@@ -163,7 +163,10 @@ func Postnews(c *gin.Context) {
 		}
 
 	}
-	insertphoto := fmt.Sprintf("INSERT INTO public.tnews_file (n_id, nf_name, nf_path, nf_type) VALUES(%s, '%s', '%s', 0);", Nid, filename, path)
+
+	nftype := c.PostForm("nf_type")
+
+	insertphoto := fmt.Sprintf("INSERT INTO public.tnews_file (n_id, nf_name, nf_path, nf_type) VALUES(%s, '%s', '%s', %s);", Nid, filename, path, nftype)
 
 	_, err = dbConnect.Exec(insertphoto)
 
@@ -264,4 +267,32 @@ func Updatenews(c *gin.Context) {
 		c.String(http.StatusBadRequest, fmt.Sprintf("insert: %s", err.Error()))
 	}
 	dbConnect.Close()
+}
+
+//Getnew get news
+func Getnew(c *gin.Context) {
+
+	nftype := c.PostForm("nf_type")
+
+	dbConnect := config.Connect()
+	todo := fmt.Sprintf("SELECT tnews.*, tnews_file.* FROM public.tnews tnews, public.tnews_file tnews_file WHERE tnews_file.n_id = tnews.n_id AND tnews_file.nf_type = %s;", nftype)
+
+	defer dbConnect.Close()
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+	dbConnect.Close()
+	return
 }
