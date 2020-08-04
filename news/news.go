@@ -270,7 +270,7 @@ func Updatenews(c *gin.Context) {
 }
 
 //Getnew get news
-func Getnew(c *gin.Context) {
+func Getnewslist(c *gin.Context) {
 
 	nftype := c.PostForm("nf_type")
 

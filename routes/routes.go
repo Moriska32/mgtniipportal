@@ -25,7 +25,7 @@ func Routes(router *gin.Engine) {
 	router.POST("/rmfiles", files.Rmfiles)
 	router.POST("/mkrmsubfolders", files.Mkrmsubfolders)
 	router.POST("/postnews", news.Postnews)
-	router.POST("/getnew", news.Getnew)
+	router.POST("/getnewslist", news.Getnewslist)
 
 	router.GET("/getnews", news.Getnews)
 	router.POST("/newuser", user.Newuser)
