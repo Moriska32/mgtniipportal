@@ -205,7 +205,7 @@ func Getusers(c *gin.Context) {
 
 //Getuser get news
 func Getuser(c *gin.Context) {
-	id := c.PostForm("id")
+	id := c.PostForm("user_id")
 	dbConnect := config.Connect()
 	todo := fmt.Sprintf("SELECT * from public.tuser where user_id = %s;", id)
 
