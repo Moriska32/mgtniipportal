@@ -178,7 +178,7 @@ func Updateuser(c *gin.Context) {
 //Getusers get news
 func Getusers(c *gin.Context) {
 	dbConnect := config.Connect()
-	todo := "SELECT* FROM FROM public.tuser;"
+	todo := "SELECT * FROM public.tuser;"
 
 	defer dbConnect.Close()
 
