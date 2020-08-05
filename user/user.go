@@ -204,7 +204,7 @@ func Getusers(c *gin.Context) {
 func Getuser(c *gin.Context) {
 	id := c.PostForm("id")
 	dbConnect := config.Connect()
-	todo := fmt.Sprintf("SELECT * FROM FROM public.tuser where user_id = %s;", id)
+	todo := fmt.Sprintf("SELECT * public.tuser where user_id = %s;", id)
 
 	defer dbConnect.Close()
 
