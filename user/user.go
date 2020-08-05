@@ -22,7 +22,7 @@ func Newuser(c *gin.Context) {
 		return
 	}
 
-	files := form.File["file"]
+	files := form.File["foto"]
 	folder := c.PostForm("folder")
 	subfolder := c.PostForm("subfolder")
 
@@ -131,7 +131,7 @@ func Updateuser(c *gin.Context) {
 		return
 	}
 
-	files := form.File["file"]
+	files := form.File["foto"]
 	folder := c.PostForm("folder")
 	subfolder := c.PostForm("subfolder")
 
