@@ -39,7 +39,7 @@ func Newuser(c *gin.Context) {
 		path = fmt.Sprintf("/file/%s/%s/%s", folder, subfolder, file.Filename)
 
 	}
-	path = 
+
 	login := c.PostForm("login")
 	pass := c.PostForm("pass")
 	fam := c.PostForm("fam")
