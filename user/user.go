@@ -39,7 +39,7 @@ func Newuser(c *gin.Context) {
 		path = fmt.Sprintf("/file/%s/%s/%s", folder, subfolder, file.Filename)
 
 	}
-
+	path = 
 	login := c.PostForm("login")
 	pass := c.PostForm("pass")
 	fam := c.PostForm("fam")
@@ -59,10 +59,10 @@ func Newuser(c *gin.Context) {
 	postid := c.PostForm("post_id")
 	dbConnect := config.Connect()
 
-	insertuser := fmt.Sprintf("INSERT INTO public.tuser 
+	insertuser := fmt.Sprintf(`INSERT INTO public.tuser 
 	(login, pass, fam, name, otch, birthday, foto, hobby, profskills, drecrut, dep_id, chief, tel, userrole, del, post_id) 
 	VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', %s, %s, '%s', %s, %s, %s);
-		", login, pass, fam, name, otch, birthday, foto, hobby, profskills, drecrut, depid, chief, tel, userrole, del, postid)
+		`, login, pass, fam, name, otch, birthday, foto, hobby, profskills, drecrut, depid, chief, tel, userrole, del, postid)
 
 	_, err = dbConnect.Exec(insertuser)
 
