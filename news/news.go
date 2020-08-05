@@ -269,7 +269,7 @@ func Updatenews(c *gin.Context) {
 	dbConnect.Close()
 }
 
-//Getnew get news
+//Getnewslist get news
 func Getnewslist(c *gin.Context) {
 
 	nftype := c.PostForm("nf_type")
