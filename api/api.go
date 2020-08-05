@@ -42,11 +42,7 @@ func Dep(c *gin.Context) {
 //Deps List all of deps
 func Deps(c *gin.Context) {
 	dbConnect := config.Connect()
-	todo := `select father.name as father, son.name as son , job.name as job from 
-	(SELECT * from tdep) as father,
-	(SELECT * from tdep) as son,
-	(SELECT * from tdep) as job
-	where father.dep_id = son.parent_id and son.dep_id = job.parent_id and father.dep_id != 1;`
+	todo := "SELECT dep_id, name, parent_id FROM public.tdep where parent_id = " + ID + " and parent_id not in (3, 27, 29, 64, 67, 69);"
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)

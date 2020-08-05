@@ -59,7 +59,10 @@ func Newuser(c *gin.Context) {
 	postid := c.PostForm("post_id")
 	dbConnect := config.Connect()
 
-	insertuser := fmt.Sprintf("INSERT INTO public.tuser (login, pass, fam, name, otch, birthday, foto, hobby, profskills, drecrut, dep_id, chief, tel, userrole, del, post_id) VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', %s, %s, '%s', %s, %s, %s);", login, pass, fam, name, otch, birthday, foto, hobby, profskills, drecrut, depid, chief, tel, userrole, del, postid)
+	insertuser := fmt.Sprintf("INSERT INTO public.tuser 
+	(login, pass, fam, name, otch, birthday, foto, hobby, profskills, drecrut, dep_id, chief, tel, userrole, del, post_id) 
+	VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', %s, %s, '%s', %s, %s, %s);
+		", login, pass, fam, name, otch, birthday, foto, hobby, profskills, drecrut, depid, chief, tel, userrole, del, postid)
 
 	_, err = dbConnect.Exec(insertuser)
 
