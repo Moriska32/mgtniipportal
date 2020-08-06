@@ -103,7 +103,7 @@ func Loginpass(c *gin.Context) {
 //Deleteuser Delete users
 func Deleteuser(c *gin.Context) {
 
-	users := c.PostFormArray("user_id")
+	users := c.PostFormArray("user_ids")
 	for _, user := range users {
 		dbConnect := config.Connect()
 		print(user)
