@@ -106,7 +106,7 @@ func Deleteuser(c *gin.Context) {
 	users := c.PostFormArray("user_id")
 	for _, user := range users {
 		dbConnect := config.Connect()
-
+		print(user)
 		deletetuser := fmt.Sprintf("DELETE FROM public.tuser WHERE user_id = %s;", user)
 
 		_, err := dbConnect.Exec(deletetuser)
