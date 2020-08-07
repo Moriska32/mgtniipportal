@@ -3,14 +3,33 @@ package user
 import (
 	config "PortalMGTNIIP/config"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/elgs/gosqljson"
 
 	"github.com/gin-gonic/gin"
 )
+
+//Copy files
+func Copy(sourceFile, destinationFile string) error {
+	input, err := ioutil.ReadFile(sourceFile)
+	if err != nil {
+		fmt.Println(err)
+
+	}
+
+	err = ioutil.WriteFile(destinationFile, input, 0644)
+	if err != nil {
+		fmt.Println("Error creating", destinationFile)
+		fmt.Println(err)
+
+	}
+	return err
+}
 
 //Newuser on BD
 func Newuser(c *gin.Context) {
@@ -135,20 +154,58 @@ func Updateuser(c *gin.Context) {
 	files := form.File["foto"]
 	folder := c.PostForm("folder")
 	subfolder := c.PostForm("subfolder")
-
+	newfullname := c.PostForm("new_fullname")
+	filepath := c.PostForm("filepath")
+	var path, filename string
 	os.Mkdir(fmt.Sprintf("public/%s/%s", folder, subfolder), os.ModePerm)
-	var path string
 
-	for _, file := range files {
+	switch {
+	case len(files) > 0:
+		os.Mkdir(fmt.Sprintf("public/%s/%s", folder, subfolder), os.ModePerm)
 
-		if err := c.SaveUploadedFile(file, fmt.Sprintf("public/%s/%s/%s", folder, subfolder, file.Filename)); err != nil {
-			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+		for _, file := range files {
+
+			if err := c.SaveUploadedFile(file, fmt.Sprintf("public/%s/%s/%s", folder, subfolder, file.Filename)); err != nil {
+				c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+				return
+			}
+
+			path = fmt.Sprintf("/file/%s/%s/%s", folder, subfolder, file.Filename)
+			filename = file.Filename
+
+		}
+	case len(filepath) > 1 && len(newfullname) < 2:
+
+		if err != nil {
+			fmt.Printf("Invalid buffer size: %q\n", err)
 			return
 		}
 
-		path = fmt.Sprintf("/file/%s/%s/%s", folder, subfolder, file.Filename)
+		filepath = strings.Replace(filepath, "/file", "public", 1)
+		filename = strings.Split(filepath, "/")[len(strings.Split(filepath, "/"))-1]
+		destination := "public/photos/Новости/" + filename
+		err = Copy(filepath, destination)
+		if err != nil {
+			fmt.Printf("File copying failed: %q\n", err)
+		}
+
+		print(filename)
+		path = strings.Replace(destination, "public", "/file", 1)
+
+	case len(newfullname) > 1:
+
+		filepath = strings.Replace(filepath, "/file", "public", 1)
+		err := os.Rename(filepath, "public/photos/Пользователи/"+newfullname)
+
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("rename file err: %s", err.Error()))
+		}
+		filename = newfullname
+
+		path = "/file/photos/Пользователи/" + filename
 
 	}
+
 	user := c.PostForm("user_id")
 	login := c.PostForm("login")
 	pass := c.PostForm("pass")
