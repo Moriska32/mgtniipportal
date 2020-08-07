@@ -80,7 +80,7 @@ func Loginpass(c *gin.Context) {
 
 	dbConnect := config.Connect()
 
-	loginpass := fmt.Sprintf("SELECT user_id FROM public.tuser where login = %s AND pass = %s;", login, pass)
+	loginpass := fmt.Sprintf("SELECT user_id FROM public.tuser where login = '%s' AND pass = '%s';", login, pass)
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, loginpass)
