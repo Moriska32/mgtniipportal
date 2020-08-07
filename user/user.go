@@ -226,7 +226,7 @@ func Updateuser(c *gin.Context) {
 
 	dbConnect := config.Connect()
 
-	insertuser := fmt.Sprintf("UPDATE public.tuser SET login='%s', pass='%s', fam='%s', name='%s', otch='%s', birthday='%s', foto='%s', hobby='%s', profskills='%s', drecrut='%s', dep_id=%s, chief=%s, tel='%s', userrole=%s, del=%s, post_id = %s WHERE user_id=%s;", login, pass, fam, name, otch, birthday, foto, hobby, profskills, drecrut, depid, chief, tel, userrole, del, postid, user)
+	insertuser := fmt.Sprintf("UPDATE public.tuser SET login='%s', pass='%s', fam='%s', name='%s', otch='%s', birthday='%s', foto='%s', hobby='%s', profskills='%s', drecrut='%s', dep_id=%s, chief=%s, tel='%s', userrole=%s, del=%s, post_id = %s WHERE user_id = %s ;", login, pass, fam, name, otch, birthday, foto, hobby, profskills, drecrut, depid, chief, tel, userrole, del, postid, user)
 
 	_, err = dbConnect.Exec(insertuser)
 
