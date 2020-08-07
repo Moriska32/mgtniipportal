@@ -231,6 +231,7 @@ func Updateuser(c *gin.Context) {
 	_, err = dbConnect.Exec(insertuser)
 
 	if err != nil {
+		print(err)
 		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 	}
 
