@@ -88,7 +88,7 @@ func Newuser(c *gin.Context) {
 	if err != nil {
 		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 	}
-
+	dbConnect.Close()
 }
 
 //Loginpass check login and pass
@@ -115,7 +115,7 @@ func Loginpass(c *gin.Context) {
 		"status": http.StatusOK,
 		"data":   data,
 	})
-
+	dbConnect.Close()
 	return
 }
 
@@ -138,6 +138,7 @@ func Deleteuser(c *gin.Context) {
 		"status": http.StatusOK,
 		"user":   users,
 	})
+	dbConnect.Close()
 
 }
 
@@ -234,7 +235,7 @@ func Updateuser(c *gin.Context) {
 		print(err)
 		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 	}
-
+	dbConnect.Close()
 }
 
 //Getusers get news
