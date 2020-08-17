@@ -132,13 +132,13 @@ func Deleteuser(c *gin.Context) {
 		if err != nil {
 			c.String(http.StatusBadRequest, fmt.Sprintf("delete user: %s", err.Error()))
 		}
+		dbConnect.Close()
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
 		"user":   users,
 	})
-	dbConnect.Close()
 
 }
 
