@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
+	"strings"
 	"time"
 
 	"net/http"
@@ -37,6 +38,22 @@ func Dep(c *gin.Context) {
 	dbConnect.Close()
 	return
 
+}
+
+//Orgstructurestruct List all of deps
+type Orgstructurestruct []struct {
+	Name       string `json:"name"`
+	DepID      int    `json:"dep_id"`
+	ChildPosts []struct {
+		Name       string `json:"name"`
+		DepID      int    `json:"dep_id"`
+		ParentID   int    `json:"parent_id"`
+		ChildPosts []struct {
+			DepID    int    `json:"dep_id"`
+			Name     string `json:"name"`
+			ParentID int    `json:"parent_id"`
+		} `json:"child_posts"`
+	} `json:"child_posts"`
 }
 
 //Orgstructure List all of deps
@@ -80,9 +97,12 @@ func Orgstructure(c *gin.Context) {
 		return
 	}
 
+	res := Orgstructurestruct{}
+	json.Unmarshal([]byte(strings.Replace(data, `\`, ``, 1)), &res)
+
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
-		"data":   data,
+		"data":   res,
 	})
 	dbConnect.Close()
 	return
