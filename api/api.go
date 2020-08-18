@@ -43,14 +43,25 @@ func Dep(c *gin.Context) {
 func Orgstructure(c *gin.Context) {
 
 	dbConnect := config.Connect()
-	todo := `select REPLACE(REPLACE(REPLACE(REPLACE((select jsonb_agg(result) as result from (select name, dep_id, child_posts from (select *, (select jsonb_agg(child_deps) from (select a.dep_id as dep_id, a.name as name, a.parent_id as parent_id, (select json_agg(child_posts) from (select * from public.tdep where parent_id = a.dep_id and a.parent_id != 1) child_posts )::text as child_posts from public.tdep as a) child_deps where child_deps is not null and b.dep_id = child_deps.parent_id )::text as child_posts from public.tdep b) res where child_posts is not null) result)::text ,'\n',''),'\',''),'"[','['),']"',']');`
+	todo := `select replace(replace(replace(replace(
+		(select jsonb_agg(result) as result from (
+		select name, dep_id, child_posts from
+		(select *,
+		(select jsonb_agg(child_deps) from (select a.dep_id as dep_id, a.name as name, a.parent_id as parent_id, 
+		 (select json_agg(child_posts) from
+			(select * from public.tdep where parent_id = a.dep_id and a.parent_id != 1) child_posts
+			 )::text as child_posts
+		  from public.tdep as a) child_deps
+		 where child_deps is not null and b.dep_id = child_deps.parent_id )::text as child_posts
+		from public.tdep b) res
+		where child_posts is not null) result)::text ,'\n',''),'\',''),'"[','['),']"',']') as data;`
 	rows, err := dbConnect.Query(todo)
 
-	var replace string
+	var data string
 
 	defer rows.Close()
 	for rows.Next() {
-		err := rows.Scan(&replace)
+		err := rows.Scan(&data)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -71,7 +82,7 @@ func Orgstructure(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
-		"data":   replace,
+		"data":   data,
 	})
 	dbConnect.Close()
 	return
