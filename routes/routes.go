@@ -17,6 +17,7 @@ func Routes(router *gin.Engine) {
 	router.GET("/", welcome)
 	router.GET("/dep/:id", api.Dep)
 	router.GET("/deps", api.Deps)
+	router.GET("/orgstructure", api.Orgstructure)
 	router.GET("/img", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "select_file.html", gin.H{})
 	})
