@@ -43,7 +43,8 @@ func Dep(c *gin.Context) {
 func Orgstructure(c *gin.Context) {
 
 	dbConnect := config.Connect()
-	todo := `select	(select jsonb_agg(result) as result from (
+	todo := `select replace(replace(replace(replace(
+		(select jsonb_agg(result) as result from (
 		select name, dep_id, child_posts from
 		(select *,
 		(select jsonb_agg(child_deps) from (select a.dep_id as dep_id, a.name as name, a.parent_id as parent_id, 
@@ -53,7 +54,7 @@ func Orgstructure(c *gin.Context) {
 		  from public.tdep as a) child_deps
 		 where child_deps is not null and b.dep_id = child_deps.parent_id )::text as child_posts
 		from public.tdep b) res
-		where child_posts is not null) result)::text  as data;`
+		where child_posts is not null) result)::text ,'\n',''),'\',''),'"[','['),']"',']') as data;`
 	rows, err := dbConnect.Query(todo)
 
 	var data string
