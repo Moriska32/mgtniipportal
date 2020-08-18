@@ -44,7 +44,22 @@ func Orgstructure(c *gin.Context) {
 
 	dbConnect := config.Connect()
 	todo := `select REPLACE(REPLACE(REPLACE(REPLACE((select jsonb_agg(result) as result from (select name, dep_id, child_posts from (select *, (select jsonb_agg(child_deps) from (select a.dep_id as dep_id, a.name as name, a.parent_id as parent_id, (select json_agg(child_posts) from (select * from public.tdep where parent_id = a.dep_id and a.parent_id != 1) child_posts )::text as child_posts from public.tdep as a) child_deps where child_deps is not null and b.dep_id = child_deps.parent_id )::text as child_posts from public.tdep b) res where child_posts is not null) result)::text ,'\n',''),'\',''),'"[','['),']"',']');`
-	data, err := dbConnect.Query(todo)
+	rows, err := dbConnect.Query(todo)
+
+	var replace string
+
+	defer rows.Close()
+	for rows.Next() {
+		err := rows.Scan(&replace)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+	}
+	err = rows.Err()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	if err != nil {
 		log.Printf("Error while getting a single todo, Reason: %v\n", err)
@@ -56,7 +71,7 @@ func Orgstructure(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
-		"data":   data,
+		"data":   replace,
 	})
 	dbConnect.Close()
 	return
