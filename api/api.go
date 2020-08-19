@@ -61,7 +61,7 @@ type Orgstructurestruct []struct {
 func Orgstructure(c *gin.Context) {
 
 	dbConnect := config.Connect()
-	todo := `  select replace(replace(replace(replace(
+	todo := `select replace(replace(replace(replace(
 		(select jsonb_agg(result) as result from (
 		select name, dep_id, child_deps from
 		(select *,
@@ -73,12 +73,12 @@ func Orgstructure(c *gin.Context) {
 			(select * from public.tpost where dep_id = dep.dep_id) child_posts
 			)::text as child_posts
 		   from public.tdep dep) as posts
-		  where child_posts is not null and parent_id != 1) child_deps
+		  where child_posts is not null and a.parent_id = dep_id and parent_id != 1) child_deps
 			 )::text as child_deps
 		  from public.tdep as a) child_deps
 		 where child_deps is not null and b.dep_id = child_deps.parent_id and parent_id != 1)::text as child_deps
 		from public.tdep b) res
-		where child_deps is not null) result)::text ,'\n',''),'\',''),'"[','['),']"',']') as data;`
+		where child_deps is not null ) result)::text ,'\n',''),'\',''),'"[','['),']"',']') as data;`
 	rows, err := dbConnect.Query(todo)
 
 	var data string
