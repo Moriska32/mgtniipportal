@@ -73,7 +73,7 @@ func Orgstructure(c *gin.Context) {
 			(select * from public.tpost where dep_id = dep.dep_id) child_posts
 			)::text as child_posts
 		   from public.tdep dep) as posts
-		  where child_posts is not null and a.parent_id = dep_id and parent_id != 1) child_deps
+		  where child_posts is not null and parent_id = a.dep_id and parent_id != 1) child_deps
 			 )::text as child_deps
 		  from public.tdep as a) child_deps
 		 where child_deps is not null and b.dep_id = child_deps.parent_id and parent_id != 1)::text as child_deps
