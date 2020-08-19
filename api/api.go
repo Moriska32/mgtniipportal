@@ -42,36 +42,43 @@ func Dep(c *gin.Context) {
 
 //Orgstructurestruct List all of deps
 type Orgstructurestruct []struct {
-	Name       string `json:"name"`
-	DepID      int    `json:"dep_id"`
-	ChildPosts []struct {
-		Name       string `json:"name"`
+	Name      string `json:"name"`
+	DepID     int    `json:"dep_id"`
+	ChildDeps [][]struct {
 		DepID      int    `json:"dep_id"`
+		Name       string `json:"name"`
 		ParentID   int    `json:"parent_id"`
 		ChildPosts []struct {
-			DepID    int    `json:"dep_id"`
-			Name     string `json:"name"`
-			ParentID int    `json:"parent_id"`
+			DepID     int    `json:"dep_id"`
+			PostID    int    `json:"post_id"`
+			PostName  string `json:"post_name"`
+			PostCount int    `json:"post_count"`
 		} `json:"child_posts"`
-	} `json:"child_posts"`
+	} `json:"child_deps"`
 }
 
 //Orgstructure List all of deps
 func Orgstructure(c *gin.Context) {
 
 	dbConnect := config.Connect()
-	todo := `select replace(replace(replace(replace(
+	todo := ` select replace(replace(replace(replace(
 		(select jsonb_agg(result) as result from (
-		select name, dep_id, child_posts from
+		select name, dep_id, child_deps from
 		(select *,
 		(select jsonb_agg(child_deps) from (select a.dep_id as dep_id, a.name as name, a.parent_id as parent_id, 
-		 (select json_agg(child_posts) from
-			(select * from public.tdep where parent_id = a.dep_id and a.parent_id != 1) child_posts
-			 )::text as child_posts
+		 (select json_agg(child_deps) from
+			(select * from 
+			(select dep.dep_id, dep.name, dep.parent_id, 
+			(select jsonb_agg(child_posts) from 
+			(select * from public.tpost where dep_id = dep.dep_id) child_posts
+			)::text as child_posts
+		   from public.tdep dep) as posts
+		  where child_posts is not null) child_deps
+			 )::text as child_deps
 		  from public.tdep as a) child_deps
-		 where child_deps is not null and b.dep_id = child_deps.parent_id )::text as child_posts
+		 where child_deps is not null and b.dep_id = child_deps.parent_id )::text as child_deps
 		from public.tdep b) res
-		where child_posts is not null) result)::text ,'\n',''),'\',''),'"[','['),']"',']') as data;`
+		where child_deps is not null) result)::text ,'\n',''),'\',''),'"[','['),']"',']') as data;`
 	rows, err := dbConnect.Query(todo)
 
 	var data string
