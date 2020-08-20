@@ -3,9 +3,9 @@ package api
 import (
 	config "PortalMGTNIIP/config"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
-	"strings"
 	"time"
 
 	"net/http"
@@ -40,76 +40,141 @@ func Dep(c *gin.Context) {
 
 }
 
-//Orgstructurestruct List all of deps
-type Orgstructurestruct []struct {
-	Name      string `json:"name"`
-	DepID     int    `json:"dep_id"`
-	ChildDeps [][]struct {
-		DepID      int    `json:"dep_id"`
-		Name       string `json:"name"`
-		ParentID   int    `json:"parent_id"`
-		ChildPosts []struct {
-			DepID     int    `json:"dep_id"`
-			PostID    int    `json:"post_id"`
-			PostName  string `json:"post_name"`
-			PostCount int    `json:"post_count"`
-		} `json:"child_posts"`
-	} `json:"child_deps"`
+//Deps_id List all of deps
+type Deps_id struct {
+	Dep_id      int
+	Name        string
+	Parent_id   int
+	Child_posts []*Posts_id
+	Child_deps  []*Deps_id
+}
+
+//Posts_id List all of deps
+type Posts_id struct {
+	Post_id   int
+	Dep_id    int
+	Post_name string
 }
 
 //Orgstructure List all of deps
 func Orgstructure(c *gin.Context) {
 
-	dbConnect := config.Connect()
-	todo := `select replace(replace(replace(replace(
-		(select jsonb_agg(result) as result from (
-		select name, dep_id, child_deps from
-		(select *,
-		(select jsonb_agg(child_deps) from (select a.dep_id as dep_id, a.name as name, a.parent_id as parent_id, 
-		 (select json_agg(child_deps) from
-			(select * from 
-			(select dep.dep_id, dep.name, dep.parent_id, 
-			(select jsonb_agg(child_posts) from 
-			(select * from public.tpost where dep_id = dep.dep_id) child_posts
-			)::text as child_posts
-		   from public.tdep dep) as posts
-		  where child_posts is not null and parent_id = a.dep_id and parent_id != 1) child_deps
-			 )::text as child_deps
-		  from public.tdep as a) child_deps
-		 where child_deps is not null and b.dep_id = child_deps.parent_id and parent_id != 1)::text as child_deps
-		from public.tdep b) res
-		where child_deps is not null ) result)::text ,'\n',''),'\',''),'"[','['),']"',']') as data;`
-	rows, err := dbConnect.Query(todo)
+	deps := []*Deps_id{}
 
-	var data string
+	dbConnect := config.Connect()
+	todo := `SELECT dep_id, name, parent_id FROM public.tdep where dep_id != 1;`
+
+	rows, err := dbConnect.Query(todo)
 
 	defer rows.Close()
 	for rows.Next() {
-		err := rows.Scan(&data)
-		if err != nil {
-			log.Fatal(err)
+		pool := new(Deps_id)
+
+		if err = rows.Scan(&pool.Dep_id, &pool.Name, &pool.Parent_id); err != nil {
+			fmt.Println("Scanning failed.....")
+			fmt.Println(err.Error())
+			return
 		}
 
+		deps = append(deps, pool)
 	}
+
 	err = rows.Err()
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	todo = `SELECT post_id, dep_id, post_name FROM public.tpost;`
+	rows, err = dbConnect.Query(todo)
+	posts := []*Posts_id{}
+	defer rows.Close()
+	for rows.Next() {
+		pool := new(Posts_id)
+
+		if err = rows.Scan(&pool.Post_id, &pool.Dep_id, &pool.Post_name); err != nil {
+			fmt.Println("Scanning failed.....")
+			fmt.Println(err.Error())
+			return
+		}
+
+		posts = append(posts, pool)
+	}
+
+	err = rows.Err()
 	if err != nil {
-		log.Printf("Error while getting a single todo, Reason: %v\n", err)
-		c.JSON(http.StatusNotFound, gin.H{
-			"status": http.StatusNotFound,
-		})
+		log.Fatal(err)
+	}
+
+	j := 0
+	k := 0
+	result := []*Deps_id{}
+	for i, dep := range deps {
+		if dep.Parent_id == 1 {
+			result = append(result, dep)
+
+			for _, post := range posts {
+
+				if dep.Dep_id == post.Dep_id {
+					result[i].Child_posts = append(result[i].Child_posts, post)
+
+				}
+
+			}
+
+			for _, subdep := range deps {
+
+				if result[i].Dep_id == subdep.Parent_id {
+
+					result[i].Child_deps = append(result[i].Child_deps, subdep)
+
+					for _, post := range posts {
+
+						if result[i].Child_deps[j].Dep_id == post.Dep_id {
+
+							result[i].Child_deps[j].Child_posts = append(result[i].Child_deps[j].Child_posts, post)
+
+						}
+
+					}
+
+					for _, subsubdep := range deps {
+
+						if result[i].Child_deps[j].Dep_id == subsubdep.Parent_id {
+
+							result[i].Child_deps[j].Child_deps = append(result[i].Child_deps[j].Child_deps, subsubdep)
+
+							for _, post := range posts {
+
+								if result[i].Child_deps[j].Child_deps[k].Dep_id == post.Dep_id {
+
+									result[i].Child_deps[j].Child_deps[k].Child_posts = append(result[i].Child_deps[j].Child_deps[k].Child_posts, post)
+
+								}
+
+							}
+							k++
+						}
+
+					}
+					k = 0
+					j++
+
+				}
+				j = 0
+			}
+		}
+
+	}
+
+	e, err := json.Marshal(result)
+	if err != nil {
+		fmt.Println(err)
 		return
 	}
 
-	res := Orgstructurestruct{}
-	json.Unmarshal([]byte(strings.Replace(data, `\`, ``, 1)), &res)
-
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
-		"data":   res,
+		"data":   e,
 	})
 	dbConnect.Close()
 	return
