@@ -174,7 +174,7 @@ func Orgstructure(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
-		"data":   e,
+		"data":   string(e),
 	})
 	dbConnect.Close()
 	return
