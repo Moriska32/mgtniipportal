@@ -166,12 +166,6 @@ func Orgstructure(c *gin.Context) {
 
 	}
 
-	e, err := json.Marshal(result)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
 		"data":   result,
