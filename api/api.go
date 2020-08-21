@@ -190,8 +190,9 @@ func Orgstructure(c *gin.Context) {
 					j++
 
 				}
-				j = 0
+
 			}
+			j = 0
 		}
 
 	}
