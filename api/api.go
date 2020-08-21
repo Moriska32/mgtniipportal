@@ -92,7 +92,7 @@ func Orgstructure(c *gin.Context) {
 	deps := []*Deps_id{}
 
 	dbConnect := config.Connect()
-	todo := `SELECT dep_id, name, parent_id FROM public.tdep where dep_id != 1;`
+	todo := `SELECT dep_id, name, parent_id FROM public.tdep where dep_id != 1 and dep_id not in (3, 27, 29, 64, 67, 69);`
 
 	rows, err := dbConnect.Query(todo)
 
