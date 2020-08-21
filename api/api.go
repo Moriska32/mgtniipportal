@@ -209,7 +209,7 @@ func Orgstructure(c *gin.Context) {
 //Deps List all of deps
 func Deps(c *gin.Context) {
 	dbConnect := config.Connect()
-	todo := "SELECT dep_id, name, parent_id FROM public.tdep where parent_id not in (3, 27, 29, 64, 67, 69);"
+	todo := "SELECT dep_id, name, parent_id FROM public.tdep where dep_id not in (3, 27, 29, 64, 67, 69);"
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
