@@ -160,7 +160,7 @@ func Orgstructure(c *gin.Context) {
 
 							for _, post := range posts {
 
-								if result[i].Child_deps[j].Child_deps[k].Dep_id == post.Dep_id {
+								if result[i].Child_deps[j].Child_deps[k].Dep_id == post.Dep_id && checkinstruct(result[i].Child_deps[j].Child_deps[k].Child_posts, post) {
 
 									result[i].Child_deps[j].Child_deps[k].Child_posts = append(result[i].Child_deps[j].Child_deps[k].Child_posts, post)
 
