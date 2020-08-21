@@ -184,7 +184,7 @@ func Updateuser(c *gin.Context) {
 
 		filepath = strings.Replace(filepath, "/file", "public", 1)
 		filename = strings.Split(filepath, "/")[len(strings.Split(filepath, "/"))-1]
-		destination := "public/photos/Новости/" + filename
+		destination := "public/photos/Пользователи/" + filename
 		err = Copy(filepath, destination)
 		if err != nil {
 			fmt.Printf("File copying failed: %q\n", err)
