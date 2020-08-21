@@ -71,6 +71,21 @@ func checkinstruct(pool []*Posts_id, post *Posts_id) bool {
 	return result
 }
 
+func checkinstructdeps(pool []*Deps_id, post *Deps_id) bool {
+
+	result := true
+
+	for _, item := range pool {
+
+		if item.Dep_id == post.Dep_id {
+			result = false
+			return result
+		}
+
+	}
+	return result
+}
+
 //Orgstructure List all of deps
 func Orgstructure(c *gin.Context) {
 
@@ -138,7 +153,7 @@ func Orgstructure(c *gin.Context) {
 
 			for _, subdep := range deps {
 
-				if result[i].Dep_id == subdep.Parent_id {
+				if result[i].Dep_id == subdep.Parent_id && checkinstructdeps(result[i].Child_deps, subdep) {
 
 					result[i].Child_deps = append(result[i].Child_deps, subdep)
 
@@ -154,7 +169,7 @@ func Orgstructure(c *gin.Context) {
 
 					for _, subsubdep := range deps {
 
-						if result[i].Child_deps[j].Dep_id == subsubdep.Parent_id {
+						if result[i].Child_deps[j].Dep_id == subsubdep.Parent_id && checkinstructdeps(result[i].Child_deps[j].Child_deps, subsubdep) {
 
 							result[i].Child_deps[j].Child_deps = append(result[i].Child_deps[j].Child_deps, subsubdep)
 
