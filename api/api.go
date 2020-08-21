@@ -182,12 +182,12 @@ func Orgstructure(c *gin.Context) {
 								}
 
 							}
-							k++
+							k += 1
 						}
 
 					}
 					k = 0
-					j++
+					j += 1
 
 				}
 				j = 0
