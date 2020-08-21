@@ -56,6 +56,21 @@ type Posts_id struct {
 	Post_name string
 }
 
+func checkinstruct(pool []*Posts_id, post *Posts_id) bool {
+
+	result := true
+
+	for _, item := range pool {
+
+		if item.Post_id == post.Post_id {
+			result = false
+			return result
+		}
+
+	}
+	return result
+}
+
 //Orgstructure List all of deps
 func Orgstructure(c *gin.Context) {
 
@@ -129,7 +144,7 @@ func Orgstructure(c *gin.Context) {
 
 					for _, post := range posts {
 
-						if result[i].Child_deps[j].Dep_id == post.Dep_id {
+						if result[i].Child_deps[j].Dep_id == post.Dep_id && checkinstruct(result[i].Child_deps[j].Child_posts, post) {
 
 							result[i].Child_deps[j].Child_posts = append(result[i].Child_deps[j].Child_posts, post)
 
