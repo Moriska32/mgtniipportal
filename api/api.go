@@ -169,7 +169,7 @@ func Orgstructure(c *gin.Context) {
 
 					for _, subsubdep := range deps {
 
-						if result[i].Child_deps[j].Dep_id == subsubdep.Parent_id && checkinstructdeps(result[i].Child_deps[j].Child_deps, subsubdep) {
+						if result[i].Child_deps[j].Dep_id == subsubdep.Parent_id {
 
 							result[i].Child_deps[j].Child_deps = append(result[i].Child_deps[j].Child_deps, subsubdep)
 
@@ -182,12 +182,12 @@ func Orgstructure(c *gin.Context) {
 								}
 
 							}
-							k += 1
+							k++
 						}
 
 					}
 					k = 0
-					j += 1
+					j++
 
 				}
 				j = 0
