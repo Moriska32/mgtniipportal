@@ -57,6 +57,8 @@ func Routes(router *gin.Engine) {
 	//Meetingroom
 	router.GET("/meetingrooms", api.Meetingrooms)
 	router.POST("/newmeet", meetingroom.Newmeet)
+	router.POST("/getmeet", meetingroom.Getmeet)
+
 }
 
 func welcome(c *gin.Context) {

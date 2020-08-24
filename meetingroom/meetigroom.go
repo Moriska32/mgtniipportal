@@ -3,9 +3,11 @@ package meetingroom
 import (
 	"PortalMGTNIIP/config"
 	"fmt"
+	"log"
 	"net/http"
 	"strings"
 
+	"github.com/elgs/gosqljson"
 	"github.com/gin-gonic/gin"
 )
 
@@ -35,5 +37,33 @@ func Newmeet(c *gin.Context) {
 		}
 
 	}
+	dbConnect.Close()
+}
+
+//Getmeet get all meeting by month
+func Getmeet(c *gin.Context) {
+
+	month := c.PostFormArray("month")
+	dbConnect := config.Connect()
+
+	todo := fmt.Sprintf(`SELECT period_id, object_id, period_beg, period_end, user_id, descr
+	FROM public.tobject_reserve 
+	where extract(month from  period_beg) = %s;`, month)
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+
 	dbConnect.Close()
 }
