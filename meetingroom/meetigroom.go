@@ -92,3 +92,31 @@ func Deletemeet(c *gin.Context) {
 
 	dbConnect.Close()
 }
+
+//Updatemeet all meeting by month
+func Updatemeet(c *gin.Context) {
+
+	dbConnect := config.Connect()
+
+	datetime := c.PostForm("datetime")
+	objectid := c.PostForm("object_id")
+	userid := c.PostForm("user_id")
+	descr := c.PostForm("descr")
+	periodid := c.PostForm("period_id")
+
+	datebegin := strings.Split(datetime, "|")[0]
+	dateend := strings.Split(datetime, "|")[1]
+
+	todo := fmt.Sprintf(`UPDATE public.tobject_reserve
+		SET object_id=%s, period_beg='%s', period_end='%s', user_id=%s, descr='%s'
+		WHERE period_id= %s;`, objectid, datebegin, dateend, userid, descr, periodid)
+
+	_, err := dbConnect.Exec(todo)
+
+	if err != nil {
+		c.String(http.StatusBadRequest, fmt.Sprintf("insert: %s", err.Error()))
+	}
+
+	dbConnect.Close()
+
+}
