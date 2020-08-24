@@ -96,12 +96,15 @@ func Loginpass(c *gin.Context) {
 
 	login := c.PostForm("login")
 	pass := c.PostForm("pass")
+	superadmin := make(map[string]int)
+
+	superadmin["user_id"] = 0
 
 	if login == "superadmin" && pass == "superadmin12345" {
 
 		c.JSON(http.StatusOK, gin.H{
 			"status": http.StatusOK,
-			"data":   `[{user_id: "0"}]`,
+			"data":   superadmin,
 		})
 
 		return
