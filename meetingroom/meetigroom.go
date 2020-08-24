@@ -44,11 +44,13 @@ func Newmeet(c *gin.Context) {
 func Getmeets(c *gin.Context) {
 
 	month := c.PostForm("month")
+	year := c.PostForm("year")
 	dbConnect := config.Connect()
 
-	todo := fmt.Sprintf(`SELECT period_id, object_id, to_char(period_beg, 'YYYY-MM-DD HH:MI') as period_beg, to_char(period_end, 'YYYY-MM-DD HH:MI') as period_end, user_id, descr
+	todo := fmt.Sprintf(`SELECT period_id, object_id, to_char(period_beg, 'YYYY-MM-DD HH:MI') as period_beg, 
+	to_char(period_end, 'YYYY-MM-DD HH:MI') as period_end, user_id, descr
 	FROM public.tobject_reserve 
-	where extract(month from  period_beg) = %s;`, month)
+	where extract(month from  period_beg) = %s and extract(year from  period_beg) = %s;`, month, year)
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
