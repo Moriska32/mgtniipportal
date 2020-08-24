@@ -98,7 +98,7 @@ func Loginpass(c *gin.Context) {
 	pass := c.PostForm("pass")
 	superadminarray := make([]map[string]int, 0)
 	superadmin := make(map[string]int)
-	superadmin["user_id"] = 0
+	superadmin["user_id"] = 1
 
 	superadminarray = append(superadminarray, superadmin)
 
