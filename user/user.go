@@ -96,15 +96,17 @@ func Loginpass(c *gin.Context) {
 
 	login := c.PostForm("login")
 	pass := c.PostForm("pass")
+	superadminarray := make([]map[string]int, 0)
 	superadmin := make(map[string]int)
-
 	superadmin["user_id"] = 0
+
+	superadminarray = append(superadminarray, superadmin)
 
 	if login == "superadmin" && pass == "superadmin12345" {
 
 		c.JSON(http.StatusOK, gin.H{
 			"status": http.StatusOK,
-			"data":   superadmin,
+			"data":   superadminarray,
 		})
 
 		return
