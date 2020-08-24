@@ -43,7 +43,7 @@ func Newmeet(c *gin.Context) {
 //Getmeet get all meeting by month
 func Getmeet(c *gin.Context) {
 
-	month := c.PostFormArray("month")
+	month := c.PostForm("month")
 	dbConnect := config.Connect()
 
 	todo := fmt.Sprintf(`SELECT period_id, object_id, period_beg, period_end, user_id, descr
