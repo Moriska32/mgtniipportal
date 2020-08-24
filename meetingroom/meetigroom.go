@@ -40,13 +40,13 @@ func Newmeet(c *gin.Context) {
 	dbConnect.Close()
 }
 
-//Getmeet get all meeting by month
-func Getmeet(c *gin.Context) {
+//Getmeets get all meeting by month
+func Getmeets(c *gin.Context) {
 
 	month := c.PostForm("month")
 	dbConnect := config.Connect()
 
-	todo := fmt.Sprintf(`SELECT period_id, object_id, period_beg, period_end, user_id, descr
+	todo := fmt.Sprintf(`SELECT period_id, object_id, to_char(period_beg, 'YYYY-MM-DD hh:mm') as period_beg, to_char(period_end, 'YYYY-MM-DD hh:mm') as period_end, user_id, descr
 	FROM public.tobject_reserve 
 	where extract(month from  period_beg) = %s;`, month)
 

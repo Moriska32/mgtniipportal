@@ -57,7 +57,7 @@ func Routes(router *gin.Engine) {
 	//Meetingroom
 	router.GET("/meetingrooms", api.Meetingrooms)
 	router.POST("/newmeet", meetingroom.Newmeet)
-	router.POST("/getmeet", meetingroom.Getmeet)
+	router.POST("/getmeets", meetingroom.Getmeets)
 	router.POST("/deletemeet", meetingroom.Deletemeet)
 	router.POST("/updatemeet", meetingroom.Updatemeet)
 }
