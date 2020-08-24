@@ -3,6 +3,7 @@ package routes
 import (
 	api "PortalMGTNIIP/api"
 	files "PortalMGTNIIP/files"
+	"PortalMGTNIIP/meetingroom"
 	news "PortalMGTNIIP/news"
 	projects "PortalMGTNIIP/project"
 	user "PortalMGTNIIP/user"
@@ -55,6 +56,7 @@ func Routes(router *gin.Engine) {
 
 	//Meetingroom
 	router.GET("/meetingrooms", api.Meetingrooms)
+	router.POST("/Newmeet", meetingroom.Newmeet)
 }
 
 func welcome(c *gin.Context) {
