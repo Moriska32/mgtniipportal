@@ -67,3 +67,28 @@ func Getmeet(c *gin.Context) {
 
 	dbConnect.Close()
 }
+
+//Deletemeet get all meeting by month
+func Deletemeet(c *gin.Context) {
+
+	periodid := c.PostForm("period_id")
+	dbConnect := config.Connect()
+
+	todo := fmt.Sprintf(`DELETE FROM public.tobject_reserve WHERE period_id = %s;`, periodid)
+
+	theCase := "lower"
+	_, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+	})
+
+	dbConnect.Close()
+}
