@@ -416,8 +416,8 @@ func Weathers(c *gin.Context) {
 
 }
 
-//Meetingroom get Weather
-func Meetingroom(c *gin.Context) {
+//Meetingrooms get Weather
+func Meetingrooms(c *gin.Context) {
 
 	dbConnect := config.Connect()
 	todo := `SELECT object_id, number
