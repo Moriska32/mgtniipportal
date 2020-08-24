@@ -101,7 +101,7 @@ func Loginpass(c *gin.Context) {
 
 		c.JSON(http.StatusOK, gin.H{
 			"status": http.StatusOK,
-			"data":   "superadmin",
+			"data":   `[{user_id: "0"}]`,
 		})
 
 		return
