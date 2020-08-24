@@ -52,6 +52,9 @@ func Routes(router *gin.Engine) {
 	router.POST("/updateprojects", projects.Updateprojects)
 	router.POST("/deleteprojects", projects.Deleteprojects)
 	router.POST("/postprojects", projects.Postprojects)
+
+	//Meetingroom
+	router.GET("/meetingroom", api.Meetingroom)
 }
 
 func welcome(c *gin.Context) {
