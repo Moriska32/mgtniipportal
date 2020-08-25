@@ -60,6 +60,9 @@ func Routes(router *gin.Engine) {
 	router.POST("/getmeets", meetingroom.Getmeets)
 	router.POST("/deletemeet", meetingroom.Deletemeet)
 	router.POST("/updatemeet", meetingroom.Updatemeet)
+
+	//Mail sender
+	router.POST("/sendmail", api.SendMail)
 }
 
 func welcome(c *gin.Context) {
