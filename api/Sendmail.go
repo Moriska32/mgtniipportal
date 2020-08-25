@@ -23,11 +23,11 @@ func SendMail(c *gin.Context) {
 
 	Header := c.PostForm("header")
 	Body := c.PostForm("body")
-	To := c.PostForm("to")
+	To := c.PostFormArray("to")
 	m := gomail.NewMessage()
 
 	m.SetHeader("From", "portal@mgtniip.ru")
-	m.SetHeader("To", To)
+	m.SetHeader("To", To...)
 	m.SetHeader("Subject", Header)
 
 	m.SetBody("text/html", Body)
