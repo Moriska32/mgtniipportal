@@ -83,8 +83,18 @@ func Deleteprojects(c *gin.Context) {
 
 }
 
+//Project insert in BD
+type Project struct {
+	ProjID int    `json:"proj_id"`
+	PfName string `json:"pf_name"`
+	PfPath string `json:"pf_path"`
+	PfType int    `json:"pf_type"`
+}
+
 //Postprojects on BD
 func Postprojects(c *gin.Context) {
+
+	var json Project
 
 	form, err := c.MultipartForm()
 
@@ -124,7 +134,7 @@ func Postprojects(c *gin.Context) {
 
 		filepath = strings.Replace(filepath, "/file", "public", 1)
 		filename = strings.Split(filepath, "/")[len(strings.Split(filepath, "/"))-1]
-		destination := "public/photos/Новости/" + filename
+		destination := "public/photos/Проекты/" + filename
 		err = Copy(filepath, destination)
 		if err != nil {
 			fmt.Printf("File copying failed: %q\n", err)
@@ -134,17 +144,15 @@ func Postprojects(c *gin.Context) {
 		path = strings.Replace(destination, "public", "/file", 1)
 	}
 
-	date := c.PostForm("date")
-	title := c.PostForm("title")
-	text := c.PostForm("text")
-
 	dbConnect := config.Connect()
+	defer dbConnect.Close()
+	todo := "SELECT max(pf_id) as pf_id FROM public.tproject_file;"
 
-	todo := "SELECT max(n_id) as n_id FROM public.tnews;"
+	insertproject := `INSERT INTO public.tproject_file
+	(proj_id, pf_name, pf_path, pf_type)
+	VALUES(?, '?', '?', ?);`
 
-	insertnews := fmt.Sprintf("INSERT INTO public.tnews (n_date, autor, title, textshort, textfull, dep_id) VALUES('%s', '', '%s', '', '%s', 1);", date, title, text)
-
-	_, err = dbConnect.Exec(insertnews)
+	_, err = dbConnect.Query(insertproject, json.ProjID, filename, path, json.PfType)
 
 	if err != nil {
 		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
@@ -154,23 +162,23 @@ func Postprojects(c *gin.Context) {
 
 	defer rows.Close()
 	print(rows)
-	var Nid string
+	var pfid string
 	for rows.Next() {
-		if err := rows.Scan(&Nid); err != nil {
+		if err := rows.Scan(&pfid); err != nil {
 			// Check for a scan error.
 			// Query rows will be closed with defer.cd
 			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 		}
 
 	}
-	insertphoto := fmt.Sprintf("INSERT INTO public.tnews_file (n_id, nf_name, nf_path, nf_type) VALUES(%s, '%s', '%s', 0);", Nid, filename, path)
+	insertphoto := fmt.Sprintf("INSERT INTO public.tnews_file (n_id, nf_name, nf_path, nf_type) VALUES(%s, '%s', '%s', 0);", pfid, filename, path)
 
 	_, err = dbConnect.Exec(insertphoto)
 
 	if err != nil {
 		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 	}
-	dbConnect.Close()
+
 }
 
 //Updateprojects news
