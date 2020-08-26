@@ -123,7 +123,7 @@ func Updatemeet(c *gin.Context) {
 
 }
 
-//GetAllMeets get all meeting by month
+//GetAllMeets get all meeting
 func GetAllMeets(c *gin.Context) {
 
 	dbConnect := config.Connect()

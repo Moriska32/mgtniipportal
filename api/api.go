@@ -416,12 +416,38 @@ func Weathers(c *gin.Context) {
 
 }
 
-//Meetingrooms get Weather
+//Meetingrooms get Meetingrooms
 func Meetingrooms(c *gin.Context) {
 
 	dbConnect := config.Connect()
 	todo := `SELECT object_id, number
 	FROM public.tobject where "number" in ('2','9','505') and type_id = 4;`
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+	dbConnect.Close()
+	return
+
+}
+
+//Objects get Object
+func Objects(c *gin.Context) {
+	dbConnect := config.Connect()
+	todo := `SELECT *
+	FROM public.tobject where type_id in (1,2,4);`
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
