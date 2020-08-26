@@ -122,3 +122,30 @@ func Updatemeet(c *gin.Context) {
 	dbConnect.Close()
 
 }
+
+//GetAllMeets get all meeting by month
+func GetAllMeets(c *gin.Context) {
+
+	dbConnect := config.Connect()
+
+	todo := fmt.Sprintf(`SELECT period_id, object_id, to_char(period_beg, 'YYYY-MM-DD HH24:MI') as period_beg, 
+	to_char(period_end, 'YYYY-MM-DD HH24:MI') as period_end, user_id, descr
+	FROM public.tobject_reserve`)
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+
+	dbConnect.Close()
+}
