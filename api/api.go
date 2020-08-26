@@ -449,7 +449,7 @@ func Objects(c *gin.Context) {
 	ID := c.Param("id")
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
-	todo := `SELECT *
+	todo := `SELECT object_id, type_id, container_id, "number"
 	FROM public.tobject where type_id in (1,2,4) and type_id = ` + ID + `;`
 
 	theCase := "lower"
