@@ -445,9 +445,12 @@ func Meetingrooms(c *gin.Context) {
 
 //Objects get Object
 func Objects(c *gin.Context) {
+
+	ID := c.Param("id")
 	dbConnect := config.Connect()
+	defer dbConnect.Close()
 	todo := `SELECT *
-	FROM public.tobject where type_id in (1,2,4);`
+	FROM public.tobject where type_id in (1,2,4) where type_id = ` + ID + `;`
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
@@ -464,7 +467,7 @@ func Objects(c *gin.Context) {
 		"status": http.StatusOK,
 		"data":   data,
 	})
-	dbConnect.Close()
+
 	return
 
 }
