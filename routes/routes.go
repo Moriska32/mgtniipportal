@@ -67,7 +67,7 @@ func Routes(router *gin.Engine) {
 
 	//Mail sender
 	router.POST("/sendmail", api.SendMail)
-	router.POST("/sendmailit", api.SendMailIT)
+	//router.POST("/sendmailit", api.SendMailIT)
 
 }
 
