@@ -46,6 +46,8 @@ func Routes(router *gin.Engine) {
 	router.GET("/getusers", user.Getusers)
 	router.GET("/getusersnotpass", user.GetUsersNotPass)
 	router.POST("/getuser", user.Getuser)
+	router.POST("/getusernotpass", user.GetuserNotPass)
+
 	router.POST("/deleteusers", user.Deleteuser)
 	router.POST("/updateuser", user.Updateuser)
 	//Object

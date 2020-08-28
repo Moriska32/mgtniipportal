@@ -304,6 +304,33 @@ func Getuser(c *gin.Context) {
 	return
 }
 
+//GetuserNotPass get Get user Not Pass
+func GetuserNotPass(c *gin.Context) {
+	id := c.PostForm("user_id")
+	dbConnect := config.Connect()
+	todo := fmt.Sprintf(`SELECT user_id, login, fam, "name", otch, birthday, foto, 
+	hobby, profskills, drecrut, dep_id, chief, tel, workplace, userrole, del, post_id from public.tuser where user_id = %s and login not in ('admin', 'moder', 'user');`, id)
+
+	defer dbConnect.Close()
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+	dbConnect.Close()
+	return
+}
+
 //GetUsersNotPass get news
 func GetUsersNotPass(c *gin.Context) {
 	dbConnect := config.Connect()
