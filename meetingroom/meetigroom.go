@@ -99,7 +99,7 @@ func Deletemeet(c *gin.Context) {
 func Updatemeet(c *gin.Context) {
 
 	dbConnect := config.Connect()
-
+	defer dbConnect.Close()
 	datetime := c.PostForm("datetime")
 	objectid := c.PostForm("object_id")
 	userid := c.PostForm("user_id")
@@ -118,8 +118,6 @@ func Updatemeet(c *gin.Context) {
 	if err != nil {
 		c.String(http.StatusBadRequest, fmt.Sprintf("insert: %s", err.Error()))
 	}
-
-	dbConnect.Close()
 
 }
 
