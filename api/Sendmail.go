@@ -54,6 +54,7 @@ type SendMailITJSON struct {
 	TextHTML string   `json:"text/html"`
 	Author   string   `json:"author "`
 	Type     string   `json:"type"`
+	Date     string   `json:"date"`
 }
 
 //SendMailIT отправка сообщений с записью в БД
@@ -84,8 +85,8 @@ func SendMailIT(c *gin.Context) {
 	defer dbConnect.Close()
 
 	todo := fmt.Sprintf(`INSERT INTO public.mails
-	(author, "type", subject, "text","to")
-	VALUES('%s', '%s', '%s', '%s','%s');`, json.Author, json.Type, json.Subject, json.TextHTML, json.To)
+	(author, "type", subject, "text","to", "date")
+	VALUES('%s', '%s', '%s', '%s','%s',%s);`, json.Author, json.Type, json.Subject, json.TextHTML, json.To, json.Date)
 
 	_, err := dbConnect.Exec(todo)
 	if err != nil {
