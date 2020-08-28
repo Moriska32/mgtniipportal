@@ -256,7 +256,7 @@ func Updateuser(c *gin.Context) {
 //Getusers get news
 func Getusers(c *gin.Context) {
 	dbConnect := config.Connect()
-	todo := "SELECT * FROM public.tuser;"
+	todo := "SELECT * FROM public.tuser where login not in ('admin', 'moder', 'user');"
 
 	defer dbConnect.Close()
 
@@ -282,7 +282,7 @@ func Getusers(c *gin.Context) {
 func Getuser(c *gin.Context) {
 	id := c.PostForm("user_id")
 	dbConnect := config.Connect()
-	todo := fmt.Sprintf("SELECT * from public.tuser where user_id = %s;", id)
+	todo := fmt.Sprintf("SELECT * from public.tuser where user_id = %s and login not in ('admin', 'moder', 'user');", id)
 
 	defer dbConnect.Close()
 
@@ -304,11 +304,11 @@ func Getuser(c *gin.Context) {
 	return
 }
 
-//Getusers get news
+//GetUsersNotPass get news
 func GetUsersNotPass(c *gin.Context) {
 	dbConnect := config.Connect()
 	todo := `SELECT user_id, login, fam, "name", otch, birthday, foto, 
-	hobby, profskills, drecrut, dep_id, chief, tel, workplace, userrole, del, post_id FROM public.tuser;`
+	hobby, profskills, drecrut, dep_id, chief, tel, workplace, userrole, del, post_id FROM public.tuser where login not in ('admin', 'moder', 'user');`
 
 	defer dbConnect.Close()
 
