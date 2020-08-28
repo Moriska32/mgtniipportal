@@ -49,16 +49,17 @@ func SendMail(c *gin.Context) {
 
 //SendMailITJSON json for BD
 type SendMailITJSON struct {
-	To       []string `json:"To"`
-	Subject  string   `json:"Subject"`
-	TextHTML string   `json:"text/html"`
-	Author   string   `json:"author "`
-	Type     string   `json:"type"`
-	Date     string   `json:"date"`
+	To      []string `json:"To"`
+	Subject string   `json:"Subject"`
+	Text    string   `json:"text"`
+	UserID  int      `json:"user_id"`
+	Type    string   `json:"type"`
+	Date    string   `json:"date"`
+	DepID   int      `json:"dep_id"`
 }
 
-//SendMailIT отправка сообщений с записью в БД
-func SendMailIT(c *gin.Context) {
+//SendRequest отправка сообщений с записью в БД
+func SendRequest(c *gin.Context) {
 
 	var json SendMailITJSON
 	c.BindJSON(&json)
@@ -69,7 +70,7 @@ func SendMailIT(c *gin.Context) {
 	m.SetHeader("To", json.To...)
 	m.SetHeader("Subject", json.Subject)
 
-	m.SetBody("text/html", json.TextHTML)
+	m.SetBody("text/html", json.Text)
 
 	from := "portal@mgtniip.ru"
 	password := "London106446"
@@ -86,7 +87,7 @@ func SendMailIT(c *gin.Context) {
 
 	todo := fmt.Sprintf(`INSERT INTO public.mails
 	(author, "type", subject, "text","to", "date")
-	VALUES('%s', '%s', '%s', '%s','%s',%s);`, json.Author, json.Type, json.Subject, json.TextHTML, json.To, json.Date)
+	VALUES('%s', '%s', '%s', '%s','%s',%s);`, json.UserID, json.Type, json.Subject, json.Text, json.To, json.Date, json.DepID)
 
 	_, err := dbConnect.Exec(todo)
 	if err != nil {

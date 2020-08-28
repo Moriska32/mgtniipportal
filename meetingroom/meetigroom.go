@@ -50,7 +50,7 @@ func Getmeets(c *gin.Context) {
 	todo := fmt.Sprintf(`SELECT period_id, object_id, to_char(period_beg, 'YYYY-MM-DD HH24:MI') as period_beg, 
 	to_char(period_end, 'YYYY-MM-DD HH24:MI') as period_end, user_id, descr
 	FROM public.tobject_reserve 
-	where extract(month from  period_beg) = %s and extract(year from  period_beg) = %s;`, month, year)
+	where extract(month from  period_beg) = %s and extract(year from  period_beg) = %s order by period_beg;`, month, year)
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
@@ -128,7 +128,7 @@ func GetAllMeets(c *gin.Context) {
 
 	todo := fmt.Sprintf(`SELECT period_id, object_id, to_char(period_beg, 'YYYY-MM-DD HH24:MI') as period_beg, 
 	to_char(period_end, 'YYYY-MM-DD HH24:MI') as period_end, user_id, descr
-	FROM public.tobject_reserve`)
+	FROM public.tobject_reserve order by period_beg;`)
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
