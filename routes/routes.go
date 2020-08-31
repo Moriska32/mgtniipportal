@@ -54,10 +54,12 @@ func Routes(router *gin.Engine) {
 	router.GET("/objectstype", api.Objectstype)
 	router.GET("/objects/:id", api.Objects)
 	//Project
-	router.POST("/updateprojects", projects.Updateprojects)
-	router.POST("/deleteprojects", projects.Deleteprojects)
 	router.POST("/postprojects", projects.Postprojects)
+	router.POST("/updateprojects", projects.UpdateProjects)
+	router.POST("/getproject", projects.GetProject)
+	router.GET("/getprojects", projects.GetProjects)
 	router.GET("/getprojectsdirection", projects.GetProjectsDirection)
+	router.POST("/deleteprojects", projects.DeleteProjects)
 
 	//Meetingroom
 	router.GET("/meetingrooms", api.Meetingrooms)

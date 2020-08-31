@@ -31,70 +31,26 @@ func Copy(sourceFile, destinationFile string) error {
 	return err
 }
 
-//Getprojects get news
-func Getprojects(c *gin.Context) {
-	dbConnect := config.Connect()
-	todo := "SELECT tnews.*, tnews_file.* FROM public.tnews tnews, public.tnews_file tnews_file WHERE tnews_file.n_id = tnews.n_id;"
-
-	defer dbConnect.Close()
-
-	theCase := "lower"
-	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
-
-	if err != nil {
-		log.Printf("Error while getting a single todo, Reason: %v\n", err)
-		c.JSON(http.StatusNotFound, gin.H{
-			"status": http.StatusNotFound,
-		})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{
-		"status": http.StatusOK,
-		"data":   data,
-	})
-	dbConnect.Close()
-	return
-}
-
-//Deleteprojects delete news by id
-func Deleteprojects(c *gin.Context) {
-
-	nids := c.PostFormArray("n_ids")
-
-	dbConnect := config.Connect()
-	for _, nid := range nids {
-		deletetnewsfile := fmt.Sprintf("DELETE FROM public.tnews_file WHERE n_id = %s;", nid)
-
-		deletetnews := fmt.Sprintf("DELETE FROM public.tnews WHERE n_id = %s;", nid)
-
-		_, err := dbConnect.Exec(deletetnewsfile)
-		if err != nil {
-			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
-		}
-		_, err = dbConnect.Exec(deletetnews)
-		if err != nil {
-			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
-		}
-	}
-	c.JSON(http.StatusOK, gin.H{
-		"status": http.StatusOK,
-	})
-	dbConnect.Close()
-
-}
-
 //Project insert in BD
 type Project struct {
-	ProjID int    `json:"proj_id"`
-	PfName string `json:"pf_name"`
-	PfPath string `json:"pf_path"`
-	PfType int    `json:"pf_type"`
+	ProjName  string `json:"proj_name"`
+	PdID      int    `json:"pd_id"`
+	ProjDecsr string `json:"proj_decsr"`
+	Drealiz   string `json:"drealiz"`
+	ProjID    int    `json:"proj_id"`
+	PfName    string `json:"pf_name"`
+	PfPath    string `json:"pf_path"`
+	PfType    int    `json:"pf_type"`
 }
 
 //Postprojects on BD
 func Postprojects(c *gin.Context) {
 
-	var json Project
+	var (
+		json Project
+	)
+
+	c.BindJSON(&json)
 
 	form, err := c.MultipartForm()
 
@@ -146,34 +102,22 @@ func Postprojects(c *gin.Context) {
 
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
-	todo := "SELECT max(pf_id) as pf_id FROM public.tproject_file;"
 
-	insertproject := `INSERT INTO public.tproject_file
-	(proj_id, pf_name, pf_path, pf_type)
-	VALUES(?, '?', '?', ?);`
+	insertproject := `INSERT INTO public.tproject
+	(proj_name, pd_id, proj_decsr, drealiz)
+	VALUES('%s', %s, '%s', '%s');`
 
-	_, err = dbConnect.Query(insertproject, json.ProjID, filename, path, json.PfType)
+	_, err = dbConnect.Query(insertproject, json.ProjName, json.PdID, json.ProjDecsr, json.Drealiz)
 
 	if err != nil {
 		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 	}
 
-	rows, _ := dbConnect.Query(todo)
+	insertfile := fmt.Sprintf(`INSERT INTO public.tproject_file
+	(proj_id, pf_name, pf_path, pf_type)
+	VALUES(%s, '%s', '%s', %s);`, string(json.ProjID), json.PfName, path, string(json.PfType))
 
-	defer rows.Close()
-	print(rows)
-	var pfid string
-	for rows.Next() {
-		if err := rows.Scan(&pfid); err != nil {
-			// Check for a scan error.
-			// Query rows will be closed with defer.cd
-			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
-		}
-
-	}
-	insertphoto := fmt.Sprintf("INSERT INTO public.tnews_file (n_id, nf_name, nf_path, nf_type) VALUES(%s, '%s', '%s', 0);", pfid, filename, path)
-
-	_, err = dbConnect.Exec(insertphoto)
+	_, err = dbConnect.Exec(insertfile)
 
 	if err != nil {
 		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
@@ -181,8 +125,8 @@ func Postprojects(c *gin.Context) {
 
 }
 
-//Updateprojects news
-func Updateprojects(c *gin.Context) {
+//UpdateProjects Projects
+func UpdateProjects(c *gin.Context) {
 
 	form, err := c.MultipartForm()
 
@@ -190,8 +134,6 @@ func Updateprojects(c *gin.Context) {
 		c.String(http.StatusBadRequest, fmt.Sprintf("get form err: %s", err.Error()))
 		return
 	}
-
-	nid := c.PostForm("n_id")
 
 	files := form.File["file"]
 	filepath := c.PostForm("filepath")
@@ -223,7 +165,7 @@ func Updateprojects(c *gin.Context) {
 
 		filepath = strings.Replace(filepath, "/file", "public", 1)
 		filename = strings.Split(filepath, "/")[len(strings.Split(filepath, "/"))-1]
-		destination := "public/photos/Новости/" + filename
+		destination := "public/photos/Проекты/" + filename
 		err = Copy(filepath, destination)
 		if err != nil {
 			fmt.Printf("File copying failed: %q\n", err)
@@ -235,38 +177,42 @@ func Updateprojects(c *gin.Context) {
 	case len(newfullname) > 1:
 
 		filepath = strings.Replace(filepath, "/file", "public", 1)
-		err := os.Rename(filepath, "public/photos/Новости/"+newfullname)
+		err := os.Rename(filepath, "public/photos/Проекты/"+newfullname)
 
 		if err != nil {
 			c.String(http.StatusBadRequest, fmt.Sprintf("rename file err: %s", err.Error()))
 		}
 		filename = newfullname
 
-		path = "/file/photos/Новости/" + filename
+		path = "/file/photos/Проекты/" + filename
 
 	}
 
-	date := c.PostForm("date")
-	title := c.PostForm("title")
-	text := c.PostForm("text")
+	var json Project
 
 	dbConnect := config.Connect()
 
-	insertnews := fmt.Sprintf("UPDATE public.tnews SET n_date='%s', autor='', title='%s', textshort='', textfull='%s' WHERE n_id= %s;", date, title, text, nid)
+	insertnews := fmt.Sprintf(`UPDATE public.tproject
+	SET proj_name='%s', pd_id=%s, proj_decsr='%s', drealiz='%s'
+	WHERE proj_id=%s;`, json.ProjName, string(json.PdID), json.ProjDecsr, json.Drealiz, string(json.ProjID))
 
 	_, err = dbConnect.Exec(insertnews)
 
 	if err != nil {
 		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 	}
-	deletetnews := fmt.Sprintf("DELETE FROM public.tnews_file WHERE n_id = %s;", nid)
+	deletetnews := fmt.Sprintf(`DELETE FROM public.tproject_file
+	WHERE proj_id=%s;`, string(json.ProjID))
 	_, err = dbConnect.Exec(deletetnews)
 	if err != nil {
 		c.String(http.StatusBadRequest, fmt.Sprintf("delete: %s", err.Error()))
 	}
-	insertphoto := fmt.Sprintf("INSERT INTO public.tnews_file (n_id, nf_name, nf_path, nf_type) VALUES(%s, '%s', '%s', 0);", nid, filename, path)
 
-	_, err = dbConnect.Exec(insertphoto)
+	insertfile := fmt.Sprintf(`INSERT INTO public.tproject_file
+	(proj_id, pf_name, pf_path, pf_type)
+	VALUES(%s, '%s', '%s', %s);`, string(json.ProjID), filename, path, string(json.PfType))
+
+	_, err = dbConnect.Exec(insertfile)
 
 	if err != nil {
 		c.String(http.StatusBadRequest, fmt.Sprintf("insert: %s", err.Error()))
@@ -300,5 +246,94 @@ func GetProjectsDirection(c *gin.Context) {
 	})
 
 	return
+
+}
+
+//GetProject get project
+func GetProject(c *gin.Context) {
+
+	projid := c.PostForm("proj_id")
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+	todo := fmt.Sprintf(`SELECT tproject.*, tproject_file.*
+	FROM public.tproject tproject, public.tproject_file tproject_file
+	WHERE 
+		tproject_file.proj_id = tproject.proj_id and tproject.proj_id = %s;`, string(projid))
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+	dbConnect.Close()
+	return
+}
+
+//GetProjects get project
+func GetProjects(c *gin.Context) {
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+	todo := fmt.Sprintf(`SELECT tproject.*, tproject_file.*
+	FROM public.tproject tproject, public.tproject_file tproject_file
+	WHERE 
+		tproject_file.proj_id = tproject.proj_id;`)
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+	dbConnect.Close()
+	return
+}
+
+//DeleteProjects delete Projects by id
+func DeleteProjects(c *gin.Context) {
+
+	projids := c.PostFormArray("proj_ids")
+
+	dbConnect := config.Connect()
+	for _, id := range projids {
+		deletetProjectsfile := fmt.Sprintf(`
+		DELETE FROM public.tproject_file
+		WHERE proj_id=%s;
+		"`, id)
+
+		deletetProjects := fmt.Sprintf(`DELETE FROM public.tproject
+		WHERE proj_id=%s;`, id)
+
+		_, err := dbConnect.Exec(deletetProjectsfile)
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+		}
+		_, err = dbConnect.Exec(deletetProjects)
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+		}
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+	})
+	dbConnect.Close()
 
 }
