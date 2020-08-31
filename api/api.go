@@ -434,26 +434,30 @@ type WeatherJSON struct {
 //Weathers get Weather
 func Weathers(c *gin.Context) {
 
-	url := "http://api.weatherstack.com/current?access_key=6c513a8f64fe766327b156add50504fe&query=Moscow"
+	//Dep list if dep by id
 
-	res, err := http.Get(url)
+	dbConnect := config.Connect()
+
+	todo := `SELECT weather
+	FROM public.weather;`
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
 
 	if err != nil {
-		panic(err.Error())
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
 	}
-
-	body, err := ioutil.ReadAll(res.Body)
-
-	if err != nil {
-		panic(err.Error())
-	}
-	var weather WeatherJSON
-	err = json.Unmarshal(body, &weather)
 
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
-		"data":   weather,
+		"data":   data,
 	})
+	dbConnect.Close()
+	return
 
 }
 
