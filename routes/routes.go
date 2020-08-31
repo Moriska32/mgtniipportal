@@ -26,7 +26,7 @@ func Routes(router *gin.Engine) {
 	router.GET("/post/:id", api.Post)
 	router.GET("/posts", api.Posts)
 	router.GET("/cbrdaily", api.Cbrdaily)
-	router.GET("/weather", api.Weather)
+	router.GET("/weather", api.Weathers)
 	router.GET("/weathersss", api.Weathers)
 	//Files
 	router.POST("/upload", files.Upload)
