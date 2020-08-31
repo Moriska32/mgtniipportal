@@ -438,19 +438,11 @@ func Weathers(c *gin.Context) {
 
 	dbConnect := config.Connect()
 
-	todo := `SELECT weather
-	FROM public.weather;`
+	todo := `select weather
+	FROM public.weather ORDER BY id DESC 
+	LIMIT 1;`
 
-	theCase := "lower"
-	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
-
-	if err != nil {
-		log.Printf("Error while getting a single todo, Reason: %v\n", err)
-		c.JSON(http.StatusNotFound, gin.H{
-			"status": http.StatusNotFound,
-		})
-		return
-	}
+	data := dbConnect.QueryRow(todo)
 
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
