@@ -434,7 +434,7 @@ type WeatherJSON struct {
 //Weathers get Weather
 func Weathers(c *gin.Context) {
 
-	url := "http://api.weatherstack.com/current?access_key=6c513a8f64fe766327b156add50504fe&query=Moscow&units=metric&lang=ru"
+	url := "http://api.weatherstack.com/current?access_key=6c513a8f64fe766327b156add50504fe&query=Moscow&units=metric"
 
 	res, err := http.Get(url)
 
