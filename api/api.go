@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"strings"
 	"time"
 
 	"net/http"
@@ -437,18 +438,29 @@ func Weathers(c *gin.Context) {
 	//Dep list if dep by id
 
 	dbConnect := config.Connect()
+	defer dbConnect.Close()
 
 	todo := `select weather
 	FROM public.weather ORDER BY id DESC 
 	LIMIT 1;`
+	var (
+		pool string
+		data WeatherJSON
+	)
+	sql := dbConnect.QueryRow(todo)
+	sql.Scan(&pool)
+	pool = strings.Replace(pool, `\`, ``, 1)
+	err := json.Unmarshal([]byte(pool), &data)
 
-	data := dbConnect.QueryRow(todo)
+	if err != nil {
+		panic(err.Error())
+	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
 		"data":   data,
 	})
-	dbConnect.Close()
+
 	return
 
 }
