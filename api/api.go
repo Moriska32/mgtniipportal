@@ -395,7 +395,7 @@ func Weather(c *gin.Context) {
 //Weathers get Weather
 func Weathers(c *gin.Context) {
 
-	url := "api.openweathermap.org/data/2.5/weather?lat=55.7631&lon=37.6241&appid=1e0cab77972f211e662fccf809bafc72"
+	url := "http://api.openweathermap.org/data/2.5/weather?q=Moscow&appid=1e0cab77972f211e662fccf809bafc72"
 
 	res, err := http.Get(url)
 
