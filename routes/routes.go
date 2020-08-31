@@ -73,6 +73,13 @@ func Routes(router *gin.Engine) {
 	router.POST("/sendmail", api.SendMail)
 	//router.POST("/sendmailit", api.SendMailIT)
 
+	//HH
+	router.POST("/posthh", api.PostHH)
+	router.POST("/updatehh", api.UpdateHH)
+	router.POST("/deletehh", api.DeleteHH)
+	router.GET("/gethhs", api.GetHHs)
+	router.POST("/gethh", api.GetHH)
+
 }
 
 func welcome(c *gin.Context) {
