@@ -106,7 +106,7 @@ func Postprojects(c *gin.Context) {
 
 	insertproject := `INSERT INTO public.tproject
 	(proj_name, pd_id, proj_decsr, drealiz)
-	VALUES('%s', %s, '%s', '%s');`
+	VALUES('?', ?, '?', '?');`
 
 	_, err = dbConnect.Query(insertproject, json.ProjName, json.PdID, json.ProjDecsr, json.Drealiz)
 
