@@ -38,10 +38,10 @@ type Project struct {
 	PdID      string `json:"pd_id"`
 	ProjDecsr string `json:"proj_decsr"`
 	Drealiz   string `json:"drealiz"`
-	ProjID    int    `json:"proj_id"`
+	ProjID    string `json:"proj_id"`
 	PfName    string `json:"pf_name"`
 	PfPath    string `json:"pf_path"`
-	PfType    int    `json:"pf_type"`
+	PfType    string `json:"pf_type"`
 }
 
 //Postprojects on BD
@@ -139,7 +139,7 @@ func Postprojects(c *gin.Context) {
 
 	insertfile := fmt.Sprintf(`INSERT INTO public.tproject_file
 	(proj_id, pf_name, pf_path, pf_type)
-	VALUES(%s, '%s', '%s', %s);`, string(projid), filename, path, string(json.PfType))
+	VALUES(%s, '%s', '%s', %s);`, string(projid), filename, path, json.PfType)
 	fmt.Printf(insertfile)
 	_, err = dbConnect.Exec(insertfile)
 
