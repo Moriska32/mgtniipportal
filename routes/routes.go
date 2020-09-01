@@ -54,8 +54,8 @@ func Routes(router *gin.Engine) {
 	router.GET("/objectstype", api.Objectstype)
 	router.GET("/objects/:id", api.Objects)
 	//Project
-	router.POST("/postprojects", projects.Postprojects)
-	router.POST("/updateprojects", projects.UpdateProjects)
+	router.POST("/postproject", projects.Postprojects)
+	router.POST("/updateproject", projects.UpdateProjects)
 	router.POST("/getproject", projects.GetProject)
 	router.GET("/getprojects", projects.GetProjects)
 	router.GET("/getprojectsdirections", projects.GetProjectsDirection)
@@ -71,6 +71,8 @@ func Routes(router *gin.Engine) {
 
 	//Mail sender
 	router.POST("/sendmail", api.SendMail)
+	router.POST("/sendrequest", api.SendRequest)
+	router.POST("/getrequest", api.GetRequest)
 	//router.POST("/sendmailit", api.SendMailIT)
 
 	//HH
