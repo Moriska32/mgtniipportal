@@ -114,9 +114,27 @@ func Postprojects(c *gin.Context) {
 		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 	}
 
+	todo := `SELECT max(proj_id) as proj_id
+	FROM public.tproject;
+	`
+
+	rows, _ := dbConnect.Query(todo)
+
+	defer rows.Close()
+	print(rows)
+	var projid string
+	for rows.Next() {
+		if err := rows.Scan(&projid); err != nil {
+			// Check for a scan error.
+			// Query rows will be closed with defer.cd
+			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+		}
+
+	}
+
 	insertfile := fmt.Sprintf(`INSERT INTO public.tproject_file
 	(proj_id, pf_name, pf_path, pf_type)
-	VALUES(%s, '%s', '%s', %s);`, string(json.ProjID), filename, path, string(json.PfType))
+	VALUES(%s, '%s', '%s', %s);`, string(projid), filename, path, string(json.PfType))
 
 	_, err = dbConnect.Exec(insertfile)
 
