@@ -58,7 +58,7 @@ func Routes(router *gin.Engine) {
 	router.POST("/updateprojects", projects.UpdateProjects)
 	router.POST("/getproject", projects.GetProject)
 	router.GET("/getprojects", projects.GetProjects)
-	router.GET("/getprojectsdirection", projects.GetProjectsDirection)
+	router.GET("/getprojectsdirections", projects.GetProjectsDirection)
 	router.POST("/deleteprojects", projects.DeleteProjects)
 
 	//Meetingroom
