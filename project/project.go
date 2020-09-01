@@ -346,8 +346,7 @@ func DeleteProjects(c *gin.Context) {
 	for _, id := range projids {
 		deletetProjectsfile := fmt.Sprintf(`
 		DELETE FROM public.tproject_file
-		WHERE proj_id=%s;
-		"`, id)
+		WHERE proj_id=%s;`, id)
 
 		deletetProjects := fmt.Sprintf(`DELETE FROM public.tproject
 		WHERE proj_id=%s;`, id)
