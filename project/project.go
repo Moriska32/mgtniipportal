@@ -287,7 +287,7 @@ func GetProject(c *gin.Context) {
 	todo := fmt.Sprintf(`SELECT tproject.*, tproject_file.*
 	FROM public.tproject tproject, public.tproject_file tproject_file
 	WHERE 
-		tproject_file.proj_id = tproject.proj_id and tproject.proj_id = %s;`, string(projid))
+		tproject_file.proj_id = tproject.proj_id and tproject.proj_id = %s order by tproject.drealiz desc;`, string(projid))
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
@@ -312,10 +312,11 @@ func GetProjects(c *gin.Context) {
 
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
-	todo := fmt.Sprintf(`SELECT tproject.*, tproject_file.*
-	FROM public.tproject tproject, public.tproject_file tproject_file
-	WHERE 
-		tproject_file.proj_id = tproject.proj_id;`)
+	todo := fmt.Sprintf(`
+	SELECT tproject.*, tproject_file.*
+		FROM public.tproject tproject, public.tproject_file tproject_file
+		WHERE 
+			tproject_file.proj_id = tproject.proj_id order by tproject.drealiz desc ;`)
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
