@@ -3,8 +3,11 @@ package api
 import (
 	"PortalMGTNIIP/config"
 	"crypto/tls"
+	"encoding/json"
+	js "encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"gopkg.in/gomail.v2"
@@ -62,9 +65,12 @@ type SendMailITJSON struct {
 func SendRequest(c *gin.Context) {
 
 	var json SendMailITJSON
-	c.BindJSON(&json)
 
 	m := gomail.NewMessage()
+
+	pool := c.PostForm("json")
+	typeid := c.PostForm("type_id")
+	err := js.Unmarshal([]byte(pool), &json)
 
 	m.SetHeader("From", "portal@mgtniip.ru")
 	m.SetHeader("To", json.To...)
@@ -84,14 +90,48 @@ func SendRequest(c *gin.Context) {
 
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
+	sql, err := js.Marshal(json)
+	todo := fmt.Sprintf(`INSERT INTO public.mail
+	("json", type_id)
+	VALUES('%s'::json, %s);
+	`, sql, typeid)
 
-	todo := fmt.Sprintf(`INSERT INTO public.mails
-	(author, "type", subject, "text","to", "date")
-	VALUES('%s', '%s', '%s', '%s','%s',%s);`, json.UserID, json.Type, json.Subject, json.Text, json.To, json.Date, json.DepID)
-
-	_, err := dbConnect.Exec(todo)
+	_, err = dbConnect.Exec(todo)
 	if err != nil {
 		c.String(http.StatusBadRequest, fmt.Sprintf("insert: %s", err.Error()))
 	}
+
+}
+
+//GetRequest mail
+func GetRequest(c *gin.Context) {
+
+	typeid := c.PostForm("type_id")
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+	todo := fmt.Sprintf(`SELECT mail.json
+	FROM public.mail mail, public.mail_type mail_type
+	WHERE 
+		mail_type.type_id = mail.type_id and mail.type_id = %s order by mail.date;`, typeid)
+	var (
+		pool string
+		data SendMailITJSON
+	)
+	sql := dbConnect.QueryRow(todo)
+	sql.Scan(&pool)
+	pool = strings.Replace(pool, `\`, ``, 1)
+	err := json.Unmarshal([]byte(pool), &data)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+
+	return
 
 }

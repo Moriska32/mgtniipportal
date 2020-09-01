@@ -116,7 +116,7 @@ func Postprojects(c *gin.Context) {
 
 	insertfile := fmt.Sprintf(`INSERT INTO public.tproject_file
 	(proj_id, pf_name, pf_path, pf_type)
-	VALUES(%s, '%s', '%s', %s);`, string(json.ProjID), json.PfName, path, string(json.PfType))
+	VALUES(%s, '%s', '%s', %s);`, string(json.ProjID), filename, path, string(json.PfType))
 
 	_, err = dbConnect.Exec(insertfile)
 
@@ -195,6 +195,7 @@ func UpdateProjects(c *gin.Context) {
 	err = js.Unmarshal([]byte(pool), &json)
 
 	dbConnect := config.Connect()
+	defer dbConnect.Close()
 
 	insertnews := fmt.Sprintf(`UPDATE public.tproject
 	SET proj_name='%s', pd_id=%s, proj_decsr='%s', drealiz='%s'
@@ -221,7 +222,7 @@ func UpdateProjects(c *gin.Context) {
 	if err != nil {
 		c.String(http.StatusBadRequest, fmt.Sprintf("insert: %s", err.Error()))
 	}
-	dbConnect.Close()
+
 }
 
 //GetProjectsDirection Get projects Direction
