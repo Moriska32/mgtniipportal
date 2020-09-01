@@ -2,6 +2,7 @@ package news
 
 import (
 	config "PortalMGTNIIP/config"
+	js "encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -50,8 +51,8 @@ func Postprojects(c *gin.Context) {
 		json Project
 	)
 
-	c.BindJSON(&json)
-
+	pool := c.PostForm("json")
+	err := js.Unmarshal([]byte(pool), &json)
 	form, err := c.MultipartForm()
 
 	if err != nil {
@@ -190,6 +191,9 @@ func UpdateProjects(c *gin.Context) {
 
 	var json Project
 
+	pool := c.PostForm("json")
+	err = js.Unmarshal([]byte(pool), &json)
+
 	dbConnect := config.Connect()
 
 	insertnews := fmt.Sprintf(`UPDATE public.tproject
@@ -313,6 +317,7 @@ func DeleteProjects(c *gin.Context) {
 	projids := c.PostFormArray("proj_ids")
 
 	dbConnect := config.Connect()
+	defer dbConnect.Close()
 	for _, id := range projids {
 		deletetProjectsfile := fmt.Sprintf(`
 		DELETE FROM public.tproject_file
@@ -334,6 +339,5 @@ func DeleteProjects(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
 	})
-	dbConnect.Close()
 
 }
