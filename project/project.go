@@ -35,7 +35,7 @@ func Copy(sourceFile, destinationFile string) error {
 //Project insert in BD
 type Project struct {
 	ProjName  string `json:"proj_name"`
-	PdID      int    `json:"pd_id"`
+	PdID      string `json:"pd_id"`
 	ProjDecsr string `json:"proj_decsr"`
 	Drealiz   string `json:"drealiz"`
 	ProjID    int    `json:"proj_id"`
@@ -53,6 +53,11 @@ func Postprojects(c *gin.Context) {
 
 	pool := c.PostForm("json")
 	err := js.Unmarshal([]byte(pool), &json)
+	if err != nil {
+		c.String(http.StatusBadRequest, fmt.Sprintf("get form err: %s", err.Error()))
+		return
+	}
+
 	form, err := c.MultipartForm()
 
 	if err != nil {
@@ -104,14 +109,14 @@ func Postprojects(c *gin.Context) {
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 
-	insertproject := `INSERT INTO public.tproject
+	insertproject := fmt.Sprintf(`INSERT INTO public.tproject
 	(proj_name, pd_id, proj_decsr, drealiz)
-	VALUES('?', ?, '?', '?');`
+	VALUES('%s', %s, '%s', '%s');`, json.ProjName, json.PdID, json.ProjDecsr, json.Drealiz)
 
-	_, err = dbConnect.Query(insertproject, json.ProjName, json.PdID, json.ProjDecsr, json.Drealiz)
+	_, err = dbConnect.Exec(insertproject)
 
 	if err != nil {
-		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+		c.String(http.StatusBadRequest, fmt.Sprintf("insertproject err: %s", err.Error()))
 	}
 
 	todo := `SELECT max(proj_id) as proj_id
@@ -135,11 +140,11 @@ func Postprojects(c *gin.Context) {
 	insertfile := fmt.Sprintf(`INSERT INTO public.tproject_file
 	(proj_id, pf_name, pf_path, pf_type)
 	VALUES(%s, '%s', '%s', %s);`, string(projid), filename, path, string(json.PfType))
-
+	fmt.Printf(insertfile)
 	_, err = dbConnect.Exec(insertfile)
 
 	if err != nil {
-		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+		c.String(http.StatusBadRequest, fmt.Sprintf("insertfile err: %s", err.Error()))
 	}
 
 }
