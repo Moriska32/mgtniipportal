@@ -80,7 +80,7 @@ func Newuser(c *gin.Context) {
 
 	insertuser := fmt.Sprintf(`INSERT INTO public.tuser 
 	(login, pass, fam, name, otch, birthday, foto, hobby, profskills, drecrut, dep_id, chief, tel, workplace, userrole, del, post_id) 
-	VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', %s, %s, '%s', %s, %s, %s);
+	VALUES('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', %s, %s, '%s',%s, %s, %s, %s);
 		`, login, pass, fam, name, otch, birthday, foto, hobby, profskills, drecrut, depid, chief, tel, workplace, userrole, del, postid)
 
 	_, err = dbConnect.Exec(insertuser)
@@ -236,13 +236,14 @@ func Updateuser(c *gin.Context) {
 	depid := c.PostForm("dep_id")
 	chief := c.PostForm("chief")
 	tel := c.PostForm("tel")
+	workplace := c.PostForm("workplace")
 	userrole := c.PostForm("userrole")
 	postid := c.PostForm("post_id")
 	del := c.PostForm("del")
 
 	dbConnect := config.Connect()
 
-	insertuser := fmt.Sprintf("UPDATE public.tuser SET login='%s', pass='%s', fam='%s', name='%s', otch='%s', birthday='%s', foto='%s', hobby='%s', profskills='%s', drecrut='%s', dep_id=%s, chief=%s, tel='%s', userrole=%s, del=%s, post_id = %s WHERE user_id = %s ;", login, pass, fam, name, otch, birthday, foto, hobby, profskills, drecrut, depid, chief, tel, userrole, del, postid, user)
+	insertuser := fmt.Sprintf("UPDATE public.tuser SET login='%s', pass='%s', fam='%s', name='%s', otch='%s', birthday='%s', foto='%s', hobby='%s', profskills='%s', drecrut='%s', dep_id=%s, chief=%s, tel='%s', workplace = %s, userrole=%s, del=%s, post_id = %s WHERE user_id = %s ;", login, pass, fam, name, otch, birthday, foto, hobby, profskills, drecrut, depid, chief, tel, workplace, userrole, del, postid, user)
 
 	_, err = dbConnect.Exec(insertuser)
 
