@@ -16,77 +16,80 @@ import (
 func Routes(router *gin.Engine) {
 
 	authMiddleware := user.Auth()
-	root := router.Group("/api")
-	root.Use(authMiddleware.MiddlewareFunc())
+	auth := router.Group("/v1")
+	auth.Use(authMiddleware.MiddlewareFunc())
 	{
-		//GET
+		root := auth.Group("/api")
+		{
+			//GET
 
-		router.GET("/dep/:id", api.Dep)
-		router.GET("/deps", api.Deps)
-		router.GET("/chiefs", api.Chief)
-		router.GET("/orgstructure", api.Orgstructure)
-		router.GET("/img", func(c *gin.Context) {
-			c.HTML(http.StatusOK, "select_file.html", gin.H{})
-		})
+			root.GET("/dep/:id", api.Dep)
+			root.GET("/deps", api.Deps)
+			root.GET("/chiefs", api.Chief)
+			root.GET("/orgstructure", api.Orgstructure)
+			root.GET("/img", func(c *gin.Context) {
+				c.HTML(http.StatusOK, "select_file.html", gin.H{})
+			})
 
-		router.GET("/post/:id", api.Post)
-		router.GET("/posts", api.Posts)
-		router.GET("/cbrdaily", api.Cbrdaily)
-		router.GET("/weather", api.Weathers)
-		router.GET("/weathersss", api.Weathers)
-		//Files
-		router.POST("/upload", files.Upload)
-		router.StaticFS("/file", http.Dir("public"))
-		router.POST("/fileslist", files.Fileslist)
-		router.POST("/rmfiles", files.Rmfiles)
-		router.POST("/mkrmsubfolders", files.Mkrmsubfolders)
-		//NEWS
-		router.POST("/postnews", news.Postnews)
-		router.POST("/getnewslist", news.Getnewslist)
-		router.GET("/getnews", news.Getnews)
-		router.POST("/newuser", user.Newuser)
-		router.POST("/updatenews", news.Updatenews)
-		router.POST("/deletenews", news.Deletenews)
-		//User
-		router.POST("/loginpass", user.Loginpass)
-		router.GET("/getusers", user.Getusers)
-		router.GET("/getportalusers", user.GetUsersNotPass)
-		router.POST("/getuser", user.Getuser)
-		router.POST("/getportaluser", user.GetuserNotPass)
+			root.GET("/post/:id", api.Post)
+			root.GET("/posts", api.Posts)
+			root.GET("/cbrdaily", api.Cbrdaily)
+			root.GET("/weather", api.Weathers)
+			root.GET("/weathersss", api.Weathers)
+			//Files
+			root.POST("/upload", files.Upload)
+			root.StaticFS("/file", http.Dir("public"))
+			root.POST("/fileslist", files.Fileslist)
+			root.POST("/rmfiles", files.Rmfiles)
+			root.POST("/mkrmsubfolders", files.Mkrmsubfolders)
+			//NEWS
+			root.POST("/postnews", news.Postnews)
+			root.POST("/getnewslist", news.Getnewslist)
+			root.GET("/getnews", news.Getnews)
+			root.POST("/newuser", user.Newuser)
+			root.POST("/updatenews", news.Updatenews)
+			root.POST("/deletenews", news.Deletenews)
+			//User
+			root.POST("/loginpass", user.Loginpass)
+			root.GET("/getusers", user.Getusers)
+			root.GET("/getportalusers", user.GetUsersNotPass)
+			root.POST("/getuser", user.Getuser)
+			root.POST("/getportaluser", user.GetuserNotPass)
 
-		router.POST("/deleteusers", user.Deleteuser)
-		router.POST("/updateuser", user.Updateuser)
-		//Object
-		router.GET("/objectstype", api.Objectstype)
-		router.GET("/objects/:id", api.Objects)
-		//Project
-		router.POST("/postproject", projects.Postprojects)
-		router.POST("/updateproject", projects.UpdateProjects)
-		router.POST("/getproject", projects.GetProject)
-		router.GET("/getprojects", projects.GetProjects)
-		router.GET("/getprojectsdirections", projects.GetProjectsDirection)
-		router.POST("/deleteprojects", projects.DeleteProjects)
+			root.POST("/deleteusers", user.Deleteuser)
+			root.POST("/updateuser", user.Updateuser)
+			//Object
+			root.GET("/objectstype", api.Objectstype)
+			root.GET("/objects/:id", api.Objects)
+			//Project
+			root.POST("/postproject", projects.Postprojects)
+			root.POST("/updateproject", projects.UpdateProjects)
+			root.POST("/getproject", projects.GetProject)
+			root.GET("/getprojects", projects.GetProjects)
+			root.GET("/getprojectsdirections", projects.GetProjectsDirection)
+			root.POST("/deleteprojects", projects.DeleteProjects)
 
-		//Meetingroom
-		router.GET("/meetingrooms", api.Meetingrooms)
-		router.POST("/newmeet", meetingroom.Newmeet)
-		router.POST("/getmeets", meetingroom.Getmeets)
-		router.POST("/deletemeet", meetingroom.Deletemeet)
-		router.POST("/updatemeet", meetingroom.Updatemeet)
-		router.GET("/getallmeets", meetingroom.GetAllMeets)
+			//Meetingroom
+			root.GET("/meetingrooms", api.Meetingrooms)
+			root.POST("/newmeet", meetingroom.Newmeet)
+			root.POST("/getmeets", meetingroom.Getmeets)
+			root.POST("/deletemeet", meetingroom.Deletemeet)
+			root.POST("/updatemeet", meetingroom.Updatemeet)
+			root.GET("/getallmeets", meetingroom.GetAllMeets)
 
-		//Mail sender
-		router.POST("/sendmail", api.SendMail)
-		router.POST("/sendrequest", api.SendRequest)
-		router.POST("/getrequest", api.GetRequest)
-		//router.POST("/sendmailit", api.SendMailIT)
+			//Mail sender
+			root.POST("/sendmail", api.SendMail)
+			root.POST("/sendrequest", api.SendRequest)
+			root.POST("/getrequest", api.GetRequest)
+			//root.POST("/sendmailit", api.SendMailIT)
 
-		//HH
-		router.POST("/posthh", api.PostHH)
-		router.POST("/updatehh", api.UpdateHH)
-		router.POST("/deletehh", api.DeleteHH)
-		router.GET("/gethhs", api.GetHHs)
-		router.POST("/gethh", api.GetHH)
+			//HH
+			root.POST("/posthh", api.PostHH)
+			root.POST("/updatehh", api.UpdateHH)
+			root.POST("/deletehh", api.DeleteHH)
+			root.GET("/gethhs", api.GetHHs)
+			root.POST("/gethh", api.GetHH)
+		}
 	}
 
 }

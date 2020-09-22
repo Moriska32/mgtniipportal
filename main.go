@@ -15,7 +15,6 @@ func main() {
 
 	router := gin.Default()
 
-	routes.Routes(router)
 	authMiddleware := auth.Auth()
 
 	router.POST("/login", authMiddleware.LoginHandler)
