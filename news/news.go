@@ -275,7 +275,7 @@ func Getnewslist(c *gin.Context) {
 	nftype := c.PostForm("nf_type")
 
 	dbConnect := config.Connect()
-	todo := fmt.Sprintf("SELECT tnews.*, tnews_file.* FROM public.tnews tnews, public.tnews_file tnews_file WHERE tnews_file.n_id = tnews.n_id AND tnews_file.nf_type = %s;", nftype)
+	todo := fmt.Sprintf("SELECT tnews.*, tnews_file.* FROM public.tnews tnews, public.tnews_file tnews_file WHERE tnews_file.n_id = tnews.n_id AND tnews_file.nf_type = %s order by tnews.n_date desc;", nftype)
 
 	defer dbConnect.Close()
 
