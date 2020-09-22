@@ -483,6 +483,7 @@ func Weathers(c *gin.Context) {
 	sql := dbConnect.QueryRow(todo)
 	sql.Scan(&pool)
 	pool = strings.Replace(pool, `\`, ``, 1)
+	fmt.Println(pool)
 	err := json.Unmarshal([]byte(pool), &data)
 
 	if err != nil {
