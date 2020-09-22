@@ -283,7 +283,7 @@ func Getusers(c *gin.Context) {
 func Getuser(c *gin.Context) {
 	id := c.PostForm("user_id")
 	dbConnect := config.Connect()
-	todo := fmt.Sprintf("SELECT * from public.tuser where user_id = %s and login not in ('admin', 'moder', 'user');", id)
+	todo := fmt.Sprintf("SELECT * from public.tuser where user_id = %s;", id)
 
 	defer dbConnect.Close()
 
