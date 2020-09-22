@@ -474,9 +474,7 @@ func Weathers(c *gin.Context) {
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 
-	todo := `select weather
-	FROM public.weather ORDER BY id DESC 
-	LIMIT 1;`
+	todo := `SELECT public.fn_classcategory_sel(4);`
 	var (
 		pool string
 		data WeatherJSON
