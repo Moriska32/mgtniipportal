@@ -25,16 +25,17 @@ func helloHandler(c *gin.Context) {
 	user, _ := c.Get(identityKey)
 	c.JSON(200, gin.H{
 		"userID":   claims[identityKey],
-		"userName": user.(*User).UserName,
+		"userName": user.(*User).userid,
 		"text":     "Hello World.",
 	})
 }
 
 // User demo
 type User struct {
-	UserName  string
-	FirstName string
-	LastName  string
+	userid   string
+	name     string
+	otch     string
+	userrole string
 }
 
 //Auth JWT
@@ -49,7 +50,7 @@ func Auth() *jwt.GinJWTMiddleware {
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
 			if v, ok := data.(*User); ok {
 				return jwt.MapClaims{
-					identityKey: v.UserName,
+					identityKey: v.userid,
 				}
 			}
 			return jwt.MapClaims{}
@@ -57,7 +58,7 @@ func Auth() *jwt.GinJWTMiddleware {
 		IdentityHandler: func(c *gin.Context) interface{} {
 			claims := jwt.ExtractClaims(c)
 			return &User{
-				UserName: claims[identityKey].(string),
+				userid: claims[identityKey].(string),
 			}
 		},
 		Authenticator: func(c *gin.Context) (interface{}, error) {
@@ -75,28 +76,36 @@ func Auth() *jwt.GinJWTMiddleware {
 
 			switch location {
 			case "admin":
-				loginpass = fmt.Sprintf("SELECT user_id, name, otch, userrole FROM public.tuser where login = '%s' AND pass = '%s' and del in (0) and userrole in (1,2);", userID, password)
+				loginpass = fmt.Sprintf("SELECT user_id, login, userrole FROM public.tuser where login = '%s' AND pass = '%s' and del in (0) and userrole in (1,2);", userID, password)
 
 			case "portal":
-				loginpass = fmt.Sprintf("SELECT user_id, name, otch, userrole FROM public.tuser where login = '%s' AND pass = '%s' and del in (0, 2);", userID, password)
+				loginpass = fmt.Sprintf("SELECT user_id, login, userrole FROM public.tuser where login = '%s' AND pass = '%s' and del in (0, 2);", userID, password)
 
 			}
 
 			theCase := "lower"
 			data, err := gosqljson.QueryDbToMap(dbConnect, theCase, loginpass)
 
+			pool := User{
+				userid:   data[0]["user_id"],
+				name:     data[0]["name"],
+				otch:     data[0]["otch"],
+				userrole: data[0]["userrole"],
+			}
+
 			if err != nil {
 				c.String(http.StatusBadRequest, fmt.Sprintf("DB login auth: %s", err.Error()))
 			}
-			fmt.Println(data)
-			if len(data) != 0 {
-				return data, nil
+
+			if pool.userid != "" {
+				return pool, nil
 			}
 
 			return nil, jwt.ErrFailedAuthentication
 		},
-		Authorizator: func(data interface{}, c *gin.Context) bool {
-			if v, ok := data.(*User); ok && v.UserName == "admin" {
+		Authorizator: func(pool interface{}, c *gin.Context) bool {
+			if v, ok := pool.(*User); ok {
+				_ = v
 				return true
 			}
 
@@ -140,4 +149,8 @@ func Token(c *gin.Context) {
 	claims := jwt.ExtractClaims(c)
 
 	fmt.Println(claims)
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   claims,
+	})
 }
