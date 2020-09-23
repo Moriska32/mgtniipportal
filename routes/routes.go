@@ -14,7 +14,7 @@ import (
 
 //Routes pool of func
 func Routes(router *gin.Engine) {
-
+	router.StaticFS("/file", http.Dir("public"))
 	authMiddleware := user.Auth()
 	auth := router.Group("/v1")
 	auth.Use(authMiddleware.MiddlewareFunc())
@@ -41,7 +41,7 @@ func Routes(router *gin.Engine) {
 			root.GET("/weathersss", api.Weathers)
 			//Files
 			root.POST("/upload", files.Upload)
-			root.StaticFS("/file", http.Dir("public"))
+
 			root.POST("/fileslist", files.Fileslist)
 			root.POST("/rmfiles", files.Rmfiles)
 			root.POST("/mkrmsubfolders", files.Mkrmsubfolders)
