@@ -6,6 +6,7 @@ require (
 	github.com/appleboy/gin-jwt v2.5.0+incompatible
 	github.com/appleboy/gin-jwt/v2 v2.6.4
 	github.com/briandowns/openweathermap v0.16.0
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/elgs/gosqljson v0.0.0-20160403005647-027aa4915315
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.6.3

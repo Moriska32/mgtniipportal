@@ -21,6 +21,9 @@ func Routes(router *gin.Engine) {
 	{
 		root := auth.Group("/api")
 		{
+
+			root.GET("/tokendescr", user.Token)
+
 			//GET
 
 			root.GET("/dep/:id", api.Dep)

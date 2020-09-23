@@ -15,6 +15,7 @@ import (
 type login struct {
 	Username string `form:"username" json:"username" binding:"required"`
 	Password string `form:"password" json:"password" binding:"required"`
+	Location string `form:"location" json:"location" binding:"required"`
 }
 
 var identityKey = "id"
@@ -66,10 +67,20 @@ func Auth() *jwt.GinJWTMiddleware {
 			}
 			userID := loginVals.Username
 			password := loginVals.Password
-
+			location := loginVals.Location
 			dbConnect := config.Connect()
+			defer dbConnect.Close()
 
-			loginpass := fmt.Sprintf("SELECT user_id, name, otch, userrole FROM public.tuser where login = '%s' AND pass = '%s' and del in (0, 2);", userID, password)
+			loginpass := ""
+
+			switch location {
+			case "admin":
+				loginpass = fmt.Sprintf("SELECT user_id, name, otch, userrole FROM public.tuser where login = '%s' AND pass = '%s' and del in (0) and userrole in (1,2);", userID, password)
+
+			case "portal":
+				loginpass = fmt.Sprintf("SELECT user_id, name, otch, userrole FROM public.tuser where login = '%s' AND pass = '%s' and del in (0, 2);", userID, password)
+
+			}
 
 			theCase := "lower"
 			data, err := gosqljson.QueryDbToMap(dbConnect, theCase, loginpass)
@@ -77,8 +88,8 @@ func Auth() *jwt.GinJWTMiddleware {
 			if err != nil {
 				c.String(http.StatusBadRequest, fmt.Sprintf("DB login auth: %s", err.Error()))
 			}
-
-			if data != nil {
+			fmt.Println(data)
+			if len(data) != 0 {
 				return data, nil
 			}
 
@@ -121,4 +132,12 @@ func Auth() *jwt.GinJWTMiddleware {
 	}
 
 	return authMiddleware
+}
+
+//Token get pool
+func Token(c *gin.Context) {
+
+	claims := jwt.ExtractClaims(c)
+
+	fmt.Println(claims)
 }
