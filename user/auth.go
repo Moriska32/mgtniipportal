@@ -57,7 +57,9 @@ func Auth() *jwt.GinJWTMiddleware {
 		IdentityHandler: func(c *gin.Context) interface{} {
 			claims := jwt.ExtractClaims(c)
 			return &User{
-				userid: claims[identityKey].(string),
+				userid:   claims[identityKey].(string),
+				login:    claims[identityKey].(string),
+				userrole: claims[identityKey].(string),
 			}
 		},
 		Authenticator: func(c *gin.Context) (interface{}, error) {
