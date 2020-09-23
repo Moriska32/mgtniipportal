@@ -33,8 +33,7 @@ func helloHandler(c *gin.Context) {
 // User demo
 type User struct {
 	userid   string
-	name     string
-	otch     string
+	login    string
 	userrole string
 }
 
@@ -88,8 +87,7 @@ func Auth() *jwt.GinJWTMiddleware {
 
 			pool := User{
 				userid:   data[0]["user_id"],
-				name:     data[0]["name"],
-				otch:     data[0]["otch"],
+				login:    data[0]["login"],
 				userrole: data[0]["userrole"],
 			}
 
