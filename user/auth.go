@@ -85,7 +85,7 @@ func Auth() *jwt.GinJWTMiddleware {
 			theCase := "lower"
 			data, err := gosqljson.QueryDbToMap(dbConnect, theCase, loginpass)
 
-			pool := User{
+			pool := &User{
 				userid:   data[0]["user_id"],
 				login:    data[0]["login"],
 				userrole: data[0]["userrole"],
