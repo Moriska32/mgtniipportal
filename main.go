@@ -29,10 +29,10 @@ func main() {
 	router.LoadHTMLGlob("template/*")
 
 	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:8080", "http://172.20.0.82:35766/", "http://172.20.0.82:5885/", "*"},
-		AllowHeaders:     []string{"Access-Control-Request-Method", "Access-Control-Request-Headers", "X-Requested-With", "Access-Control-Allow-Headers", "Origin", "Authorization", "Content-Type", "Content-Length", "Accept", "Accept-Encoding", "X-HttpRequest"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"},
-		ExposeHeaders:    []string{"Access-Control-Allow-Origin", "Content-Length"},
+		AllowOrigins:     []string{"*"},
+		AllowHeaders:     []string{"Origin", "Authorization", "Content-Type", "Content-Length", "Accept", "Accept-Encoding", "X-HttpRequest"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
+		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 		MaxAge:           5600,
 	}))
