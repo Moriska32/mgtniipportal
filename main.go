@@ -5,7 +5,6 @@ import (
 	auth "PortalMGTNIIP/user"
 	"log"
 	_ "os"
-	"time"
 
 	jwt "github.com/appleboy/gin-jwt"
 	"github.com/gin-contrib/cors"
@@ -31,11 +30,11 @@ func main() {
 
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
-		AllowHeaders:     []string{"Origin"},
+		AllowHeaders:     []string{"Origin", "Authorization", "Content-Type", "Content-Length", "Accept", "Accept-Encoding", "X-HttpRequest"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
-
-		MaxAge: 12 * time.Hour,
+		MaxAge:           5600,
 	}))
 	routes.Routes(router)
 	log.Fatal(router.Run(":4747"))
