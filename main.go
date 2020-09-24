@@ -27,7 +27,9 @@ func main() {
 	auth.GET("/refresh_token", authMiddleware.RefreshHandler)
 
 	router.LoadHTMLGlob("template/*")
-	router.Use(cors.Default())
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"*"}
+	router.Use(cors.New(config))
 	routes.Routes(router)
 	log.Fatal(router.Run(":4747"))
 }

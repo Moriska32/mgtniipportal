@@ -161,3 +161,11 @@ func Token(c *gin.Context) {
 		"data":   claims,
 	})
 }
+
+//Logout logout
+func Logout(c *gin.Context) {
+
+	token := jwt.GetToken(c)
+	_ = token
+
+}
