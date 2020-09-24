@@ -89,7 +89,7 @@ func Auth() *jwt.GinJWTMiddleware {
 			theCase := "lower"
 			data, err := gosqljson.QueryDbToMap(dbConnect, theCase, loginpass)
 
-			if data[0]["user_id"] == "" {
+			if len(data) == 0 {
 
 				return nil, jwt.ErrFailedAuthentication
 
