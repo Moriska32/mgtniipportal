@@ -89,6 +89,12 @@ func Auth() *jwt.GinJWTMiddleware {
 			theCase := "lower"
 			data, err := gosqljson.QueryDbToMap(dbConnect, theCase, loginpass)
 
+			if data[0]["user_id"] == "" {
+
+				return nil, jwt.ErrFailedAuthentication
+
+			}
+
 			pool := &User{
 				userid:   data[0]["user_id"],
 				login:    data[0]["login"],
@@ -99,7 +105,7 @@ func Auth() *jwt.GinJWTMiddleware {
 				c.String(http.StatusBadRequest, fmt.Sprintf("DB login auth: %s", err.Error()))
 			}
 
-			if len(pool.userid) > 0 {
+			if pool.userid != "" {
 				return pool, nil
 			}
 
