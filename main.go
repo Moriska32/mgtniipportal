@@ -15,6 +15,17 @@ func main() {
 
 	router := gin.Default()
 
+	router.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowHeaders:     []string{"Origin", "Authorization", "Content-Type", "Content-Length", "Accept", "Accept-Encoding", "X-HttpRequest"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           5600,
+	}))
+
+	routes.Routes(router)
+
 	authMiddleware := auth.Auth()
 
 	router.POST("/login", authMiddleware.LoginHandler)
@@ -28,14 +39,5 @@ func main() {
 
 	router.LoadHTMLGlob("template/*")
 
-	router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
-		AllowHeaders:     []string{"Origin", "Authorization", "Content-Type", "Content-Length", "Accept", "Accept-Encoding", "X-HttpRequest"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
-		ExposeHeaders:    []string{"Content-Length"},
-		AllowCredentials: true,
-		MaxAge:           5600,
-	}))
-	routes.Routes(router)
 	log.Fatal(router.Run(":4747"))
 }
