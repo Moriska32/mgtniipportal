@@ -165,7 +165,23 @@ func Token(c *gin.Context) {
 //Logout logout
 func Logout(c *gin.Context) {
 
-	token := jwt.GetToken(c)
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+
+	inserttoken := fmt.Sprintf("")
+
+	_, err := dbConnect.Exec(inserttoken)
+
+	if err != nil {
+		log.Fatal("Insert token:" + err.Error())
+	}
+
+	token, _ := c.Get("JWT_TOKEN")
 	_ = token
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   token,
+	})
 
 }

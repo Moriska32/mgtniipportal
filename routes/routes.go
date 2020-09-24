@@ -21,7 +21,8 @@ func Routes(router *gin.Engine) {
 	{
 		root := auth.Group("/api")
 		{
-
+			//TOKEN
+			root.GET("/logout", user.Logout)
 			root.GET("/tokendescr", user.Token)
 
 			//GET
