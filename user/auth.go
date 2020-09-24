@@ -99,7 +99,7 @@ func Auth() *jwt.GinJWTMiddleware {
 				c.String(http.StatusBadRequest, fmt.Sprintf("DB login auth: %s", err.Error()))
 			}
 
-			if pool.userid != "" {
+			if len(pool.userid) > 0 {
 				return pool, nil
 			}
 
@@ -150,7 +150,6 @@ func Token(c *gin.Context) {
 
 	claims := jwt.ExtractClaims(c)
 
-	fmt.Println(claims)
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
 		"data":   claims,
