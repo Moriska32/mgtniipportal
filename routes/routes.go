@@ -16,8 +16,10 @@ import (
 func Routes(router *gin.Engine) {
 	router.StaticFS("/file", http.Dir("public"))
 	authMiddleware := user.Auth()
+
 	auth := router.Group("/v1")
 	auth.Use(authMiddleware.MiddlewareFunc())
+	auth.Use(user.Blacklist())
 	{
 		root := auth.Group("/api")
 		{

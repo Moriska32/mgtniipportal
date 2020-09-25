@@ -168,7 +168,11 @@ func Logout(c *gin.Context) {
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 
-	inserttoken := fmt.Sprintf("")
+	token, _ := c.Get("JWT_TOKEN")
+
+	inserttoken := fmt.Sprintf(`INSERT INTO public.logout
+	("token")
+	VALUES('%s');`, token)
 
 	_, err := dbConnect.Exec(inserttoken)
 
@@ -176,12 +180,33 @@ func Logout(c *gin.Context) {
 		log.Fatal("Insert token:" + err.Error())
 	}
 
-	token, _ := c.Get("JWT_TOKEN")
-	_ = token
-
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
 		"data":   token,
 	})
+
+}
+
+//Blacklist check token in blacklist
+func Blacklist(c *gin.Context) {
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+
+	token := jwt.GetToken(c)
+
+	todo := fmt.Sprintf(`SELECT "token"
+	FROM public.logout where token = '%s';`, token)
+
+	var blacktoken string
+
+	sql := dbConnect.QueryRow(todo)
+	sql.Scan(&blacktoken)
+
+	if blacktoken != "" {
+		c.AbortWithStatusJSON(401, gin.H{"Error": "Your token is blacklisted"})
+		return
+	}
+	c.Next()
 
 }
