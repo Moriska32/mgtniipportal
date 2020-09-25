@@ -19,7 +19,7 @@ func Routes(router *gin.Engine) {
 
 	auth := router.Group("/v1")
 	auth.Use(authMiddleware.MiddlewareFunc())
-	auth.Use(user.Blacklist())
+	auth.Use(user.Blacklist)
 	{
 		root := auth.Group("/api")
 		{
