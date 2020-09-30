@@ -4,6 +4,7 @@ import (
 	config "PortalMGTNIIP/config"
 	"database/sql"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -11,23 +12,27 @@ import (
 
 //Geom List all of deps
 type Geom struct {
-	type_id      string
-	type_name    string
-	container    string
-	object_id    string
-	st_asgeojson string
-	container_id sql.NullString
+	TypeID      string
+	TypeName    string
+	Container   string
+	ObjectID    string
+	Geom        string
+	ContainerID sql.NullString
 }
 
 //Map get geom by floor
 func Map(c *gin.Context) {
+
+	id := c.PostForm("id")
 
 	geom := []*Geom{}
 
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 
-	ID := "1"
+	bodyBytes, err := ioutil.ReadAll(c.Request.Body)
+
+	fmt.Printf(string(bodyBytes))
 
 	sql := `SELECT sobject_type.*, tobject.object_id, St_asgeojson(tobject.geom), tobject.container_id
 		FROM public.sobject_type sobject_type, public.tobject tobject
@@ -39,7 +44,7 @@ func Map(c *gin.Context) {
 	todo := `SELECT sobject_type.*, tobject.object_id, St_asgeojson(tobject.geom), tobject.container_id
 		FROM public.sobject_type sobject_type, public.tobject tobject
 		WHERE
-			tobject.type_id = sobject_type.type_id and tobject.object_id = ` + ID + `;`
+			tobject.type_id = sobject_type.type_id and tobject.object_id = ` + id + `;`
 
 	fmt.Println(todo)
 
@@ -50,39 +55,39 @@ func Map(c *gin.Context) {
 	for rows.Next() {
 		pool := new(Geom)
 
-		if err = rows.Scan(&pool.type_id, &pool.type_name, &pool.container, &pool.object_id, &pool.st_asgeojson, &pool.container_id); err != nil {
+		if err = rows.Scan(&pool.TypeID, &pool.TypeName, &pool.Container, &pool.ObjectID, &pool.Geom, &pool.ContainerID); err != nil {
 			fmt.Println("Scanning failed.....")
 			fmt.Println(err.Error())
 			return
 		}
 
 		geom = append(geom, pool)
-		fmt.Print(geom)
-		// rowson, err := dbConnect.Query(fmt.Sprintf(sql, pool.object_id))
 
-		// for rowson.Next() {
+		rowson, err := dbConnect.Query(fmt.Sprintf(sql, pool.ObjectID))
 
-		// 	if err = rowson.Scan(&pool.type_id, &pool.type_name, &pool.container, &pool.object_id, &pool.st_asgeojson, &pool.container_id); err != nil {
-		// 		fmt.Println("Scanning rowson failed.....")
-		// 		fmt.Println(err.Error())
-		// 		continue
-		// 	}
-		// 	geom = append(geom, pool)
+		for rowson.Next() {
 
-		// 	rowsons, err := dbConnect.Query(fmt.Sprintf(sql, pool.object_id))
+			if err = rowson.Scan(&pool.TypeID, &pool.TypeName, &pool.Container, &pool.ObjectID, &pool.Geom, &pool.ContainerID); err != nil {
+				fmt.Println("Scanning rowson failed.....")
+				fmt.Println(err.Error())
+				continue
+			}
+			geom = append(geom, pool)
 
-		// 	for rowsons.Next() {
+			rowsons, err := dbConnect.Query(fmt.Sprintf(sql, pool.ObjectID))
 
-		// 		if err = rowsons.Scan(&pool.type_id, &pool.type_name, &pool.container, &pool.object_id, &pool.st_asgeojson, &pool.container_id); err != nil {
-		// 			fmt.Println("Scanning rowsons failed.....")
-		// 			fmt.Println(err.Error())
-		// 			continue
-		// 		}
-		// 		geom = append(geom, pool)
+			for rowsons.Next() {
 
-		// 	}
+				if err = rowsons.Scan(&pool.TypeID, &pool.TypeName, &pool.Container, &pool.ObjectID, &pool.Geom, &pool.ContainerID); err != nil {
+					fmt.Println("Scanning rowsons failed.....")
+					fmt.Println(err.Error())
+					continue
+				}
+				geom = append(geom, pool)
 
-		// }
+			}
+
+		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{
