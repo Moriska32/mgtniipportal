@@ -3,6 +3,7 @@ package routes
 import (
 	"PortalMGTNIIP/api"
 	files "PortalMGTNIIP/files"
+	"PortalMGTNIIP/geomap"
 	"PortalMGTNIIP/meetingroom"
 	news "PortalMGTNIIP/news"
 	projects "PortalMGTNIIP/project"
@@ -15,6 +16,7 @@ import (
 //Routes pool of func
 func Routes(router *gin.Engine) {
 	router.StaticFS("/file", http.Dir("public"))
+
 	authMiddleware := user.Auth()
 
 	auth := router.Group("/v1")
@@ -95,6 +97,10 @@ func Routes(router *gin.Engine) {
 			root.POST("/deletehh", api.DeleteHH)
 			root.GET("/gethhs", api.GetHHs)
 			root.POST("/gethh", api.GetHH)
+
+			//Map
+			root.POST("/geombyfloor", geomap.Map)
+
 		}
 	}
 
