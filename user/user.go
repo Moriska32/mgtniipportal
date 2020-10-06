@@ -2,6 +2,7 @@ package user
 
 import (
 	config "PortalMGTNIIP/config"
+	fl "PortalMGTNIIP/files"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -56,6 +57,7 @@ func Newuser(c *gin.Context) {
 		}
 
 		path = fmt.Sprintf("/file/%s/%s/%s", folder, subfolder, file.Filename)
+		fl.Resize(fmt.Sprintf("public/%s/%s/%s", folder, subfolder, file.Filename))
 
 	}
 
@@ -187,6 +189,7 @@ func Updateuser(c *gin.Context) {
 			}
 
 			path = fmt.Sprintf("/file/%s/%s/%s", folder, subfolder, file.Filename)
+			fl.Resize(fmt.Sprintf("public/%s/%s/%s", folder, subfolder, file.Filename))
 			filename = file.Filename
 
 		}
@@ -200,6 +203,7 @@ func Updateuser(c *gin.Context) {
 		filepath = strings.Replace(filepath, "/file", "public", 1)
 		filename = strings.Split(filepath, "/")[len(strings.Split(filepath, "/"))-1]
 		destination := "public/photos/Пользователи/" + filename
+		fl.Resize(fmt.Sprintf(destination))
 		err = Copy(filepath, destination)
 		if err != nil {
 			fmt.Printf("File copying failed: %q\n", err)
@@ -212,6 +216,8 @@ func Updateuser(c *gin.Context) {
 
 		filepath = strings.Replace(filepath, "/file", "public", 1)
 		err := os.Rename(filepath, "public/photos/Пользователи/"+newfullname)
+
+		fl.Resize("public/photos/Пользователи/" + newfullname)
 
 		if err != nil {
 			c.String(http.StatusBadRequest, fmt.Sprintf("rename file err: %s", err.Error()))
