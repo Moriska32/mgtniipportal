@@ -53,7 +53,7 @@ func Resize(name string) {
 	m := resize.Resize(90, 0, img, resize.Lanczos3)
 
 	name = strings.Replace(name, ".jpg", "-min.jpg", 0)
-	name = strings.Replace(name, "Пользователи", "Пользователи-min.jpg", 0)
+	name = strings.Replace(name, "Пользователи", "Пользователи-min", 0)
 
 	out, err := os.Create(name)
 	if err != nil {

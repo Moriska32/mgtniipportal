@@ -287,6 +287,8 @@ func Getusers(c *gin.Context) {
 
 //Getuser get news
 func Getuser(c *gin.Context) {
+	var data []map[string]string
+	data[0]["foto-min"] = ""
 	id := c.PostForm("user_id")
 	dbConnect := config.Connect()
 	todo := fmt.Sprintf("SELECT * from public.tuser where user_id = %s;", id)
@@ -303,6 +305,7 @@ func Getuser(c *gin.Context) {
 		})
 		return
 	}
+	data[0]["foto-min"] = strings.Replace(strings.Replace(data[0]["foto"], ".jpg", "-min.jpg", 0), "Пользователи", "Пользователи-min", 0)
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
 		"data":   data,
