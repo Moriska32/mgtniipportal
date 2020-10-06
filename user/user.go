@@ -277,6 +277,11 @@ func Getusers(c *gin.Context) {
 		})
 		return
 	}
+	for _, items := range data {
+
+		items["foto-min"] = strings.Replace(strings.Replace(items["foto"], ".jpg", "-min.jpg", 0), "Пользователи", "Пользователи-min", 0)
+
+	}
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
 		"data":   data,
