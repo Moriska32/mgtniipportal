@@ -33,10 +33,6 @@ func Resize(name string) {
 	fmt.Println(name)
 	file, err := os.Open(name)
 
-	if guessImageMimeTypes(file) {
-		return
-	}
-
 	if err != nil {
 		log.Fatal(err)
 	}
