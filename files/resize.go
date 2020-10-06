@@ -42,7 +42,7 @@ func Resize(name string) {
 	}
 	defer file.Close()
 	// decode jpeg into image.Image
-	img, err := jpeg.Decode(file)
+	img, _, err := image.Decode(file)
 	if err != nil {
 		log.Fatal(err)
 	}
