@@ -1,6 +1,7 @@
 package files
 
 import (
+	"fmt"
 	"image"
 	"image/jpeg"
 	"io"
@@ -29,6 +30,7 @@ func guessImageMimeTypes(r io.Reader) bool {
 //Resize resize image
 func Resize(name string) {
 
+	fmt.Println(name)
 	file, err := os.Open(name)
 
 	if guessImageMimeTypes(file) {
@@ -54,7 +56,7 @@ func Resize(name string) {
 
 	name = strings.Replace(name, ".jpg", "-min.jpg", 0)
 	name = strings.Replace(name, "Пользователи", "Пользователи-min", 0)
-
+	fmt.Println(name)
 	out, err := os.Create(name)
 	if err != nil {
 		log.Fatal(err)
@@ -63,11 +65,5 @@ func Resize(name string) {
 
 	// write new image to file
 	jpeg.Encode(out, m, nil)
-
-}
-
-func main() {
-
-	Resize("D:/progi/Microsoft VS Code/Programs/mgtniipportal/public/photos/ss/43.jpg")
 
 }
