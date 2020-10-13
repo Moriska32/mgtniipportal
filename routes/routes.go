@@ -101,6 +101,9 @@ func Routes(router *gin.Engine) {
 			//Map
 			root.POST("/geombyfloor", geomap.Map)
 
+			//search
+			root.POST("/search", api.Search)
+
 		}
 	}
 
