@@ -377,7 +377,7 @@ func Getsuperuser(c *gin.Context) {
 
 	dbConnect := config.Connect()
 	todo := `SELECT user_id, login, fam, "name", otch, birthday, foto, 
-	hobby, profskills, drecrut, dep_id, chief, tel, workplace, userrole, del, post_id FROM public.tuser where login in ('admin', 'moder', 'user');`
+	hobby, profskills, drecrut, dep_id, chief, tel, workplace, userrole, del, post_id FROM public.tuser where login in ('admin', 'moder', 'portal');`
 
 	defer dbConnect.Close()
 
