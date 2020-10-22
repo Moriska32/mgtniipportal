@@ -52,8 +52,8 @@ func SendMail(c *gin.Context) {
 
 //SendMailITJSON json for BD
 type SendMailITJSON struct {
-	To      []string `json:"To"`
-	Subject string   `json:"Subject"`
+	To      []string `json:"to"`
+	Subject string   `json:"subject"`
 	Text    string   `json:"text"`
 	UserID  int      `json:"user_id"`
 	Type    string   `json:"type"`
