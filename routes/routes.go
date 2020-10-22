@@ -89,7 +89,7 @@ func Routes(router *gin.Engine) {
 			//Mail sender
 			root.POST("/sendmail", api.SendMail)
 			root.POST("/sendrequest", api.SendRequest)
-			root.POST("/getrequest", api.GetRequest)
+			root.POST("/getrequests", api.GetRequest)
 			//root.POST("/sendmailit", api.SendMailIT)
 
 			//HH
