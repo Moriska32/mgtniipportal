@@ -50,6 +50,9 @@ func SendMail(c *gin.Context) {
 
 }
 
+//SendMailSITJSON json for BD
+type SendMailSITJSON []SendMailITJSON
+
 //SendMailITJSON json for BD
 type SendMailITJSON struct {
 	To      []string `json:"to"`
@@ -118,18 +121,23 @@ func GetRequest(c *gin.Context) {
 		pool string
 		data SendMailITJSON
 	)
-	sql := dbConnect.QueryRow(todo)
-	sql.Scan(&pool)
-	pool = strings.Replace(pool, `\`, ``, 1)
-	err := json.Unmarshal([]byte(pool), &data)
+	sql, _ := dbConnect.Query(todo)
 
-	if err != nil {
-		panic(err.Error())
+	var result SendMailSITJSON
+
+	for sql.Next() {
+		sql.Scan(&pool)
+		pool = strings.Replace(pool, `\`, ``, 1)
+		err := json.Unmarshal([]byte(pool), &data)
+
+		if err != nil {
+			panic(err.Error())
+		}
+		result = append(result, data)
 	}
-
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
-		"data":   data,
+		"data":   result,
 	})
 
 	return
