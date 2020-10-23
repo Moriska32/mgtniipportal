@@ -116,7 +116,7 @@ func GetRequest(c *gin.Context) {
 	todo := fmt.Sprintf(`SELECT mail.json
 	FROM public.mail mail, public.mail_type mail_type
 	WHERE 
-		mail_type.type_id = mail.type_id and mail.type_id = %s order by mail.date;`, typeid)
+		mail_type.type_id = mail.type_id and mail.type_id = %s order by mail.date desc;`, typeid)
 	var (
 		pool string
 		data SendMailITJSON
