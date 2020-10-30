@@ -18,12 +18,12 @@ func Search(c *gin.Context) {
 
 	param := c.Param("param")
 
-	if param == "" {
-		c.JSON(http.StatusNotFound, gin.H{
-			"status": http.StatusNotFound,
-		})
-		return
-	}
+	// if param == "" {
+	// 	c.JSON(http.StatusNotFound, gin.H{
+	// 		"status": http.StatusNotFound,
+	// 	})
+	// 	return
+	// }
 
 	todo := `select pool from (
 	SELECT row_to_json::text as pool
