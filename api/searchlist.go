@@ -11,14 +11,15 @@ import (
 
 //Search in bd
 func Search(c *gin.Context) {
+	log.Println("поиск")
+	Param := c.Param("param")
 
 	dbConnect := config.Connect()
 
 	defer dbConnect.Close()
 
-	param := c.Param("param")
-
-	if param == "" {
+	log.Println(Param)
+	if Param == "" {
 		c.JSON(http.StatusNotFound, gin.H{
 			"status": http.StatusNotFound,
 		})
@@ -27,7 +28,7 @@ func Search(c *gin.Context) {
 
 	todo := `select pool from (
 	SELECT row_to_json::text as pool
-	FROM public.searchlist) as pool where pool like '%` + param + `%';`
+	FROM public.searchlist) as pool where pool like '%` + Param + `%';`
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
