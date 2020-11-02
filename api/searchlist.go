@@ -27,6 +27,10 @@ func Search(c *gin.Context) {
 		return
 	}
 
+	refresh := `REFRESH MATERIALIZED VIEW public.searchlist;`
+
+	_, err := dbConnect.Query(refresh)
+
 	todo := `select pool from (
 	SELECT row_to_json::text as pool
 	FROM public.searchlist) as pool where pool like '%` + param + `%';`
