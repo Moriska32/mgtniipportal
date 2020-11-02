@@ -296,3 +296,31 @@ func Getnewslist(c *gin.Context) {
 	dbConnect.Close()
 	return
 }
+
+//GetOneNews get one news
+func GetOneNews(c *gin.Context) {
+
+	id := c.PostForm("id")
+
+	dbConnect := config.Connect()
+	todo := fmt.Sprintf("SELECT tnews.*, tnews_file.* FROM public.tnews tnews, public.tnews_file tnews_file WHERE tnews_file.n_id = tnews.n_id AND tnews_file.n_id = %s order by tnews.n_date desc;", id)
+
+	defer dbConnect.Close()
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+	dbConnect.Close()
+	return
+}

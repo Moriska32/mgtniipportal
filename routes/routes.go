@@ -57,6 +57,8 @@ func Routes(router *gin.Engine) {
 			root.POST("/newuser", user.Newuser)
 			root.POST("/updatenews", news.Updatenews)
 			root.POST("/deletenews", news.Deletenews)
+			root.POST("/getonenews", news.GetOneNews)
+
 			//User
 			root.POST("/loginpass", user.Loginpass)
 			root.GET("/getusers", user.Getusers)
