@@ -69,6 +69,8 @@ func Routes(router *gin.Engine) {
 
 			root.POST("/deleteusers", user.Deleteuser)
 			root.POST("/updateuser", user.Updateuser)
+			root.POST("/getuserslimit", user.Getuserslimit)
+
 			//Object
 			root.GET("/objectstype", api.Objectstype)
 			root.GET("/objects/:id", api.Objects)

@@ -324,7 +324,8 @@ func GetuserNotPass(c *gin.Context) {
 	id := c.PostForm("user_id")
 	dbConnect := config.Connect()
 	todo := fmt.Sprintf(`SELECT user_id, login, fam, "name", otch, birthday, foto, 
-	hobby, profskills, drecrut, dep_id, chief, tel, workplace, userrole, del, post_id from public.tuser where user_id = %s and login not in ('admin', 'moder', 'user');`, id)
+	hobby, profskills, drecrut, dep_id, chief, tel, workplace, userrole, del,
+	 post_id from public.tuser where user_id = %s and login not in ('admin', 'moder', 'user');`, id)
 
 	defer dbConnect.Close()
 
@@ -398,4 +399,40 @@ func Getsuperuser(c *gin.Context) {
 
 	return
 
+}
+
+//Getuserslimit get user by limit
+func Getuserslimit(c *gin.Context) {
+	dbConnect := config.Connect()
+
+	limit := c.PostForm("limit")
+	offset := c.PostForm("offset")
+
+	todo := fmt.Sprintf(`SELECT user_id, login, fam, "name", otch, birthday, foto, 
+	hobby, profskills, drecrut, dep_id, chief, tel, workplace, userrole, del, post_id
+	FROM public.tuser limit %s offset %s;`, limit, offset)
+
+	defer dbConnect.Close()
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	for _, items := range data {
+
+		items["foto-min"] = strings.Replace(strings.Replace(items["foto"], ".jpg", "-min.jpg", 1), "Пользователи", "Пользователи-min", 1)
+
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+	dbConnect.Close()
+	return
 }
