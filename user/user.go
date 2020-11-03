@@ -443,10 +443,10 @@ func Getusersobj(c *gin.Context) {
 
 	objid := c.PostForm("obj_id")
 
-	todo := fmt.Sprintf(`SELECT t.user_id, t.login, t.fam, t."name", t.otch, t.birthday, t.foto,
-	 t.hobby, t.profskills, t.drecrut, t.dep_id, t.chief, t.tel, t.workplace, t.userrole t.del, t.post_id
-	FROM public.tobject floor, public.tobject room,public.tobject cabinet, public.tuser t
-	where floor.type_id = %s and floor.object_id = room.container_id and room.object_id = cabinet.container_id and t.workplace = cabinet.object_id;;`, objid)
+	todo := fmt.Sprintf(`
+	SELECT t.user_id, t.login, t.fam, t."name", t.otch, t.birthday, t.foto, t.hobby, t.profskills, t.drecrut, t.dep_id, t.chief, t.tel, t.workplace, t.userrole, t.del, t.post_id
+		FROM public.tobject floor, public.tobject room,public.tobject cabinet, public.tuser t
+		where floor.object_id = %s and floor.object_id = room.container_id and room.object_id = cabinet.container_id and t.workplace = cabinet.object_id;`, objid)
 
 	defer dbConnect.Close()
 
