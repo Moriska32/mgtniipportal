@@ -436,3 +436,38 @@ func Getuserslimit(c *gin.Context) {
 	dbConnect.Close()
 	return
 }
+
+//Getusersobj get user by limit
+func Getusersobj(c *gin.Context) {
+	dbConnect := config.Connect()
+
+	objid := c.PostForm("obj_id")
+
+	todo := fmt.Sprintf(`SELECT t.*
+	FROM public.tobject floor, public.tobject room,public.tobject cabinet, public.tuser t
+	where floor.type_id = %s and floor.object_id = room.container_id and room.object_id = cabinet.container_id and t.workplace = cabinet.object_id;;`, objid)
+
+	defer dbConnect.Close()
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	for _, items := range data {
+
+		items["foto-min"] = strings.Replace(strings.Replace(items["foto"], ".jpg", "-min.jpg", 1), "Пользователи", "Пользователи-min", 1)
+
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+	dbConnect.Close()
+	return
+}
