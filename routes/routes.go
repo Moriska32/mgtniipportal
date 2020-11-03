@@ -71,7 +71,7 @@ func Routes(router *gin.Engine) {
 			root.POST("/updateuser", user.Updateuser)
 			root.POST("/getuserslimit", user.Getuserslimit)
 
-			oot.POST("/getusersobj", user.Getusersobj)
+			root.POST("/getusersobj", user.Getusersobj)
 
 			//Object
 			root.GET("/objectstype", api.Objectstype)
