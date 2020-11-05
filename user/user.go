@@ -293,7 +293,6 @@ func Getusers(c *gin.Context) {
 //Getuser get news
 func Getuser(c *gin.Context) {
 	var data []map[string]string
-	data[0]["foto-min"] = ""
 	id := c.PostForm("user_id")
 	dbConnect := config.Connect()
 	todo := fmt.Sprintf("SELECT * from public.tuser where user_id = %s;", id)
