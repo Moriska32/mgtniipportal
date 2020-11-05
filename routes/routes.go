@@ -54,12 +54,13 @@ func Routes(router *gin.Engine) {
 			root.POST("/postnews", news.Postnews)
 			root.POST("/getnewslist", news.Getnewslist)
 			root.GET("/getnews", news.Getnews)
-			root.POST("/newuser", user.Newuser)
+
 			root.POST("/updatenews", news.Updatenews)
 			root.POST("/deletenews", news.Deletenews)
 			root.POST("/getonenews", news.GetOneNews)
 
 			//User
+			root.POST("/newuser", user.Newuser)
 			root.POST("/loginpass", user.Loginpass)
 			root.GET("/getusers", user.Getusers)
 			root.GET("/getportalusers", user.GetUsersNotPass)
