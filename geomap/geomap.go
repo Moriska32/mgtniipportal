@@ -35,9 +35,9 @@ func Map(c *gin.Context) {
 	fmt.Printf(string(bodyBytes))
 
 	sql := `SELECT sobject_type.*, tobject.object_id, St_asgeojson(tobject.geom), tobject.container_id
-		FROM public.sobject_type sobject_type, public.tobject tobject
-		WHERE
-			tobject.type_id = sobject_type.type_id and tobject.container_id = %s;`
+	FROM public.sobject_type sobject_type, public.tobject tobject
+	WHERE
+		tobject.type_id = sobject_type.type_id and tobject.container_id = %s;`
 
 	_ = sql
 
@@ -66,24 +66,26 @@ func Map(c *gin.Context) {
 		rowson, err := dbConnect.Query(fmt.Sprintf(sql, pool.ObjectID))
 
 		for rowson.Next() {
-
-			if err = rowson.Scan(&pool.TypeID, &pool.TypeName, &pool.Container, &pool.ObjectID, &pool.Geom, &pool.ContainerID); err != nil {
+			poolson := new(Geom)
+			if err = rowson.Scan(&poolson.TypeID, &poolson.TypeName, &poolson.Container, &poolson.ObjectID, &poolson.Geom, &poolson.ContainerID); err != nil {
 				fmt.Println("Scanning rowson failed.....")
 				fmt.Println(err.Error())
 				continue
 			}
-			geom = append(geom, pool)
 
 			rowsons, err := dbConnect.Query(fmt.Sprintf(sql, pool.ObjectID))
+			geom = append(geom, poolson)
 
 			for rowsons.Next() {
 
-				if err = rowsons.Scan(&pool.TypeID, &pool.TypeName, &pool.Container, &pool.ObjectID, &pool.Geom, &pool.ContainerID); err != nil {
+				poolsons := new(Geom)
+
+				if err = rowsons.Scan(&poolsons.TypeID, &poolsons.TypeName, &poolsons.Container, &poolsons.ObjectID, &poolsons.Geom, &poolsons.ContainerID); err != nil {
 					fmt.Println("Scanning rowsons failed.....")
 					fmt.Println(err.Error())
 					continue
 				}
-				geom = append(geom, pool)
+				geom = append(geom, poolsons)
 
 			}
 
