@@ -480,7 +480,7 @@ func Getusersletter(c *gin.Context) {
 
 	todo := fmt.Sprintf(`SELECT user_id, login, fam, "name", otch, birthday, foto,
 	 hobby, profskills, drecrut, dep_id, chief, tel, workplace, userrole, del, post_id
-	FROM public.tuser where upper(substr(fam,1,1)) = upper('%s');`, letter)
+	FROM public.tuser where upper(substr(fam,1,1)) = upper('%s') and login not in ('admin', 'user', 'moder');`, letter)
 
 	defer dbConnect.Close()
 
