@@ -293,7 +293,7 @@ func Getusers(c *gin.Context) {
 //Getuser get news
 func Getuser(c *gin.Context) {
 	var data []map[string]string
-	data[0]["foto-min"] = ""
+	data[0]["foto-min"] := ""
 	id := c.PostForm("user_id")
 	dbConnect := config.Connect()
 	todo := fmt.Sprintf("SELECT * from public.tuser where user_id = %s;", id)
@@ -517,6 +517,41 @@ func Getusersbyobj(c *gin.Context) {
 	todo := fmt.Sprintf(`SELECT user_id, login, fam, "name", otch, birthday, foto, hobby,
 	profskills, drecrut, dep_id, chief, tel, workplace, userrole, del, post_id
 	FROM public.tuser where workplace = %s;`, objid)
+
+	defer dbConnect.Close()
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	for _, items := range data {
+
+		items["foto-min"] = strings.Replace(strings.Replace(items["foto"], ".jpg", "-min.jpg", 1), "Пользователи", "Пользователи-min", 1)
+
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+	dbConnect.Close()
+	return
+}
+
+//Getuserslimitcount get user by limit
+func Getuserslimitcount(c *gin.Context) {
+	dbConnect := config.Connect()
+
+	limit := c.PostForm("limit")
+	offset := c.PostForm("offset")
+
+	todo := fmt.Sprintf(`SELECT count(user_id)
+	FROM public.tuser limit %s offset %s;`, limit, offset)
 
 	defer dbConnect.Close()
 
