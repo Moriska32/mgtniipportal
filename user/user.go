@@ -548,7 +548,7 @@ func Getuserslimitcount(c *gin.Context) {
 
 	limit := c.PostForm("limit")
 
-	todo := fmt.Sprintf(`SELECT ((count(*)+7)/%s+1) as pages_length from public.tuser;`, limit)
+	todo := fmt.Sprintf(`SELECT (count(*)/%s+1) as pages_length from public.tuser;`, limit)
 
 	defer dbConnect.Close()
 
