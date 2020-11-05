@@ -507,3 +507,38 @@ func Getusersletter(c *gin.Context) {
 	dbConnect.Close()
 	return
 }
+
+//Getusersbyobj get user by limit
+func Getusersbyobj(c *gin.Context) {
+	dbConnect := config.Connect()
+
+	objid := c.PostForm("obj_id")
+
+	todo := fmt.Sprintf(`SELECT user_id, login, fam, "name", otch, birthday, foto, hobby,
+	profskills, drecrut, dep_id, chief, tel, workplace, userrole, del, post_id
+	FROM public.tuser where workplace = %s;`, objid)
+
+	defer dbConnect.Close()
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	for _, items := range data {
+
+		items["foto-min"] = strings.Replace(strings.Replace(items["foto"], ".jpg", "-min.jpg", 1), "Пользователи", "Пользователи-min", 1)
+
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+	dbConnect.Close()
+	return
+}
