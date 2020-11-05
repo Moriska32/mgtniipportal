@@ -542,15 +542,13 @@ func Getusersbyobj(c *gin.Context) {
 	return
 }
 
-//Getuserslimitcount get user by limit
+//Getuserslimitcount get count of users by limit
 func Getuserslimitcount(c *gin.Context) {
 	dbConnect := config.Connect()
 
 	limit := c.PostForm("limit")
-	offset := c.PostForm("offset")
 
-	todo := fmt.Sprintf(`SELECT count(user_id)
-	FROM public.tuser limit %s offset %s;`, limit, offset)
+	todo := fmt.Sprintf(`SELECT (count(*)+7)/%s+1 from public.tuser;`, limit)
 
 	defer dbConnect.Close()
 
@@ -564,11 +562,7 @@ func Getuserslimitcount(c *gin.Context) {
 		})
 		return
 	}
-	for _, items := range data {
 
-		items["foto-min"] = strings.Replace(strings.Replace(items["foto"], ".jpg", "-min.jpg", 1), "Пользователи", "Пользователи-min", 1)
-
-	}
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
 		"data":   data,
