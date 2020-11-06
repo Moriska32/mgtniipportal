@@ -2,11 +2,13 @@ package news
 
 import (
 	config "PortalMGTNIIP/config"
+	"bytes"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"strings"
 
 	"github.com/elgs/gosqljson"
@@ -48,6 +50,16 @@ func Getnews(c *gin.Context) {
 		})
 		return
 	}
+
+	for _, item := range data {
+
+		if item["nf_type"] == "1" {
+
+			item["screen"] = PictureFromVideo(item["nf_name"])
+		}
+
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
 		"data":   data,
@@ -325,4 +337,23 @@ func GetOneNews(c *gin.Context) {
 	})
 	dbConnect.Close()
 	return
+}
+
+//PictureFromVideo take picture from video
+func PictureFromVideo(filename string) string {
+
+	filename = strings.Replace(filename, "file", "public", 1)
+	format := strings.Split(filename, ".")[len(strings.Split(filename, "."))-1]
+	width := 640
+	height := 360
+	cmd := exec.Command("ffmpeg", "-i", filename, "-vframes", "1", "-s", fmt.Sprintf("%dx%d", width, height), "-f", strings.Replace(filename, format, "jpg", 1), "-")
+	var buffer bytes.Buffer
+	cmd.Stdout = &buffer
+	filename = strings.Replace((strings.Replace(filename, "public", "file", 1)), format, "jpg", 1)
+	if cmd.Run() != nil {
+		filename = ""
+	}
+
+	return filename
+
 }
