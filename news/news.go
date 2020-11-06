@@ -344,9 +344,8 @@ func PictureFromVideo(filename string) string {
 
 	filename = strings.Replace(filename, "file", "public", 1)
 	format := strings.Split(filename, ".")[len(strings.Split(filename, "."))-1]
-	width := 640
-	height := 360
-	cmd := exec.Command("ffmpeg", "-i", filename, "-vframes", "1", "-s", fmt.Sprintf("%dx%d", width, height), "-f", strings.Replace(filename, format, "jpg", 1), "-")
+
+	cmd := exec.Command("ffmpeg", "-i", filename, "-ss", "00:00:01", "-vframes", "1", strings.Replace(filename, format, "jpg", 1))
 	var buffer bytes.Buffer
 	cmd.Stdout = &buffer
 	filename = strings.Replace((strings.Replace(filename, "public", "file", 1)), format, "jpg", 1)
