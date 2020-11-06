@@ -348,7 +348,7 @@ func PictureFromVideo(filename string) string {
 	log.Println("ffmpeg", "-i", filename, "-ss", "00:00:01", "-vframes", "1", strings.Replace(filename, format, "jpg", 1))
 	cmd, err := exec.Command("ffmpeg", "-i", filename, "-ss", "00:00:01", "-vframes", "1", strings.Replace(filename, format, "jpg", 1)).Output()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	fmt.Printf("%s\n", cmd)
 

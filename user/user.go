@@ -570,3 +570,62 @@ func Getuserslimitcount(c *gin.Context) {
 	dbConnect.Close()
 	return
 }
+
+//Getusersadmins get count of users by limit
+func Getusersadmins(c *gin.Context) {
+	dbConnect := config.Connect()
+
+	todo := `select * from tuser
+	where fam in ('Зенина'
+   ,'Попова'
+   ,'Герасимов'
+   ,'Барсуков'
+   ,'Еременко'
+   ,'Былин'
+   ,'Горелов'
+   ,'Полищученко'
+   ,'Чепин'
+   ,'Клипов'
+   ,'Шабуня'
+   ,'Рязанцев'
+   ,'Щепаков'
+   ,'Трофимов'
+   ,'Курганская') and 
+   name in (
+   'Валерия'
+   ,'Юлия'
+   ,'Александр'
+   ,'Петр'
+   ,'Владимир'
+   ,'Владислав'
+   ,'Станислав'
+   ,'Владислав'
+   ,'Артём'
+   ,'Олег'
+   ,'Вадим'
+   ,'Никита'
+   ,'Максим'
+   ,'Дмитрий'
+   ,'Марина'
+   );`
+
+	defer dbConnect.Close()
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+	dbConnect.Close()
+	return
+}

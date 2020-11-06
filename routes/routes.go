@@ -76,6 +76,8 @@ func Routes(router *gin.Engine) {
 			root.POST("/getusersbyobj", user.Getusersbyobj)
 			root.POST("/getuserslimitcount", user.Getuserslimitcount)
 
+			root.GET("/getusersadmins", user.Getusersadmins)
+
 			//Object
 			root.GET("/objectstype", api.Objectstype)
 			root.GET("/objects/:id", api.Objects)
