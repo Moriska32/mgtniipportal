@@ -55,7 +55,7 @@ func Getnews(c *gin.Context) {
 
 		if item["nf_type"] == "1" {
 
-			item["screen"] = PictureFromVideo(item["nf_name"])
+			item["screen"] = PictureFromVideo(item["nf_path"])
 		}
 
 	}
@@ -123,7 +123,8 @@ func Postnews(c *gin.Context) {
 				return
 			}
 
-			path = fmt.Sprintf("/file/%s/%s/%s", folder, subfolder, file.Filename)
+			path = fmt.Sprintf("/file/%s/%s/%s", folder, subfolder, fi
+			le.Filename)
 			filename = file.Filename
 
 		}
