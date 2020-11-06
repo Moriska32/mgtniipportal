@@ -43,8 +43,8 @@ func Auth() *jwt.GinJWTMiddleware {
 	authMiddleware, err := jwt.New(&jwt.GinJWTMiddleware{
 		Realm:       "test zone",
 		Key:         []byte("secret key"),
-		Timeout:     time.Duration(5) * time.Minute,
-		MaxRefresh:  time.Duration(5) * time.Minute,
+		Timeout:     time.Hour,
+		MaxRefresh:  time.Hour,
 		IdentityKey: identityKey,
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
 			if v, ok := data.(*User); ok {
