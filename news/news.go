@@ -123,8 +123,7 @@ func Postnews(c *gin.Context) {
 				return
 			}
 
-			path = fmt.Sprintf("/file/%s/%s/%s", folder, subfolder, fi
-			le.Filename)
+			path = fmt.Sprintf("/file/%s/%s/%s", folder, subfolder, file.Filename)
 			filename = file.Filename
 
 		}
@@ -344,12 +343,14 @@ func GetOneNews(c *gin.Context) {
 func PictureFromVideo(filename string) string {
 
 	filename = strings.Replace(filename, "file", "public", 1)
+	log.Println(filename)
 	format := strings.Split(filename, ".")[len(strings.Split(filename, "."))-1]
-
+	log.Println(format)
 	cmd := exec.Command("ffmpeg", "-i", filename, "-ss", "00:00:01", "-vframes", "1", strings.Replace(filename, format, "jpg", 1))
 	var buffer bytes.Buffer
 	cmd.Stdout = &buffer
 	filename = strings.Replace((strings.Replace(filename, "public", "file", 1)), format, "jpg", 1)
+	log.Println(filename)
 	if cmd.Run() != nil {
 		filename = ""
 	}
