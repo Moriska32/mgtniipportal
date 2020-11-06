@@ -575,7 +575,7 @@ func Getuserslimitcount(c *gin.Context) {
 func Getusersadmins(c *gin.Context) {
 	dbConnect := config.Connect()
 
-	todo := `select * from tuser
+	todo := `select user_id, login, fam, "name", otch, birthday, foto, hobby, profskills, drecrut, dep_id, chief, tel, workplace, userrole, del, post_id from tuser
 	where fam in ('Зенина'
    ,'Попова'
    ,'Герасимов'
