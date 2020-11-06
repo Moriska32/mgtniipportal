@@ -342,15 +342,15 @@ func GetOneNews(c *gin.Context) {
 //PictureFromVideo take picture from video
 func PictureFromVideo(filename string) string {
 
-	filename = strings.Replace(filename, "file", "public", 1)
+	filename = strings.Replace(filename, "/file", "public", 1)
 	log.Println(filename)
 	format := strings.Split(filename, ".")[len(strings.Split(filename, "."))-1]
 	log.Println(format)
 	log.Println("ffmpeg", "-i", filename, "-ss", "00:00:01", "-vframes", "1", strings.Replace(filename, format, "jpg", 1))
-	cmd := exec.Command("ffmpeg", "-i", filename, "-ss", "00:00:01", "-vframes", "1", strings.Replace(filename, format, "jpg", 1))
+	cmd := exec.Command("sudo ffmpeg", "-i", filename, "-ss", "00:00:01", "-vframes", "1", strings.Replace(filename, format, "jpg", 1))
 	var buffer bytes.Buffer
 	cmd.Stdout = &buffer
-	filename = strings.Replace((strings.Replace(filename, "public", "file", 1)), format, "jpg", 1)
+	filename = strings.Replace((strings.Replace(filename, "public", "/file", 1)), format, "jpg", 1)
 	log.Println(filename)
 
 	return filename
