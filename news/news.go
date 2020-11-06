@@ -2,7 +2,6 @@ package news
 
 import (
 	config "PortalMGTNIIP/config"
-	"bytes"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -347,12 +346,12 @@ func PictureFromVideo(filename string) string {
 	format := strings.Split(filename, ".")[len(strings.Split(filename, "."))-1]
 	log.Println(format)
 	log.Println("ffmpeg", "-i", filename, "-ss", "00:00:01", "-vframes", "1", strings.Replace(filename, format, "jpg", 1))
-	cmd := exec.Command("ffmpeg", "-i", filename, "-ss", "00:00:01", "-vframes", "1", strings.Replace(filename, format, "jpg", 1))
-	var buffer bytes.Buffer
-	cmd.Stdout = &buffer
-	if cmd.Run() != nil {
-		panic("could not generate frame")
+	cmd, err := exec.Command("ffmpeg", "-i", filename, "-ss", "00:00:01", "-vframes", "1", strings.Replace(filename, format, "jpg", 1)).Output()
+	if err != nil {
+		log.Fatal(err)
 	}
+	fmt.Printf("%s\n", cmd)
+
 	filename = strings.Replace((strings.Replace(filename, "public", "/file", 1)), format, "jpg", 1)
 	log.Println(filename)
 
