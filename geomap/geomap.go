@@ -4,7 +4,6 @@ import (
 	config "PortalMGTNIIP/config"
 	"database/sql"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -30,10 +29,6 @@ func Map(c *gin.Context) {
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 
-	bodyBytes, err := ioutil.ReadAll(c.Request.Body)
-
-	fmt.Printf(string(bodyBytes))
-
 	sql := `SELECT sobject_type.*, tobject.object_id, St_asgeojson(tobject.geom), tobject.container_id
 	FROM public.sobject_type sobject_type, public.tobject tobject
 	WHERE
@@ -45,8 +40,6 @@ func Map(c *gin.Context) {
 		FROM public.sobject_type sobject_type, public.tobject tobject
 		WHERE
 			tobject.type_id = sobject_type.type_id and tobject.object_id = ` + id + `;`
-
-	fmt.Println(todo)
 
 	rows, err := dbConnect.Query(todo)
 
@@ -74,7 +67,7 @@ func Map(c *gin.Context) {
 			}
 
 			geom = append(geom, poolson)
-			rowsons, err := dbConnect.Query(fmt.Sprintf(sql, pool.ObjectID))
+			rowsons, err := dbConnect.Query(fmt.Sprintf(sql, poolson.ObjectID))
 
 			for rowsons.Next() {
 
