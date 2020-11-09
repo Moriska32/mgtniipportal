@@ -365,3 +365,33 @@ func DeleteProjects(c *gin.Context) {
 	})
 
 }
+
+//GetProjectsByID get project
+func GetProjectsByID(c *gin.Context) {
+
+	id := c.PostFormArray("pd_id")
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+	todo := fmt.Sprintf(`SELECT tproject.*, tproject_file.*
+	FROM public.tproject tproject, public.tproject_file tproject_file
+	WHERE 
+		tproject_file.proj_id = tproject.proj_id and tproject.pd_id = %s order by tproject.drealiz desc ;`, id)
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+	dbConnect.Close()
+	return
+}
