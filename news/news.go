@@ -364,11 +364,12 @@ func GetnewsLimit(c *gin.Context) {
 
 	limit := c.PostForm("limit")
 	offset := c.PostForm("offset")
+	t := c.PostForm("type")
 
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 	todo := fmt.Sprintf(`SELECT tnews.*, tnews_file.* FROM public.tnews tnews, public.tnews_file tnews_file 
-	WHERE tnews_file.n_id = tnews.n_id order by tnews.n_date desc limit %s offset %s;`, limit, offset)
+	WHERE tnews_file.n_id = tnews.n_id and nf_type = %s order by tnews.n_date desc limit %s offset %s;`, t, limit, offset)
 
 	defer dbConnect.Close()
 
@@ -394,11 +395,12 @@ func GetnewsLimit(c *gin.Context) {
 func GetnewsLimitCount(c *gin.Context) {
 
 	limit := c.PostForm("limit")
+	t := c.PostForm("type")
 
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 	todo := fmt.Sprintf(`SELECT (count(*)/%s +1) FROM public.tnews tnews, public.tnews_file tnews_file 
-	WHERE tnews_file.n_id = tnews.n_id order by tnews.n_date desc ;`, limit)
+	WHERE tnews_file.n_id = tnews.n_id and nf_type = %s  order by tnews.n_date desc ;`, limit, t)
 
 	defer dbConnect.Close()
 
