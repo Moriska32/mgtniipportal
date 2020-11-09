@@ -73,8 +73,8 @@ func Map(c *gin.Context) {
 				continue
 			}
 
-			rowsons, err := dbConnect.Query(fmt.Sprintf(sql, pool.ObjectID))
 			geom = append(geom, poolson)
+			rowsons, err := dbConnect.Query(fmt.Sprintf(sql, pool.ObjectID))
 
 			for rowsons.Next() {
 
