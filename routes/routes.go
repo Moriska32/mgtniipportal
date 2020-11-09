@@ -59,6 +59,10 @@ func Routes(router *gin.Engine) {
 			root.POST("/deletenews", news.Deletenews)
 			root.POST("/getonenews", news.GetOneNews)
 
+			root.POST("/getnewslimit", news.GetnewsLimit)
+
+			root.POST("/getnewslimitcount", news.GetnewsLimitCount)
+
 			//User
 			root.POST("/newuser", user.Newuser)
 			root.POST("/loginpass", user.Loginpass)
@@ -90,6 +94,10 @@ func Routes(router *gin.Engine) {
 			root.POST("/deleteprojects", projects.DeleteProjects)
 
 			root.POST("/getprojectsbydirectionid", projects.GetProjectsByID)
+
+			root.POST("/getprojectslimit", projects.GetProjectsLimit)
+
+			root.POST("/getprojectslimitcount", projects.GetProjectsLimitCount)
 
 			//Meetingroom
 			root.GET("/meetingrooms", api.Meetingrooms)

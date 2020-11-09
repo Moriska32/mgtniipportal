@@ -395,3 +395,64 @@ func GetProjectsByID(c *gin.Context) {
 	dbConnect.Close()
 	return
 }
+
+//GetProjectsLimit get project
+func GetProjectsLimit(c *gin.Context) {
+
+	limit := c.PostForm("limit")
+	offset := c.PostForm("offset")
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+	todo := fmt.Sprintf(`SELECT tproject.*, tproject_file.*
+	FROM public.tproject tproject, public.tproject_file tproject_file
+	WHERE 
+		tproject_file.proj_id = tproject.proj_id order by tproject.drealiz desc limit %s offset %s;`, limit, offset)
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+	dbConnect.Close()
+	return
+}
+
+//GetProjectsLimitCount get project
+func GetProjectsLimitCount(c *gin.Context) {
+
+	limit := c.PostForm("limit")
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+	todo := fmt.Sprintf(`SELECT (count(*)/%s +1) as pages_length
+	FROM public.tproject tproject, public.tproject_file tproject_file
+	WHERE 
+		tproject_file.proj_id = tproject.proj_id order by tproject.drealiz desc;`, limit)
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+	dbConnect.Close()
+	return
+}
