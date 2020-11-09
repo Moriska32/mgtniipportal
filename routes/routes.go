@@ -89,7 +89,7 @@ func Routes(router *gin.Engine) {
 			root.GET("/getprojectsdirections", projects.GetProjectsDirection)
 			root.POST("/deleteprojects", projects.DeleteProjects)
 
-			root.POST("/getprojectsbyid", projects.GetProjectsByID)
+			root.POST("/getprojectsbydirectionid", projects.GetProjectsByID)
 
 			//Meetingroom
 			root.GET("/meetingrooms", api.Meetingrooms)
