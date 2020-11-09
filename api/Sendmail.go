@@ -7,7 +7,6 @@ import (
 	js "encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"gopkg.in/gomail.v2"
@@ -127,7 +126,7 @@ func GetRequest(c *gin.Context) {
 
 	for sql.Next() {
 		sql.Scan(&pool)
-		pool = strings.Replace(pool, `\`, ``, 1)
+		//pool = strings.Replace(pool, `\`, ``, 1)
 		err := json.Unmarshal([]byte(pool), &data)
 
 		if err != nil {
