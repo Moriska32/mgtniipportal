@@ -369,7 +369,7 @@ func DeleteProjects(c *gin.Context) {
 //GetProjectsByID get project
 func GetProjectsByID(c *gin.Context) {
 
-	id := c.PostFormArray("pd_id")
+	id := c.PostForm("pd_id")
 
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
