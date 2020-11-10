@@ -585,7 +585,8 @@ func Getusersadmins(c *gin.Context) {
 	dbConnect := config.Connect()
 
 	todo := `select user_id, login, fam, "name", otch, birthday, foto, hobby, profskills, drecrut, dep_id, chief, tel, workplace, userrole, del, post_id from tuser
-	where fam in ('Зенина'
+	where fam in ( 'Поляков'
+   ,'Зенина'
    ,'Попова'
    ,'Герасимов'
    ,'Барсуков'
@@ -601,7 +602,8 @@ func Getusersadmins(c *gin.Context) {
    ,'Трофимов'
    ,'Курганская') and 
    name in (
-   'Валерия'
+	   'Александр'
+   ,'Валерия'
    ,'Юлия'
    ,'Александр'
    ,'Петр'
