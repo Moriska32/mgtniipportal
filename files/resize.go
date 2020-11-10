@@ -34,13 +34,13 @@ func Resize(name string) {
 	file, err := os.Open(name)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	defer file.Close()
 	// decode jpeg into image.Image
 	img, _, err := image.Decode(file)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	file.Close()
@@ -55,7 +55,7 @@ func Resize(name string) {
 	fmt.Println(name)
 	out, err := os.Create(name)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 	defer out.Close()
 
