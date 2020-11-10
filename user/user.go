@@ -178,6 +178,11 @@ func Updateuser(c *gin.Context) {
 	os.Mkdir(fmt.Sprintf("public/%s/%s", folder, subfolder), os.ModePerm)
 
 	switch {
+
+	case (len(folder) + len(subfolder) + len(filepath)) == 0:
+
+		path = "/file/photos/Пользователи/default-user-avatar.jpg"
+
 	case len(files) > 0:
 		os.Mkdir(fmt.Sprintf("public/%s/%s", folder, subfolder), os.ModePerm)
 
