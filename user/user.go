@@ -557,7 +557,7 @@ func Getuserslimitcount(c *gin.Context) {
 
 	limit := c.PostForm("limit")
 
-	todo := fmt.Sprintf(`SELECT (count(*)/%s +1) as pages_length from public.tuser where login not in ('admin', 'user', 'moder');`, limit)
+	todo := fmt.Sprintf(`SELECT floor(count(*)/%s) as pages_length from public.tuser where login not in ('admin', 'user', 'moder');`, limit)
 
 	defer dbConnect.Close()
 
