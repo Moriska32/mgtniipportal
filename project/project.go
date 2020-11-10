@@ -434,7 +434,7 @@ func GetProjectsLimitCount(c *gin.Context) {
 
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
-	todo := fmt.Sprintf(`select (count(*)/%s +1) as pages_length from
+	todo := fmt.Sprintf(`select floor(count(*)/%s) as pages_length from
 	(SELECT *
 	FROM public.tproject tproject, public.tproject_file tproject_file
 	WHERE 

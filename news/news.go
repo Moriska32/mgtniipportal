@@ -399,7 +399,7 @@ func GetnewsLimitCount(c *gin.Context) {
 
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
-	todo := fmt.Sprintf(`select (count(*)/%s +1) as pages_length from
+	todo := fmt.Sprintf(`select floor(count(*)/%s) as pages_length from
 	(SELECT * FROM public.tnews tnews, public.tnews_file tnews_file 
 		WHERE tnews_file.n_id = tnews.n_id and nf_type = %s  order by tnews.n_date desc) a ;`, limit, t)
 
