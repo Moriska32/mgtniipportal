@@ -16,6 +16,7 @@ type Geom struct {
 	Container   string
 	ObjectID    string
 	Geom        string
+	Number      string
 	ContainerID sql.NullString
 }
 
@@ -29,14 +30,14 @@ func Map(c *gin.Context) {
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 
-	sql := `SELECT sobject_type.*, tobject.object_id, St_asgeojson(tobject.geom), tobject.container_id
+	sql := `SELECT sobject_type.*, tobject.object_id, tobject.number, St_asgeojson(tobject.geom), tobject.container_id
 	FROM public.sobject_type sobject_type, public.tobject tobject
 	WHERE
 		tobject.type_id = sobject_type.type_id and tobject.container_id = %s;`
 
 	_ = sql
 
-	todo := `SELECT sobject_type.*, tobject.object_id, St_asgeojson(tobject.geom), tobject.container_id
+	todo := `SELECT sobject_type.*, tobject.object_id, tobject.number, St_asgeojson(tobject.geom), tobject.container_id
 		FROM public.sobject_type sobject_type, public.tobject tobject
 		WHERE
 			tobject.type_id = sobject_type.type_id and tobject.object_id = ` + id + `;`
@@ -48,7 +49,7 @@ func Map(c *gin.Context) {
 	for rows.Next() {
 		pool := new(Geom)
 
-		if err = rows.Scan(&pool.TypeID, &pool.TypeName, &pool.Container, &pool.ObjectID, &pool.Geom, &pool.ContainerID); err != nil {
+		if err = rows.Scan(&pool.TypeID, &pool.TypeName, &pool.Container, &pool.ObjectID, &pool.Number, &pool.Geom, &pool.ContainerID); err != nil {
 			fmt.Println("Scanning failed.....")
 			fmt.Println(err.Error())
 			return
@@ -60,7 +61,7 @@ func Map(c *gin.Context) {
 
 		for rowson.Next() {
 			poolson := new(Geom)
-			if err = rowson.Scan(&poolson.TypeID, &poolson.TypeName, &poolson.Container, &poolson.ObjectID, &poolson.Geom, &poolson.ContainerID); err != nil {
+			if err = rowson.Scan(&poolson.TypeID, &poolson.TypeName, &poolson.Container, &poolson.ObjectID, &pool.Number, &poolson.Geom, &poolson.ContainerID); err != nil {
 				fmt.Println("Scanning rowson failed.....")
 				fmt.Println(err.Error())
 				continue
@@ -73,7 +74,7 @@ func Map(c *gin.Context) {
 
 				poolsons := new(Geom)
 
-				if err = rowsons.Scan(&poolsons.TypeID, &poolsons.TypeName, &poolsons.Container, &poolsons.ObjectID, &poolsons.Geom, &poolsons.ContainerID); err != nil {
+				if err = rowsons.Scan(&poolsons.TypeID, &poolsons.TypeName, &poolsons.Container, &poolsons.ObjectID, &pool.Number, &poolsons.Geom, &poolsons.ContainerID); err != nil {
 					fmt.Println("Scanning rowsons failed.....")
 					fmt.Println(err.Error())
 					continue
