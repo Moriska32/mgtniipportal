@@ -434,10 +434,11 @@ func GetProjectsLimitCount(c *gin.Context) {
 
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
-	todo := fmt.Sprintf(`SELECT (count(*)/%s +1) as pages_length
+	todo := fmt.Sprintf(`select (count(*)/%s +1) as pages_length from
+	(SELECT *
 	FROM public.tproject tproject, public.tproject_file tproject_file
 	WHERE 
-		tproject_file.proj_id = tproject.proj_id order by tproject.drealiz desc;`, limit)
+		tproject_file.proj_id = tproject.proj_id order by tproject.drealiz desc) a;`, limit)
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
