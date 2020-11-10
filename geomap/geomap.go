@@ -61,7 +61,7 @@ func Map(c *gin.Context) {
 
 		for rowson.Next() {
 			poolson := new(Geom)
-			if err = rowson.Scan(&poolson.TypeID, &poolson.TypeName, &poolson.Container, &poolson.ObjectID, &pool.Number, &poolson.Geom, &poolson.ContainerID); err != nil {
+			if err = rowson.Scan(&poolson.TypeID, &poolson.TypeName, &poolson.Container, &poolson.ObjectID, &poolson.Number, &poolson.Geom, &poolson.ContainerID); err != nil {
 				fmt.Println("Scanning rowson failed.....")
 				fmt.Println(err.Error())
 				continue
@@ -74,7 +74,7 @@ func Map(c *gin.Context) {
 
 				poolsons := new(Geom)
 
-				if err = rowsons.Scan(&poolsons.TypeID, &poolsons.TypeName, &poolsons.Container, &poolsons.ObjectID, &pool.Number, &poolsons.Geom, &poolsons.ContainerID); err != nil {
+				if err = rowsons.Scan(&poolsons.TypeID, &poolsons.TypeName, &poolsons.Container, &poolsons.ObjectID, &poolsons.Number, &poolsons.Geom, &poolsons.ContainerID); err != nil {
 					fmt.Println("Scanning rowsons failed.....")
 					fmt.Println(err.Error())
 					continue
