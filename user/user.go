@@ -48,19 +48,23 @@ func Newuser(c *gin.Context) {
 
 	os.Mkdir(fmt.Sprintf("public/%s/%s", folder, subfolder), os.ModePerm)
 	var path string
+	if len(folder)+len(subfolder) == 0 {
 
-	for _, file := range files {
+		path = "/file/photos/Пользователи/default-user-avatar.jpg"
 
-		if err := c.SaveUploadedFile(file, fmt.Sprintf("public/%s/%s/%s", folder, subfolder, file.Filename)); err != nil {
-			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
-			return
+	} else {
+		for _, file := range files {
+
+			if err := c.SaveUploadedFile(file, fmt.Sprintf("public/%s/%s/%s", folder, subfolder, file.Filename)); err != nil {
+				c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+				return
+			}
+
+			path = fmt.Sprintf("/file/%s/%s/%s", folder, subfolder, file.Filename)
+			fl.Resize(fmt.Sprintf("public/%s/%s/%s", folder, subfolder, file.Filename))
+
 		}
-
-		path = fmt.Sprintf("/file/%s/%s/%s", folder, subfolder, file.Filename)
-		fl.Resize(fmt.Sprintf("public/%s/%s/%s", folder, subfolder, file.Filename))
-
 	}
-
 	login := c.PostForm("login")
 	pass := c.PostForm("pass")
 	fam := c.PostForm("fam")
