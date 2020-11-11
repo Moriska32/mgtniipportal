@@ -347,6 +347,13 @@ func GetuserNotPass(c *gin.Context) {
 		})
 		return
 	}
+
+	for _, items := range data {
+
+		items["foto_min"] = strings.Replace(strings.Replace(items["foto"], ".jpg", "-min.jpg", 1), "Пользователи", "Пользователи-min", 1)
+
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
 		"data":   data,
@@ -373,6 +380,13 @@ func GetUsersNotPass(c *gin.Context) {
 		})
 		return
 	}
+
+	for _, items := range data {
+
+		items["foto_min"] = strings.Replace(strings.Replace(items["foto"], ".jpg", "-min.jpg", 1), "Пользователи", "Пользователи-min", 1)
+
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
 		"data":   data,
@@ -631,6 +645,12 @@ func Getusersadmins(c *gin.Context) {
 			"status": http.StatusNotFound,
 		})
 		return
+	}
+
+	for _, items := range data {
+
+		items["foto_min"] = strings.Replace(strings.Replace(items["foto"], ".jpg", "-min.jpg", 1), "Пользователи", "Пользователи-min", 1)
+
 	}
 
 	c.JSON(http.StatusOK, gin.H{
