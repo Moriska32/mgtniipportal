@@ -197,7 +197,7 @@ func GetRequestLimit(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
 		"data":   result,
-		"count":  count[0]["pages_lenght"],
+		"count":  count[0],
 	})
 
 	return
