@@ -357,7 +357,7 @@ func DeleteProjects(c *gin.Context) {
 			c.String(http.StatusBadRequest, fmt.Sprintf("Get file name err: %s", err.Error()))
 		}
 
-		os.Remove(strings.Replace(data[0]["pf_path"], "file", "public", 1))
+		os.Remove(strings.Replace(data[0]["pf_path"], "/file", "public", 1))
 
 		deletetProjectsfile := fmt.Sprintf(`
 		DELETE FROM public.tproject_file
