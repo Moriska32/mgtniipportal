@@ -147,3 +147,40 @@ func GetAllMeets(c *gin.Context) {
 
 	dbConnect.Close()
 }
+
+//GetMeetsLimit get all meeting
+func GetMeetsLimit(c *gin.Context) {
+
+	limit := c.PostForm("limit")
+	offset := c.PostForm("offset")
+
+	dbConnect := config.Connect()
+
+	todo := fmt.Sprintf(`SELECT period_id, object_id, to_char(period_beg, 'YYYY-MM-DD HH24:MI') as period_beg, 
+	to_char(period_end, 'YYYY-MM-DD HH24:MI') as period_end, user_id, descr
+	FROM public.tobject_reserve order by period_beg desc limit %s offset %s;`, limit, offset)
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+
+	todo = fmt.Sprintf(`SELECT ceil(count(*)::real/%s::real) as pages_length
+	FROM public.tobject_reserve ;`, limit)
+
+	count, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+		"count":  count,
+	})
+
+	dbConnect.Close()
+}

@@ -6,8 +6,10 @@ import (
 	"encoding/json"
 	js "encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
+	"github.com/elgs/gosqljson"
 	"github.com/gin-gonic/gin"
 	"gopkg.in/gomail.v2"
 )
@@ -137,6 +139,64 @@ func GetRequest(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
 		"data":   result,
+	})
+
+	return
+
+}
+
+//GetRequestLimit mail
+func GetRequestLimit(c *gin.Context) {
+
+	limit := c.PostForm("limit")
+	offset := c.PostForm("offset")
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+	todo := fmt.Sprintf(`SELECT mail.json
+	FROM public.mail mail, public.mail_type mail_type
+	WHERE 
+		mail_type.type_id = mail.type_id order by mail.date desc limit %s offset %s;`, limit, offset)
+	var (
+		pool string
+		data SendMailITJSON
+	)
+	sql, _ := dbConnect.Query(todo)
+
+	var result SendMailSITJSON
+
+	for sql.Next() {
+		sql.Scan(&pool)
+		//pool = strings.Replace(pool, `\`, ``, 1)
+		err := json.Unmarshal([]byte(pool), &data)
+
+		if err != nil {
+			panic(err.Error())
+		}
+		result = append(result, data)
+	}
+
+	todo = fmt.Sprintf(`SELECT ceil(count(*)::real/%s::real) as pages_length from
+	(SELECT mail.json
+	FROM public.mail mail, public.mail_type mail_type
+	WHERE 
+		mail_type.type_id = mail.type_id) a;`, limit)
+
+	theCase := "lower"
+	count, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   result,
+		"count":  count,
 	})
 
 	return

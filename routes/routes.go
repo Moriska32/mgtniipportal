@@ -107,11 +107,15 @@ func Routes(router *gin.Engine) {
 			root.POST("/updatemeet", meetingroom.Updatemeet)
 			root.GET("/getallmeets", meetingroom.GetAllMeets)
 
+			root.POST("/getmeetslimit", meetingroom.GetMeetsLimit)
+
 			//Mail sender
 			root.POST("/sendmail", api.SendMail)
 			root.POST("/sendrequest", api.SendRequest)
 			root.POST("/getrequests", api.GetRequest)
 			//root.POST("/sendmailit", api.SendMailIT)
+
+			root.POST("/getrequestlimit", api.GetRequestLimit)
 
 			//HH
 			root.POST("/posthh", api.PostHH)
