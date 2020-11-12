@@ -344,6 +344,21 @@ func DeleteProjects(c *gin.Context) {
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 	for _, id := range projids {
+
+		todo := fmt.Sprintf(`SELECT tproject.*, tproject_file.*
+		FROM public.tproject tproject, public.tproject_file tproject_file
+		WHERE 
+			tproject_file.proj_id = tproject.proj_id and tproject.proj_id = %s order by tproject.drealiz desc ;`, projids)
+
+		theCase := "lower"
+		data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("Get file name err: %s", err.Error()))
+		}
+
+		os.Remove(strings.Replace(data[0]["pf_path"], "file", "public", 1))
+
 		deletetProjectsfile := fmt.Sprintf(`
 		DELETE FROM public.tproject_file
 		WHERE proj_id=%s;`, id)
@@ -351,13 +366,13 @@ func DeleteProjects(c *gin.Context) {
 		deletetProjects := fmt.Sprintf(`DELETE FROM public.tproject
 		WHERE proj_id=%s;`, id)
 
-		_, err := dbConnect.Exec(deletetProjectsfile)
+		_, err = dbConnect.Exec(deletetProjectsfile)
 		if err != nil {
-			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+			c.String(http.StatusBadRequest, fmt.Sprintf("delete project file err: %s", err.Error()))
 		}
 		_, err = dbConnect.Exec(deletetProjects)
 		if err != nil {
-			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+			c.String(http.StatusBadRequest, fmt.Sprintf("delete project err: %s", err.Error()))
 		}
 	}
 	c.JSON(http.StatusOK, gin.H{
