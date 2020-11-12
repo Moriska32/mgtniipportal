@@ -73,24 +73,35 @@ func Deletenews(c *gin.Context) {
 	nids := c.PostFormArray("n_ids")
 
 	dbConnect := config.Connect()
+	defer dbConnect.Close()
 	for _, nid := range nids {
+
+		todo := fmt.Sprintf("SELECT tnews.*, tnews_file.* FROM public.tnews tnews, public.tnews_file tnews_file WHERE tnews_file.n_id = tnews.n_id AND tnews_file.n_id = %s order by tnews.n_date desc;", nid)
+
+		theCase := "lower"
+		data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("Get file name err: %s", err.Error()))
+		}
+
+		os.Remove(strings.Replace(data[0]["nf_path"], "file", "public", 1))
 		deletetnewsfile := fmt.Sprintf("DELETE FROM public.tnews_file WHERE n_id = %s;", nid)
 
 		deletetnews := fmt.Sprintf("DELETE FROM public.tnews WHERE n_id = %s;", nid)
 
-		_, err := dbConnect.Exec(deletetnewsfile)
+		_, err = dbConnect.Exec(deletetnewsfile)
 		if err != nil {
-			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+			c.String(http.StatusBadRequest, fmt.Sprintf("Delete file from BD err: %s", err.Error()))
 		}
 		_, err = dbConnect.Exec(deletetnews)
 		if err != nil {
-			c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+			c.String(http.StatusBadRequest, fmt.Sprintf("Delete news err: %s", err.Error()))
 		}
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
 	})
-	dbConnect.Close()
 
 }
 
