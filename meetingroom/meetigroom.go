@@ -179,7 +179,7 @@ func GetMeetsLimit(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
 		"data":   data,
-		"count":  count,
+		"count":  count[0]["pages_lenght"],
 	})
 
 	dbConnect.Close()
