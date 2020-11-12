@@ -33,7 +33,7 @@ func Search(c *gin.Context) {
 
 	todo := `select pool from (
 	SELECT row_to_json::text as pool
-	FROM public.searchlist) as pool where pool like lower('%` + param + `%');`
+	FROM public.searchlist) as pool where lower(pool) like lower('%` + param + `%');`
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
