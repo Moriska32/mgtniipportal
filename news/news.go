@@ -85,7 +85,10 @@ func Deletenews(c *gin.Context) {
 			c.String(http.StatusBadRequest, fmt.Sprintf("Get file name err: %s", err.Error()))
 		}
 
-		os.Remove(strings.Replace(data[0]["nf_path"], "file", "public", 1))
+		err = os.Remove(strings.Replace(data[0]["nf_path"], "file", "public", 1))
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("Can't delete file: %s", err.Error()))
+		}
 		deletetnewsfile := fmt.Sprintf("DELETE FROM public.tnews_file WHERE n_id = %s;", nid)
 
 		deletetnews := fmt.Sprintf("DELETE FROM public.tnews WHERE n_id = %s;", nid)
