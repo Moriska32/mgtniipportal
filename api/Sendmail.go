@@ -181,7 +181,7 @@ func GetRequestLimit(c *gin.Context) {
 	(SELECT mail.json
 	FROM public.mail mail, public.mail_type mail_type
 	WHERE 
-		mail_type.type_id = mail.type_id and mail.type_id = %s) a;`, t, limit)
+		mail_type.type_id = mail.type_id and mail.type_id = %s) a;`, limit, t)
 
 	theCase := "lower"
 	count, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
