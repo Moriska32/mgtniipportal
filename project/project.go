@@ -348,7 +348,7 @@ func DeleteProjects(c *gin.Context) {
 		todo := fmt.Sprintf(`SELECT tproject.*, tproject_file.*
 		FROM public.tproject tproject, public.tproject_file tproject_file
 		WHERE 
-			tproject_file.proj_id = tproject.proj_id and tproject.proj_id = %s order by tproject.drealiz desc ;`, projids)
+			tproject_file.proj_id = tproject.proj_id and tproject.proj_id = %s order by tproject.drealiz desc ;`, id)
 
 		theCase := "lower"
 		data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
