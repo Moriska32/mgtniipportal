@@ -533,7 +533,7 @@ func Objects(c *gin.Context) {
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 	todo := `SELECT object_id, type_id, container_id, "number"
-	FROM public.tobject where type_id in (1,2,4) and number not in ('0', '') and  LENGTH(number) <= 5 and type_id = ` + ID + ` 
+	FROM public.tobject where type_id in (1,2,4) and number not in ('0', '') and  LENGTH(number) <= 5 and type_id = ` + ID + `
 	and number not in ('электрощитовая', 'техническое помещение', 'лифтовая шахта', 'серверная');`
 
 	theCase := "lower"
