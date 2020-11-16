@@ -660,3 +660,44 @@ func Getusersadmins(c *gin.Context) {
 	dbConnect.Close()
 	return
 }
+
+//Getusersletters get user by letter
+func Getusersletters(c *gin.Context) {
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+
+	todo := fmt.Sprintf(`SELECT distinct(substr(fam,1,1)) as letter
+	FROM public.tuser where fam ~ '[а-я]+' order by letter;`)
+
+	theCase := "lower"
+	rus, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+
+	todo = fmt.Sprintf(`SELECT distinct(substr(fam,1,1)) as letter
+	FROM public.tuser where fam ~ '[a-z]+' and login not in ('admin', 'user', 'moder') order by letter;`)
+
+	eng, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"rus":    rus,
+		"eng":    eng,
+	})
+	dbConnect.Close()
+	return
+}

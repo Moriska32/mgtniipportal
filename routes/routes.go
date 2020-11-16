@@ -82,6 +82,8 @@ func Routes(router *gin.Engine) {
 
 			root.GET("/getusersadmins", user.Getusersadmins)
 
+			root.GET("/getusersletters", user.Getusersletters)
+
 			//Object
 			root.GET("/objectstype", api.Objectstype)
 			root.GET("/objects/:id", api.Objects)
