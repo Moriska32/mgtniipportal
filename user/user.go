@@ -143,17 +143,34 @@ func Loginpass(c *gin.Context) {
 //Deleteuser Delete users
 func Deleteuser(c *gin.Context) {
 
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+
 	users := c.PostFormArray("user_ids")
 	for _, user := range users {
-		dbConnect := config.Connect()
-		print(user)
+
+		todo := fmt.Sprintf("select foto FROM public.tuser WHERE user_id = %s;", user)
+
+		theCase := "lower"
+		data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("Get file name err: %s", err.Error()))
+		}
+
+		err = os.Remove(strings.Replace(data[0]["foto"], "/file", "public", 1))
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("Can't delete file: %s", err.Error()))
+
+		}
+
 		deletetuser := fmt.Sprintf("DELETE FROM public.tuser WHERE user_id = %s;", user)
 
-		_, err := dbConnect.Exec(deletetuser)
+		_, err = dbConnect.Exec(deletetuser)
 		if err != nil {
 			c.String(http.StatusBadRequest, fmt.Sprintf("delete user: %s", err.Error()))
 		}
-		dbConnect.Close()
+
 	}
 
 	c.JSON(http.StatusOK, gin.H{
