@@ -666,7 +666,7 @@ func Getusersletters(c *gin.Context) {
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 
-	todo := fmt.Sprintf(`SELECT distinct(substr(fam,1,1)) as letter
+	todo := fmt.Sprintf(`SELECT string_agg(distinct(substr(fam,1,1)), ',') as letter
 	FROM public.tuser where fam ~ '[а-я]+' order by letter;`)
 
 	theCase := "lower"
@@ -680,7 +680,7 @@ func Getusersletters(c *gin.Context) {
 		return
 	}
 
-	todo = fmt.Sprintf(`SELECT distinct(substr(fam,1,1)) as letter
+	todo = fmt.Sprintf(`SELECT string_agg(distinct(substr(fam,1,1)), ',') as letter
 	FROM public.tuser where fam ~ '[a-z]+' and login not in ('admin', 'user', 'moder') order by letter;`)
 
 	eng, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
