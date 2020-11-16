@@ -695,8 +695,8 @@ func Getusersletters(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
-		"rus":    rus,
-		"eng":    eng,
+		"rus":    rus[0]["letter"],
+		"eng":    eng[0]["letter"],
 	})
 	dbConnect.Close()
 	return
