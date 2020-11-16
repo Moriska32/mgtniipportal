@@ -157,13 +157,13 @@ func Deleteuser(c *gin.Context) {
 		if err != nil {
 			c.String(http.StatusBadRequest, fmt.Sprintf("Get file name err: %s", err.Error()))
 		}
+		if data[0]["foto"] != "/file/photos/Пользователи/default-user-avatar.jpg" {
+			err = os.Remove(strings.Replace(data[0]["foto"], "/file", "public", 1))
+			if err != nil {
+				c.String(http.StatusBadRequest, fmt.Sprintf("Can't delete file: %s", err.Error()))
 
-		err = os.Remove(strings.Replace(data[0]["foto"], "/file", "public", 1))
-		if err != nil {
-			c.String(http.StatusBadRequest, fmt.Sprintf("Can't delete file: %s", err.Error()))
-
+			}
 		}
-
 		deletetuser := fmt.Sprintf("DELETE FROM public.tuser WHERE user_id = %s;", user)
 
 		_, err = dbConnect.Exec(deletetuser)
