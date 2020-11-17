@@ -79,10 +79,10 @@ func Auth() *jwt.GinJWTMiddleware {
 
 			switch location {
 			case "admin":
-				loginpass = fmt.Sprintf("SELECT user_id, login, userrole FROM public.tuser where login = '%s' AND pass = '%s' and del in (0) and userrole in (1,2);", userID, password)
+				loginpass = fmt.Sprintf("SELECT user_id, login, userrole FROM public.tuser where lower(login) = lower('%s') AND pass = '%s' and del in (0) and userrole in (1,2);", userID, password)
 
 			case "portal":
-				loginpass = fmt.Sprintf("SELECT user_id, login, userrole FROM public.tuser where login = '%s' AND pass = '%s' and del in (0, 2);", userID, password)
+				loginpass = fmt.Sprintf("SELECT user_id, login, userrole FROM public.tuser where lower(login) = lower('%s') AND pass = '%s' and del in (0, 2);", userID, password)
 
 			}
 
