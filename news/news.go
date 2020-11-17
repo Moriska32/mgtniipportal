@@ -280,14 +280,6 @@ func Updatenews(c *gin.Context) {
 
 	log.Println(path, filename)
 
-	insertnews := fmt.Sprintf("UPDATE public.tnews SET n_date='%s', autor='', title='%s', textshort='', textfull='%s' WHERE n_id= %s;", date, title, text, nid)
-
-	_, err = dbConnect.Exec(insertnews)
-
-	if err != nil {
-		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
-	}
-
 	nftype := c.PostForm("nf_type")
 	insertphoto := fmt.Sprintf("UPDATE public.tnews_file SET nf_name='%s', nf_path='%s', nf_type=%s WHERE nf_id= %s;", filename, path, nftype, nid)
 
@@ -295,6 +287,14 @@ func Updatenews(c *gin.Context) {
 
 	if err != nil {
 		c.String(http.StatusBadRequest, fmt.Sprintf("insert: %s", err.Error()))
+	}
+
+	insertnews := fmt.Sprintf("UPDATE public.tnews SET n_date='%s', autor='', title='%s', textshort='', textfull='%s' WHERE n_id= %s;", date, title, text, nid)
+
+	_, err = dbConnect.Exec(insertnews)
+
+	if err != nil {
+		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 	}
 
 }
