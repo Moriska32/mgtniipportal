@@ -131,6 +131,7 @@ func Routes(router *gin.Engine) {
 
 			//search
 			root.POST("/search", api.Search)
+			root.POST("/searchinfolder", api.SearchInFolder)
 
 		}
 	}
