@@ -91,7 +91,7 @@ func SearchInFolder(c *gin.Context) {
 
 	for _, item := range dirs {
 
-		if strings.Contains(item, name) {
+		if strings.Contains(strings.Split(item, "\\")[len(strings.Split(item, "\\"))-1], name) {
 
 			result = append(result, strings.Replace(item, "public", "file", 1))
 
