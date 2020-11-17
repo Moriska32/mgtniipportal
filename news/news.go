@@ -295,6 +295,9 @@ func Updatenews(c *gin.Context) {
 
 		path = "/file/photos/Новости/" + filename
 
+	case len(filepath) > 0 && len(newfullname) < 1 && len(files) == 0:
+
+		path = filepath
 	}
 
 	date := c.PostForm("date")
