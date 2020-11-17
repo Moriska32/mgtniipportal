@@ -311,14 +311,9 @@ func Updatenews(c *gin.Context) {
 	if err != nil {
 		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 	}
-	deletetnews := fmt.Sprintf("DELETE FROM public.tnews_file WHERE n_id = %s;", nid)
-	_, err = dbConnect.Exec(deletetnews)
-	if err != nil {
-		c.String(http.StatusBadRequest, fmt.Sprintf("delete: %s", err.Error()))
-	}
 
 	nftype := c.PostForm("nf_type")
-	insertphoto := fmt.Sprintf("INSERT INTO public.tnews_file (n_id, nf_name, nf_path, nf_type) VALUES(%s, '%s', '%s', %s);", nid, filename, path, nftype)
+	insertphoto := fmt.Sprintf("UPDATE public.tnews_file SET nf_name='%s', nf_path='%s', nf_type=%s WHERE nf_id= %s;", filename, path, nftype, nid)
 
 	_, err = dbConnect.Exec(insertphoto)
 
