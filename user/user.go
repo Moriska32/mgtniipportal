@@ -195,8 +195,12 @@ func Updateuser(c *gin.Context) {
 	subfolder := c.PostForm("subfolder")
 	newfullname := c.PostForm("new_fullname")
 	filepath := c.PostForm("filepath")
+	user := c.PostForm("user_id")
 	var path, filename string
 	os.Mkdir(fmt.Sprintf("public/%s/%s", folder, subfolder), os.ModePerm)
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
 
 	switch {
 
@@ -206,6 +210,22 @@ func Updateuser(c *gin.Context) {
 
 	case len(files) > 0:
 		os.Mkdir(fmt.Sprintf("public/%s/%s", folder, subfolder), os.ModePerm)
+
+		todo := fmt.Sprintf("select foto FROM public.tuser WHERE user_id = %s;", user)
+
+		theCase := "lower"
+		data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("Get file name err: %s", err.Error()))
+		}
+		if data[0]["foto"] != "/file/photos/Пользователи/default-user-avatar.jpg" {
+			err = os.Remove(strings.Replace(data[0]["foto"], "/file", "public", 1))
+			if err != nil {
+				c.String(http.StatusBadRequest, fmt.Sprintf("Can't delete file: %s", err.Error()))
+
+			}
+		}
 
 		for _, file := range files {
 
@@ -238,6 +258,22 @@ func Updateuser(c *gin.Context) {
 		print(filename)
 		path = strings.Replace(destination, "public", "/file", 1)
 
+		todo := fmt.Sprintf("select foto FROM public.tuser WHERE user_id = %s;", user)
+
+		theCase := "lower"
+		data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("Get file name err: %s", err.Error()))
+		}
+		if data[0]["foto"] != "/file/photos/Пользователи/default-user-avatar.jpg" {
+			err = os.Remove(strings.Replace(data[0]["foto"], "/file", "public", 1))
+			if err != nil {
+				c.String(http.StatusBadRequest, fmt.Sprintf("Can't delete file: %s", err.Error()))
+
+			}
+		}
+
 	case len(newfullname) > 1:
 
 		filepath = strings.Replace(filepath, "/file", "public", 1)
@@ -254,7 +290,6 @@ func Updateuser(c *gin.Context) {
 
 	}
 
-	user := c.PostForm("user_id")
 	login := c.PostForm("login")
 	pass := c.PostForm("pass")
 	fam := c.PostForm("fam")
@@ -273,8 +308,6 @@ func Updateuser(c *gin.Context) {
 	postid := c.PostForm("post_id")
 	del := c.PostForm("del")
 
-	dbConnect := config.Connect()
-
 	insertuser := fmt.Sprintf("UPDATE public.tuser SET login='%s', pass='%s', fam='%s', name='%s', otch='%s', birthday='%s', foto='%s', hobby='%s', profskills='%s', drecrut='%s', dep_id=%s, chief=%s, tel='%s', workplace = %s, userrole=%s, del=%s, post_id = %s WHERE user_id = %s ;", login, pass, fam, name, otch, birthday, foto, hobby, profskills, drecrut, depid, chief, tel, workplace, userrole, del, postid, user)
 
 	_, err = dbConnect.Exec(insertuser)
@@ -283,7 +316,7 @@ func Updateuser(c *gin.Context) {
 		print(err)
 		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 	}
-	dbConnect.Close()
+
 }
 
 //Getusers get news
