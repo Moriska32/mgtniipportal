@@ -221,20 +221,6 @@ func UpdateProjects(c *gin.Context) {
 		print(filename)
 		path = strings.Replace(destination, "public", "/file", 1)
 
-		todo := fmt.Sprintf(`SELECT tproject.*, tproject_file.*
-		FROM public.tproject tproject, public.tproject_file tproject_file
-		WHERE 
-			tproject_file.proj_id = tproject.proj_id and tproject.proj_id = %s order by tproject.drealiz desc ;`, json.ProjID)
-
-		theCase := "lower"
-		data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
-
-		if err != nil {
-			c.String(http.StatusBadRequest, fmt.Sprintf("Get file name err: %s", err.Error()))
-		}
-
-		os.Remove(strings.Replace(data[0]["pf_path"], "/file", "public", 1))
-
 	case len(newfullname) > 1:
 
 		filepath = strings.Replace(filepath, "/file", "public", 1)
@@ -250,6 +236,7 @@ func UpdateProjects(c *gin.Context) {
 	case len(filepath) > 0 && len(newfullname) < 1 && len(files) == 0:
 
 		path = filepath
+		filename = strings.Split(filepath, "/")[len(strings.Split(filepath, "/"))-1]
 
 	}
 
