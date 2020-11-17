@@ -159,15 +159,38 @@ func UpdateProjects(c *gin.Context) {
 		return
 	}
 
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+
 	files := form.File["file"]
 	filepath := c.PostForm("filepath")
 	folder := c.PostForm("folder")
 	subfolder := c.PostForm("subfolder")
 	newfullname := c.PostForm("new_fullname")
+	pool := c.PostForm("json")
+
+	var json Project
+
+	err = js.Unmarshal([]byte(pool), &json)
+
 	var path, filename string
 	switch {
 	case len(files) > 0:
 		os.Mkdir(fmt.Sprintf("public/%s/%s", folder, subfolder), os.ModePerm)
+
+		todo := fmt.Sprintf(`SELECT tproject.*, tproject_file.*
+		FROM public.tproject tproject, public.tproject_file tproject_file
+		WHERE 
+			tproject_file.proj_id = tproject.proj_id and tproject.proj_id = %s order by tproject.drealiz desc ;`, json.ProjID)
+
+		theCase := "lower"
+		data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("Get file name err: %s", err.Error()))
+		}
+
+		os.Remove(strings.Replace(data[0]["pf_path"], "/file", "public", 1))
 
 		for _, file := range files {
 
@@ -198,6 +221,20 @@ func UpdateProjects(c *gin.Context) {
 		print(filename)
 		path = strings.Replace(destination, "public", "/file", 1)
 
+		todo := fmt.Sprintf(`SELECT tproject.*, tproject_file.*
+		FROM public.tproject tproject, public.tproject_file tproject_file
+		WHERE 
+			tproject_file.proj_id = tproject.proj_id and tproject.proj_id = %s order by tproject.drealiz desc ;`, json.ProjID)
+
+		theCase := "lower"
+		data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("Get file name err: %s", err.Error()))
+		}
+
+		os.Remove(strings.Replace(data[0]["pf_path"], "/file", "public", 1))
+
 	case len(newfullname) > 1:
 
 		filepath = strings.Replace(filepath, "/file", "public", 1)
@@ -211,14 +248,6 @@ func UpdateProjects(c *gin.Context) {
 		path = "/file/photos/Проекты/" + filename
 
 	}
-
-	var json Project
-
-	pool := c.PostForm("json")
-	err = js.Unmarshal([]byte(pool), &json)
-
-	dbConnect := config.Connect()
-	defer dbConnect.Close()
 
 	insertnews := fmt.Sprintf(`UPDATE public.tproject
 	SET proj_name='%s', pd_id=%s, proj_decsr='%s', drealiz='%s'

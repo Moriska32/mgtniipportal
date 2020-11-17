@@ -211,6 +211,9 @@ func Updatenews(c *gin.Context) {
 		return
 	}
 
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+
 	nid := c.PostForm("n_id")
 
 	files := form.File["file"]
@@ -222,6 +225,20 @@ func Updatenews(c *gin.Context) {
 	switch {
 	case len(files) > 0:
 		os.Mkdir(fmt.Sprintf("public/%s/%s", folder, subfolder), os.ModePerm)
+
+		todo := fmt.Sprintf("SELECT tnews.*, tnews_file.* FROM public.tnews tnews, public.tnews_file tnews_file WHERE tnews_file.n_id = tnews.n_id AND tnews_file.n_id = %s order by tnews.n_date desc;", nid)
+
+		theCase := "lower"
+		data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("Get file name err: %s", err.Error()))
+		}
+
+		err = os.Remove(strings.Replace(data[0]["nf_path"], "/file", "public", 1))
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("Can't delete file: %s", err.Error()))
+		}
 
 		for _, file := range files {
 
@@ -252,6 +269,20 @@ func Updatenews(c *gin.Context) {
 		print(filename)
 		path = strings.Replace(destination, "public", "/file", 1)
 
+		todo := fmt.Sprintf("SELECT tnews.*, tnews_file.* FROM public.tnews tnews, public.tnews_file tnews_file WHERE tnews_file.n_id = tnews.n_id AND tnews_file.n_id = %s order by tnews.n_date desc;", nid)
+
+		theCase := "lower"
+		data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("Get file name err: %s", err.Error()))
+		}
+
+		err = os.Remove(strings.Replace(data[0]["nf_path"], "/file", "public", 1))
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("Can't delete file: %s", err.Error()))
+		}
+
 	case len(newfullname) > 1:
 
 		filepath = strings.Replace(filepath, "/file", "public", 1)
@@ -269,8 +300,6 @@ func Updatenews(c *gin.Context) {
 	date := c.PostForm("date")
 	title := c.PostForm("title")
 	text := c.PostForm("text")
-
-	dbConnect := config.Connect()
 
 	insertnews := fmt.Sprintf("UPDATE public.tnews SET n_date='%s', autor='', title='%s', textshort='', textfull='%s' WHERE n_id= %s;", date, title, text, nid)
 
@@ -293,7 +322,7 @@ func Updatenews(c *gin.Context) {
 	if err != nil {
 		c.String(http.StatusBadRequest, fmt.Sprintf("insert: %s", err.Error()))
 	}
-	dbConnect.Close()
+
 }
 
 //Getnewslist get news
