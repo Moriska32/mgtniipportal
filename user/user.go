@@ -288,6 +288,10 @@ func Updateuser(c *gin.Context) {
 
 		path = "/file/photos/Пользователи/" + filename
 
+	case len(filepath) > 0 && len(newfullname) < 1 && len(files) == 0:
+
+		path = filepath
+
 	}
 
 	login := c.PostForm("login")
