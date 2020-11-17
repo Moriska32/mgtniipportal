@@ -261,7 +261,7 @@ func Updatenews(c *gin.Context) {
 
 		filepath = strings.Replace(filepath, "/file", "public", 1)
 		filename = strings.Split(filepath, "/")[len(strings.Split(filepath, "/"))-1]
-		destination := "public/photos/Новости/" + filename
+		destination := "public/photos/" + subfolder + "/" + filename
 		err = Copy(filepath, destination)
 		if err != nil {
 			fmt.Printf("File copying failed: %q\n", err)
@@ -273,14 +273,14 @@ func Updatenews(c *gin.Context) {
 	case len(newfullname) > 1:
 
 		filepath = strings.Replace(filepath, "/file", "public", 1)
-		err := os.Rename(filepath, "public/photos/Новости/"+newfullname)
+		err := os.Rename(filepath, "public/photos/"+subfolder+"/"+newfullname)
 
 		if err != nil {
 			c.String(http.StatusBadRequest, fmt.Sprintf("rename file err: %s", err.Error()))
 		}
 		filename = newfullname
 
-		path = "/file/photos/Новости/" + filename
+		path = "file/photos/" + subfolder + "/" + newfullname
 
 	case len(filepath) > 0 && len(newfullname) < 1 && len(files) == 0:
 
