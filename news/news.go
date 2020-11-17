@@ -228,8 +228,6 @@ func Updatenews(c *gin.Context) {
 
 		for _, file := range files {
 
-			log.Println(file.Filename)
-
 			if err := c.SaveUploadedFile(file, fmt.Sprintf("public/%s/%s/%s", folder, subfolder, file.Filename)); err != nil {
 				c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 				return
@@ -279,6 +277,8 @@ func Updatenews(c *gin.Context) {
 	date := c.PostForm("date")
 	title := c.PostForm("title")
 	text := c.PostForm("text")
+
+	log.Println(path, filename)
 
 	insertnews := fmt.Sprintf("UPDATE public.tnews SET n_date='%s', autor='', title='%s', textshort='', textfull='%s' WHERE n_id= %s;", date, title, text, nid)
 
