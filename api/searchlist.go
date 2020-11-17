@@ -49,7 +49,7 @@ func Search(c *gin.Context) {
 		return
 	}
 
-	dir := c.PostForm("dir")
+	dir := "documents"
 
 	var resultf []string
 
