@@ -226,6 +226,17 @@ func Updatenews(c *gin.Context) {
 	case len(files) > 0:
 		os.Mkdir(fmt.Sprintf("public/%s/%s", folder, subfolder), os.ModePerm)
 
+		for _, file := range files {
+
+			if err := c.SaveUploadedFile(file, fmt.Sprintf("public/%s/%s/%s", folder, subfolder, file.Filename)); err != nil {
+				c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+				return
+			}
+
+			path = fmt.Sprintf("/file/%s/%s/%s", folder, subfolder, file.Filename)
+			filename = file.Filename
+
+		}
 		todo := fmt.Sprintf("SELECT tnews.*, tnews_file.* FROM public.tnews tnews, public.tnews_file tnews_file WHERE tnews_file.n_id = tnews.n_id AND tnews_file.n_id = %s order by tnews.n_date desc;", nid)
 
 		theCase := "lower"
@@ -238,18 +249,6 @@ func Updatenews(c *gin.Context) {
 		err = os.Remove(strings.Replace(data[0]["nf_path"], "/file", "public", 1))
 		if err != nil {
 			c.String(http.StatusBadRequest, fmt.Sprintf("Can't delete file: %s", err.Error()))
-		}
-
-		for _, file := range files {
-
-			if err := c.SaveUploadedFile(file, fmt.Sprintf("public/%s/%s/%s", folder, subfolder, file.Filename)); err != nil {
-				c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
-				return
-			}
-
-			path = fmt.Sprintf("/file/%s/%s/%s", folder, subfolder, file.Filename)
-			filename = file.Filename
-
 		}
 	case len(filepath) > 1 && len(newfullname) < 2:
 
