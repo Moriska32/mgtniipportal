@@ -226,6 +226,20 @@ func Updatenews(c *gin.Context) {
 	case len(files) > 0:
 		os.Mkdir(fmt.Sprintf("public/%s/%s", folder, subfolder), os.ModePerm)
 
+		todo := fmt.Sprintf("SELECT tnews.*, tnews_file.* FROM public.tnews tnews, public.tnews_file tnews_file WHERE tnews_file.n_id = tnews.n_id AND tnews_file.n_id = %s order by tnews.n_date desc;", nid)
+
+		theCase := "lower"
+		data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("Get file name err: %s", err.Error()))
+		}
+
+		err = os.Remove(strings.Replace(data[0]["nf_path"], "/file", "public", 1))
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("Can't delete file: %s", err.Error()))
+		}
+
 		for _, file := range files {
 
 			if err := c.SaveUploadedFile(file, fmt.Sprintf("public/%s/%s/%s", folder, subfolder, file.Filename)); err != nil {
@@ -255,6 +269,20 @@ func Updatenews(c *gin.Context) {
 
 		print(filename)
 		path = strings.Replace(destination, "public", "/file", 1)
+
+		todo := fmt.Sprintf("SELECT tnews.*, tnews_file.* FROM public.tnews tnews, public.tnews_file tnews_file WHERE tnews_file.n_id = tnews.n_id AND tnews_file.n_id = %s order by tnews.n_date desc;", nid)
+
+		theCase := "lower"
+		data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("Get file name err: %s", err.Error()))
+		}
+
+		err = os.Remove(strings.Replace(data[0]["nf_path"], "/file", "public", 1))
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("Can't delete file: %s", err.Error()))
+		}
 
 	case len(newfullname) > 1:
 
