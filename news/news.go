@@ -298,6 +298,7 @@ func Updatenews(c *gin.Context) {
 	case len(filepath) > 0 && len(newfullname) < 1 && len(files) == 0:
 
 		path = filepath
+		filename = strings.Split(filepath, "/")[len(strings.Split(filepath, "/"))-1]
 	}
 
 	date := c.PostForm("date")
