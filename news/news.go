@@ -228,6 +228,8 @@ func Updatenews(c *gin.Context) {
 
 		for _, file := range files {
 
+			log.Println(file.Filename)
+
 			if err := c.SaveUploadedFile(file, fmt.Sprintf("public/%s/%s/%s", folder, subfolder, file.Filename)); err != nil {
 				c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
 				return
@@ -268,7 +270,7 @@ func Updatenews(c *gin.Context) {
 
 		path = "/file/photos/Новости/" + filename
 
-	case len(filepath) == 0 && len(newfullname) < 1 && len(files) == 0:
+	case len(filepath) > 0 && len(newfullname) < 1 && len(files) == 0:
 
 		path = filepath
 		filename = strings.Split(filepath, "/")[len(strings.Split(filepath, "/"))-1]
