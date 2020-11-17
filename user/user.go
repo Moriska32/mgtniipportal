@@ -638,40 +638,21 @@ func Getusersadmins(c *gin.Context) {
 	dbConnect := config.Connect()
 
 	todo := `select user_id, login, fam, "name", otch, birthday, foto, hobby, profskills, drecrut, dep_id, chief, tel, workplace, userrole, del, post_id from tuser
-	where fam in ( 'Поляков'
-   ,'Зенина'
-   ,'Попова'
-   ,'Герасимов'
-   ,'Барсуков'
-   ,'Еременко'
-   ,'Былин'
-   ,'Горелов'
-   ,'Полищученко'
-   ,'Чепин'
-   ,'Клипов'
-   ,'Шабуня'
-   ,'Рязанцев'
-   ,'Щепаков'
-   ,'Трофимов'
-   ,'Курганская') and 
-   name in (
-	   'Александр'
-   ,'Валерия'
-   ,'Юлия'
-   ,'Александр'
-   ,'Петр'
-   ,'Владимир'
-   ,'Владислав'
-   ,'Станислав'
-   ,'Владислав'
-   ,'Артём'
-   ,'Олег'
-   ,'Вадим'
-   ,'Никита'
-   ,'Максим'
-   ,'Дмитрий'
-   ,'Марина'
-   );`
+	where user_id in ( 72,
+253,
+272,
+259,
+308,
+303,
+380,
+1,
+261,
+100,
+194,
+321,
+309,
+415,
+262);`
 
 	defer dbConnect.Close()
 
