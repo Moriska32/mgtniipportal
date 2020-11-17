@@ -281,7 +281,7 @@ func Updatenews(c *gin.Context) {
 	log.Println(path, filename)
 
 	nftype := c.PostForm("nf_type")
-	insertphoto := fmt.Sprintf("UPDATE public.tnews_file SET nf_name='%s', nf_path='%s', nf_type=%s WHERE nf_id= %s;", filename, path, nftype, nid)
+	insertphoto := fmt.Sprintf("UPDATE public.tnews_file SET nf_name='%s', nf_path='%s', nf_type=%s WHERE n_id= %s;", filename, path, nftype, nid)
 
 	_, err = dbConnect.Exec(insertphoto)
 
