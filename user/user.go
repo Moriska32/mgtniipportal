@@ -640,7 +640,6 @@ func Getusersadmins(c *gin.Context) {
 	todo := `select user_id, login, fam, "name", otch, birthday, foto, hobby, profskills, drecrut, dep_id, chief, tel, workplace, userrole, del, post_id from tuser
 	where user_id in ( 72,
 253,
-272,
 259,
 308,
 303,
