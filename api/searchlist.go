@@ -49,9 +49,39 @@ func Search(c *gin.Context) {
 		return
 	}
 
+	dir := c.PostForm("dir")
+
+	var resultf []string
+
+	fileInfo, dirs, err := FilePathWalkDir("public/" + dir + "/")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, item := range dirs {
+
+		if strings.Contains(strings.ToLower(strings.Split(item, "\\")[len(strings.Split(item, "\\"))-1]), strings.ToLower(param)) {
+
+			resultf = append(resultf, strings.Replace(item, "public", "file", 1))
+
+		}
+
+	}
+
+	for _, item := range fileInfo {
+
+		if strings.Contains(strings.ToLower(strings.Split(item, "\\")[len(strings.Split(item, "\\"))-1]), strings.ToLower(param)) {
+
+			resultf = append(resultf, strings.Replace(item, "public", "file", 1))
+
+		}
+
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
 		"data":   data,
+		"files":  resultf,
 	})
 
 	return
@@ -91,7 +121,7 @@ func SearchInFolder(c *gin.Context) {
 
 	for _, item := range dirs {
 
-		if strings.Contains(strings.Split(item, "\\")[len(strings.Split(item, "\\"))-1], name) {
+		if strings.Contains(strings.ToLower(strings.Split(item, "\\")[len(strings.Split(item, "\\"))-1]), strings.ToLower(name)) {
 
 			result = append(result, strings.Replace(item, "public", "file", 1))
 
@@ -101,7 +131,7 @@ func SearchInFolder(c *gin.Context) {
 
 	for _, item := range fileInfo {
 
-		if strings.Contains(strings.Split(item, "\\")[len(strings.Split(item, "\\"))-1], name) {
+		if strings.Contains(strings.ToLower(strings.Split(item, "\\")[len(strings.Split(item, "\\"))-1]), strings.ToLower(name)) {
 
 			result = append(result, strings.Replace(item, "public", "file", 1))
 
