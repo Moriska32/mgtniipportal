@@ -237,19 +237,7 @@ func Updatenews(c *gin.Context) {
 			filename = file.Filename
 
 		}
-		todo := fmt.Sprintf("SELECT tnews.*, tnews_file.* FROM public.tnews tnews, public.tnews_file tnews_file WHERE tnews_file.n_id = tnews.n_id AND tnews_file.n_id = %s order by tnews.n_date desc;", nid)
 
-		theCase := "lower"
-		data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
-
-		if err != nil {
-			c.String(http.StatusBadRequest, fmt.Sprintf("Get file name err: %s", err.Error()))
-		}
-
-		err = os.Remove(strings.Replace(data[0]["nf_path"], "/file", "public", 1))
-		if err != nil {
-			c.String(http.StatusBadRequest, fmt.Sprintf("Can't delete file: %s", err.Error()))
-		}
 	case len(filepath) > 1 && len(newfullname) < 2:
 
 		if err != nil {
