@@ -53,19 +53,9 @@ func Search(c *gin.Context) {
 
 	var resultf []string
 
-	fileInfo, dirs, err := FilePathWalkDir("public/" + dir + "/")
+	fileInfo, _, err := FilePathWalkDir("public/" + dir + "/")
 	if err != nil {
 		log.Fatal(err)
-	}
-
-	for _, item := range dirs {
-
-		if strings.Contains(strings.ToLower(strings.Split(item, "\\")[len(strings.Split(item, "\\"))-1]), strings.ToLower(param)) {
-
-			resultf = append(resultf, strings.Replace(item, "public", "file", 1))
-
-		}
-
 	}
 
 	for _, item := range fileInfo {
@@ -114,19 +104,9 @@ func SearchInFolder(c *gin.Context) {
 
 	var result []string
 
-	fileInfo, dirs, err := FilePathWalkDir("public/" + dir + "/")
+	fileInfo, _, err := FilePathWalkDir("public/" + dir + "/")
 	if err != nil {
 		log.Fatal(err)
-	}
-
-	for _, item := range dirs {
-
-		if strings.Contains(strings.ToLower(strings.Split(item, "\\")[len(strings.Split(item, "\\"))-1]), strings.ToLower(name)) {
-
-			result = append(result, strings.Replace(item, "public", "file", 1))
-
-		}
-
 	}
 
 	for _, item := range fileInfo {
