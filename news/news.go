@@ -222,7 +222,7 @@ func Updatenews(c *gin.Context) {
 	folder := c.PostForm("folder")
 	subfolder := c.PostForm("subfolder")
 	newfullname := c.PostForm("new_fullname")
-	theme
+
 	var path, filename string
 	switch {
 	case len(files) > 0:
