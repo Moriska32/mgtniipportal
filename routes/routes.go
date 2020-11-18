@@ -63,6 +63,8 @@ func Routes(router *gin.Engine) {
 
 			root.POST("/getnewslimitcount", news.GetnewsLimitCount)
 
+			root.GET("/newsthemes", news.Newsthemes)
+
 			//User
 			root.POST("/newuser", user.Newuser)
 			root.POST("/loginpass", user.Loginpass)

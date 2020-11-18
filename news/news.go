@@ -162,12 +162,13 @@ func Postnews(c *gin.Context) {
 	date := c.PostForm("date")
 	title := c.PostForm("title")
 	text := c.PostForm("text")
+	theme := c.PostForm("theme")
 
 	dbConnect := config.Connect()
 
 	todo := "SELECT max(n_id) as n_id FROM public.tnews;"
 
-	insertnews := fmt.Sprintf("INSERT INTO public.tnews (n_date, autor, title, textshort, textfull, dep_id) VALUES('%s', '', '%s', '', '%s', 1);", date, title, text)
+	insertnews := fmt.Sprintf("INSERT INTO public.tnews (n_date, autor, title, textshort, textfull, dep_id, theme) VALUES('%s', '', '%s', '', '%s', 1, %s);", date, title, text, theme)
 
 	_, err = dbConnect.Exec(insertnews)
 
@@ -221,6 +222,7 @@ func Updatenews(c *gin.Context) {
 	folder := c.PostForm("folder")
 	subfolder := c.PostForm("subfolder")
 	newfullname := c.PostForm("new_fullname")
+	theme
 	var path, filename string
 	switch {
 	case len(files) > 0:
@@ -434,7 +436,31 @@ func GetnewsLimitCount(c *gin.Context) {
 	(SELECT * FROM public.tnews tnews, public.tnews_file tnews_file 
 		WHERE tnews_file.n_id = tnews.n_id and nf_type = %s  order by tnews.n_date desc) a ;`, limit, t)
 
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+
+	return
+}
+
+//Newsthemes get news theme
+func Newsthemes(c *gin.Context) {
+
+	dbConnect := config.Connect()
 	defer dbConnect.Close()
+	todo := fmt.Sprintf(`SELECT id, theme
+	FROM public.newstheme;`)
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
@@ -452,4 +478,5 @@ func GetnewsLimitCount(c *gin.Context) {
 	})
 
 	return
+
 }
