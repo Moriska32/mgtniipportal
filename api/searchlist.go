@@ -87,7 +87,7 @@ func FilePathWalkDir(root string) ([]string, []string, error) {
 			files = append(files, path)
 		}
 		if info.IsDir() {
-			files = append(files, path)
+			dirs = append(files, path)
 		}
 
 		return nil
