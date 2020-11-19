@@ -119,6 +119,7 @@ func Loginpass(c *gin.Context) {
 	}
 
 	dbConnect := config.Connect()
+	defer dbConnect.Close()
 
 	loginpass := fmt.Sprintf("SELECT user_id FROM public.tuser where login = '%s' AND pass = '%s';", login, pass)
 
@@ -136,7 +137,7 @@ func Loginpass(c *gin.Context) {
 		"status": http.StatusOK,
 		"data":   data,
 	})
-	dbConnect.Close()
+
 	return
 }
 
@@ -334,7 +335,7 @@ func Getusers(c *gin.Context) {
 		"status": http.StatusOK,
 		"data":   data,
 	})
-	dbConnect.Close()
+
 	return
 }
 
@@ -362,7 +363,7 @@ func Getuser(c *gin.Context) {
 		"status": http.StatusOK,
 		"data":   data,
 	})
-	dbConnect.Close()
+
 	return
 }
 
@@ -397,7 +398,7 @@ func GetuserNotPass(c *gin.Context) {
 		"status": http.StatusOK,
 		"data":   data,
 	})
-	dbConnect.Close()
+
 	return
 }
 
@@ -494,7 +495,7 @@ func Getuserslimit(c *gin.Context) {
 		"status": http.StatusOK,
 		"data":   data,
 	})
-	dbConnect.Close()
+
 	return
 }
 
@@ -530,7 +531,7 @@ func Getusersobj(c *gin.Context) {
 		"status": http.StatusOK,
 		"data":   data,
 	})
-	dbConnect.Close()
+
 	return
 }
 
@@ -565,7 +566,7 @@ func Getusersletter(c *gin.Context) {
 		"status": http.StatusOK,
 		"data":   data,
 	})
-	dbConnect.Close()
+
 	return
 }
 
@@ -600,7 +601,7 @@ func Getusersbyobj(c *gin.Context) {
 		"status": http.StatusOK,
 		"data":   data,
 	})
-	dbConnect.Close()
+
 	return
 }
 
@@ -629,7 +630,7 @@ func Getuserslimitcount(c *gin.Context) {
 		"status": http.StatusOK,
 		"data":   data,
 	})
-	dbConnect.Close()
+
 	return
 }
 
@@ -676,7 +677,7 @@ func Getusersadmins(c *gin.Context) {
 		"status": http.StatusOK,
 		"data":   data,
 	})
-	dbConnect.Close()
+
 	return
 }
 
@@ -717,6 +718,40 @@ func Getusersletters(c *gin.Context) {
 		"rus":    rus[0]["letter"],
 		"eng":    eng[0]["letter"],
 	})
-	dbConnect.Close()
+
+	return
+}
+
+//Getusersadmins get count of users by limit
+func Getusersadmins(c *gin.Context) {
+	dbConnect := config.Connect()
+
+	todo := `SELECT user_id, login, fam, "name", otch, birthday, foto, hobby, profskills, drecrut, dep_id, chief, tel, workplace, userrole, del, post_id
+	FROM public.tuser where drecrut between now() - INTERVAL '7 DAY' DAY and now();`
+
+	defer dbConnect.Close()
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+
+	for _, items := range data {
+
+		items["foto_min"] = strings.Replace(strings.Replace(items["foto"], ".", "-min.", -1), "Пользователи", "Пользователи-min", 1)
+
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+
 	return
 }
