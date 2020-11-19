@@ -327,7 +327,7 @@ func Getusers(c *gin.Context) {
 	}
 	for _, items := range data {
 
-		items["foto_min"] = strings.Replace(strings.Replace(items["foto"], ".jpg", "-min.jpg", 1), "Пользователи", "Пользователи-min", 1)
+		items["foto_min"] = strings.Replace(strings.Replace(items["foto"], ".", "-min.", -1), "Пользователи", "Пользователи-min", 1)
 
 	}
 	c.JSON(http.StatusOK, gin.H{
@@ -357,7 +357,7 @@ func Getuser(c *gin.Context) {
 		})
 		return
 	}
-	data[0]["foto_min"] = strings.Replace(strings.Replace(data[0]["foto"], ".jpg", "-min.jpg", 1), "Пользователи", "Пользователи-min", 1)
+	data[0]["foto_min"] = strings.Replace(strings.Replace(data[0]["foto"], ".", "-min.", -1), "Пользователи", "Пользователи-min", 1)
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
 		"data":   data,
@@ -389,7 +389,7 @@ func GetuserNotPass(c *gin.Context) {
 
 	for _, items := range data {
 
-		items["foto_min"] = strings.Replace(strings.Replace(items["foto"], ".jpg", "-min.jpg", 1), "Пользователи", "Пользователи-min", 1)
+		items["foto_min"] = strings.Replace(strings.Replace(items["foto"], ".", "-min.", -1), "Пользователи", "Пользователи-min", 1)
 
 	}
 
@@ -422,7 +422,7 @@ func GetUsersNotPass(c *gin.Context) {
 
 	for _, items := range data {
 
-		items["foto_min"] = strings.Replace(strings.Replace(items["foto"], ".jpg", "-min.jpg", 1), "Пользователи", "Пользователи-min", 1)
+		items["foto_min"] = strings.Replace(strings.Replace(items["foto"], ".", "-min.", -1), "Пользователи", "Пользователи-min", 1)
 
 	}
 
@@ -487,7 +487,7 @@ func Getuserslimit(c *gin.Context) {
 	}
 	for _, items := range data {
 
-		items["foto_min"] = strings.Replace(strings.Replace(items["foto"], ".jpg", "-min.jpg", 1), "Пользователи", "Пользователи-min", 1)
+		items["foto_min"] = strings.Replace(strings.Replace(items["foto"], ".", "-min.", -1), "Пользователи", "Пользователи-min", 1)
 
 	}
 	c.JSON(http.StatusOK, gin.H{
@@ -523,7 +523,7 @@ func Getusersobj(c *gin.Context) {
 	}
 	for _, items := range data {
 
-		items["foto_min"] = strings.Replace(strings.Replace(items["foto"], ".jpg", "-min.jpg", 1), "Пользователи", "Пользователи-min", 1)
+		items["foto_min"] = strings.Replace(strings.Replace(items["foto"], ".", "-min.", -1), "Пользователи", "Пользователи-min", 1)
 
 	}
 	c.JSON(http.StatusOK, gin.H{
@@ -558,7 +558,7 @@ func Getusersletter(c *gin.Context) {
 	}
 	for _, items := range data {
 
-		items["foto_min"] = strings.Replace(strings.Replace(items["foto"], ".jpg", "-min.jpg", 1), "Пользователи", "Пользователи-min", 1)
+		items["foto_min"] = strings.Replace(strings.Replace(items["foto"], ".", "-min.", -1), "Пользователи", "Пользователи-min", 1)
 
 	}
 	c.JSON(http.StatusOK, gin.H{
@@ -593,7 +593,7 @@ func Getusersbyobj(c *gin.Context) {
 	}
 	for _, items := range data {
 
-		items["foto_min"] = strings.Replace(strings.Replace(items["foto"], ".jpg", "-min.jpg", 1), "Пользователи", "Пользователи-min", 1)
+		items["foto_min"] = strings.Replace(strings.Replace(items["foto"], ".", "-min.", -1), "Пользователи", "Пользователи-min", 1)
 
 	}
 	c.JSON(http.StatusOK, gin.H{
@@ -668,7 +668,7 @@ func Getusersadmins(c *gin.Context) {
 
 	for _, items := range data {
 
-		items["foto_min"] = strings.Replace(strings.Replace(items["foto"], ".jpg", "-min.jpg", 1), "Пользователи", "Пользователи-min", 1)
+		items["foto_min"] = strings.Replace(strings.Replace(items["foto"], ".", "-min.", -1), "Пользователи", "Пользователи-min", 1)
 
 	}
 
