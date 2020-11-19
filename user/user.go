@@ -727,7 +727,7 @@ func Getuserstime(c *gin.Context) {
 	dbConnect := config.Connect()
 
 	todo := `SELECT user_id, login, fam, "name", otch, birthday, foto, hobby, profskills, drecrut, dep_id, chief, tel, workplace, userrole, del, post_id
-	FROM public.tuser where drecrut between now() - INTERVAL '7 DAY' DAY and now();`
+	FROM public.tuser where drecrut between now() - INTERVAL '14 DAY' DAY and now();`
 
 	defer dbConnect.Close()
 
