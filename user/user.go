@@ -722,8 +722,8 @@ func Getusersletters(c *gin.Context) {
 	return
 }
 
-//Getusersadmins get count of users by limit
-func Getusersadmins(c *gin.Context) {
+//Getuserstime get  users on 7 days
+func Getuserstime(c *gin.Context) {
 	dbConnect := config.Connect()
 
 	todo := `SELECT user_id, login, fam, "name", otch, birthday, foto, hobby, profskills, drecrut, dep_id, chief, tel, workplace, userrole, del, post_id
