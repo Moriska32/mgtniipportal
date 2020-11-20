@@ -460,7 +460,7 @@ func Newsthemes(c *gin.Context) {
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 	todo := fmt.Sprintf(`SELECT id, theme
-	FROM public.newstheme order by id;`)
+	FROM public.newstheme where id in (1,2,3,4,0) order by id;`)
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
@@ -488,7 +488,7 @@ func GetNewsByTheme(c *gin.Context) {
 
 	dbConnect := config.Connect()
 	todo := fmt.Sprintf(`SELECT tnews.*, tnews_file.* FROM public.tnews tnews, public.tnews_file tnews_file 
-	WHERE tnews_file.n_id = tnews.n_id AND tnews.theme = %s and tnews.theme in (0,1,2,3,4) order by tnews.n_date desc;`, theme)
+	WHERE tnews_file.n_id = tnews.n_id AND tnews.theme = %s order by tnews.n_date desc;`, theme)
 
 	defer dbConnect.Close()
 
