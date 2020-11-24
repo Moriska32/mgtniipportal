@@ -502,8 +502,7 @@ func SearchInProjects(c *gin.Context) {
 	defer dbConnect.Close()
 	todo := fmt.Sprintf(`
 	select * from(
-	   SELECT row_to_json(u.*)::text AS row_to_json
-			   FROM ( SELECT tproject.proj_id,
+	    SELECT (tproject.proj_id,
 				tproject.proj_name,
 				tproject.pd_id,
 				tproject.proj_decsr,
@@ -512,10 +511,10 @@ func SearchInProjects(c *gin.Context) {
 				tproject_file.proj_id,
 				tproject_file.pf_name,
 				tproject_file.pf_path,
-				tproject_file.pf_type
+				tproject_file.pf_type)::text
 			   FROM tproject tproject,
-				tproject_file tproject_file) u) 
-					  news where lower(news.row_to_json) like lower('%` + param + `%');`)
+				tproject_file tproject_file) 
+					  news where lower(news.row) like lower('%` + param + `%');`)
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)

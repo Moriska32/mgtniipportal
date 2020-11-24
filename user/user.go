@@ -765,26 +765,25 @@ func SearchInUsers(c *gin.Context) {
 	defer dbConnect.Close()
 	todo := fmt.Sprintf(`
 	select * from(
-	   SELECT row_to_json(u.*)::text AS row_to_json
-			   FROM ( SELECT tuser.user_id,
-				tuser.login,
-				tuser.fam,
-				tuser.name,
-				tuser.otch,
-				tuser.birthday,
-				tuser.foto,
-				tuser.hobby,
-				tuser.profskills,
-				tuser.drecrut,
-				tuser.dep_id,
-				tuser.chief,
-				tuser.tel,
-				tuser.workplace,
-				tuser.userrole,
-				tuser.del,
-				tuser.post_id
-			   FROM tuser) u) 
-					  news where lower(news.row_to_json) like lower('%` + param + `%');`)
+		SELECT (tuser.user_id,
+					tuser.login,
+					tuser.fam,
+					tuser.name,
+					tuser.otch,
+					tuser.birthday,
+					tuser.foto,
+					tuser.hobby,
+					tuser.profskills,
+					tuser.drecrut,
+					tuser.dep_id,
+					tuser.chief,
+					tuser.tel,
+					tuser.workplace,
+					tuser.userrole,
+					tuser.del,
+					tuser.post_id)::text
+				   FROM tuser
+		   ) news where lower(news.row) like lower('%` + param + `%');`)
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)

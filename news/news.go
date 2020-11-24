@@ -550,8 +550,7 @@ func SearchInNews(c *gin.Context) {
 	defer dbConnect.Close()
 	todo := fmt.Sprintf(`
 	select * from(
-	   SELECT row_to_json(u.*)::text AS row_to_json
-			   FROM ( SELECT tnews.n_id,
+	 SELECT (tnews.n_id,
 						tnews.n_date,
 						tnews.autor,
 						tnews.title,
@@ -562,11 +561,11 @@ func SearchInNews(c *gin.Context) {
 						tnews_file.n_id,
 						tnews_file.nf_name,
 						tnews_file.nf_path,
-						tnews_file.nf_type
+						tnews_file.nf_type)::text
 					   FROM tnews tnews,
 						tnews_file tnews_file
-					  WHERE tnews_file.n_id = tnews.n_id and  tnews_file.nf_type = %s) u) 
-					  news where lower(news.row_to_json) like lower('%`+param+`%');`, t)
+					  WHERE tnews_file.n_id = tnews.n_id and  tnews_file.nf_type = %s)
+					  news where lower(news.row) like lower('%`+param+`%');`, t)
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
