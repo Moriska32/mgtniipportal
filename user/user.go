@@ -755,3 +755,51 @@ func Getuserstime(c *gin.Context) {
 
 	return
 }
+
+//SearchInUsers Search In Users
+func SearchInUsers(c *gin.Context) {
+
+	param := c.PostForm("param")
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+	todo := fmt.Sprintf(`
+	select * from(
+	   SELECT row_to_json(u.*)::text AS row_to_json
+			   FROM ( SELECT tuser.user_id,
+				tuser.login,
+				tuser.fam,
+				tuser.name,
+				tuser.otch,
+				tuser.birthday,
+				tuser.foto,
+				tuser.hobby,
+				tuser.profskills,
+				tuser.drecrut,
+				tuser.dep_id,
+				tuser.chief,
+				tuser.tel,
+				tuser.workplace,
+				tuser.userrole,
+				tuser.del,
+				tuser.post_id
+			   FROM tuser) u) 
+					  news where lower(news.row_to_json) like lower('%` + param + `%');`)
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+
+	return
+}

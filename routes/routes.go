@@ -63,6 +63,8 @@ func Routes(router *gin.Engine) {
 			root.POST("/getnewsbytheme", news.GetNewsByTheme)
 			root.POST("/getnewsbytime", news.GetNewsByTime)
 
+			root.POST("/searchinnews", news.SearchInNews)
+
 			//User
 			root.POST("/newuser", user.Newuser)
 			root.POST("/loginpass", user.Loginpass)
@@ -71,7 +73,6 @@ func Routes(router *gin.Engine) {
 			root.POST("/getuser", user.Getuser)
 			root.POST("/getportaluser", user.GetuserNotPass)
 			root.GET("/getsuperusers", user.Getsuperuser)
-
 			root.POST("/deleteusers", user.Deleteuser)
 			root.POST("/updateuser", user.Updateuser)
 			root.POST("/getuserslimit", user.Getuserslimit)
@@ -82,10 +83,12 @@ func Routes(router *gin.Engine) {
 			root.GET("/getusersadmins", user.Getusersadmins)
 			root.GET("/getusersletters", user.Getusersletters)
 			root.GET("/getuserstime", user.Getuserstime)
+			root.POST("/searchinusers", user.SearchInUsers)
 
 			//Object
 			root.GET("/objectstype", api.Objectstype)
 			root.GET("/objects/:id", api.Objects)
+
 			//Project
 			root.POST("/postproject", projects.Postprojects)
 			root.POST("/updateproject", projects.UpdateProjects)
@@ -93,12 +96,10 @@ func Routes(router *gin.Engine) {
 			root.GET("/getprojects", projects.GetProjects)
 			root.GET("/getprojectsdirections", projects.GetProjectsDirection)
 			root.POST("/deleteprojects", projects.DeleteProjects)
-
 			root.POST("/getprojectsbydirectionid", projects.GetProjectsByID)
-
 			root.POST("/getprojectslimit", projects.GetProjectsLimit)
-
 			root.POST("/getprojectslimitcount", projects.GetProjectsLimitCount)
+			root.POST("/searchinprojects", projects.SearchInProjects)
 
 			//Meetingroom
 			root.GET("/meetingrooms", api.Meetingrooms)

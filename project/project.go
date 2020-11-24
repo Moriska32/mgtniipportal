@@ -492,3 +492,45 @@ func GetProjectsLimitCount(c *gin.Context) {
 	dbConnect.Close()
 	return
 }
+
+//SearchInProjects Search In Projects
+func SearchInProjects(c *gin.Context) {
+
+	param := c.PostForm("param")
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+	todo := fmt.Sprintf(`
+	select * from(
+	   SELECT row_to_json(u.*)::text AS row_to_json
+			   FROM ( SELECT tproject.proj_id,
+				tproject.proj_name,
+				tproject.pd_id,
+				tproject.proj_decsr,
+				tproject.drealiz,
+				tproject_file.pf_id,
+				tproject_file.proj_id,
+				tproject_file.pf_name,
+				tproject_file.pf_path,
+				tproject_file.pf_type
+			   FROM tproject tproject,
+				tproject_file tproject_file) u) 
+					  news where lower(news.row_to_json) like lower('%` + param + `%');`)
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+
+	return
+}

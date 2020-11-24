@@ -506,7 +506,7 @@ func GetNewsByTheme(c *gin.Context) {
 		"status": http.StatusOK,
 		"data":   data,
 	})
-	dbConnect.Close()
+
 	return
 }
 
@@ -536,6 +536,52 @@ func GetNewsByTime(c *gin.Context) {
 		"status": http.StatusOK,
 		"data":   data,
 	})
-	dbConnect.Close()
+
+	return
+}
+
+//SearchInNews SearchInNews
+func SearchInNews(c *gin.Context) {
+
+	param := c.PostForm("param")
+	t := c.PostForm("type")
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+	todo := fmt.Sprintf(`
+	select * from(
+	   SELECT row_to_json(u.*)::text AS row_to_json
+			   FROM ( SELECT tnews.n_id,
+						tnews.n_date,
+						tnews.autor,
+						tnews.title,
+						tnews.textshort,
+						tnews.textfull,
+						tnews.dep_id,
+						tnews_file.nf_id,
+						tnews_file.n_id,
+						tnews_file.nf_name,
+						tnews_file.nf_path,
+						tnews_file.nf_type
+					   FROM tnews tnews,
+						tnews_file tnews_file
+					  WHERE tnews_file.n_id = tnews.n_id and  tnews_file.nf_type = %s) u) 
+					  news where lower(news.row_to_json) like lower('%`+param+`%');`, t)
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+
 	return
 }
