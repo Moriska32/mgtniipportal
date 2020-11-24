@@ -509,3 +509,33 @@ func GetNewsByTheme(c *gin.Context) {
 	dbConnect.Close()
 	return
 }
+
+//GetNewsByTime get news by time
+func GetNewsByTime(c *gin.Context) {
+
+	from := c.PostForm("from")
+	to := c.PostForm("to")
+
+	dbConnect := config.Connect()
+	todo := fmt.Sprintf(`SELECT tnews.*, tnews_file.* FROM public.tnews tnews, public.tnews_file tnews_file 
+	WHERE tnews_file.n_id = tnews.n_id AND tnews.n_date between '%s' and '%s' order by tnews.n_date desc;`, from, to)
+
+	defer dbConnect.Close()
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+	dbConnect.Close()
+	return
+}
