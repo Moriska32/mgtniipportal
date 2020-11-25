@@ -639,20 +639,9 @@ func Getusersadmins(c *gin.Context) {
 	dbConnect := config.Connect()
 
 	todo := `select user_id, login, fam, "name", otch, birthday, foto, hobby, profskills, drecrut, dep_id, chief, tel, workplace, userrole, del, post_id from tuser
-	where user_id in ( 72,
-253,
-259,
-308,
-303,
-380,
-1,
-261,
-100,
-194,
-321,
-309,
-415,
-262);`
+	where post_id in (201,164,151,178,180,172,13,61,174,188,3,130,130,43,46,91,46,46,46,258,20,153)
+order by array_position( array ['Горелов','Барсуков','Былин','Еременко','Жилинский','Клипов','Полищученко','Рязанцев','Чепин','Шабуня','Трофимов',
+'Попова','Зенина','Курганская','Крючкова','Пасынский','Рущинская','Хорович','Шабунина','Шурупов','Саакян','Гурова']::varchar[], fam);`
 
 	defer dbConnect.Close()
 
