@@ -504,7 +504,7 @@ func Meetingrooms(c *gin.Context) {
 
 	dbConnect := config.Connect()
 	todo := `SELECT object_id, number
-	FROM public.tobject where "number" in ('2','9','505') and type_id = 4;`
+	FROM public.tobject where object_id in (108,106,151) and type_id = 4;`
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
