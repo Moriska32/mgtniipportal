@@ -551,7 +551,19 @@ func SearchInNews(c *gin.Context) {
 	param = "%" + param + "%"
 	text := `
 	select * from(
-	 SELECT (tnews.n_id,
+	 SELECT tnews.n_id,
+	 tnews.n_date,
+	 tnews.autor,
+	 tnews.title,
+	 tnews.textshort,
+	 tnews.textfull,
+	 tnews.dep_id,
+	 tnews_file.nf_id,
+	 tnews_file.n_id,
+	 tnews_file.nf_name,
+	 tnews_file.nf_path,
+	 tnews_file.nf_type,
+	 (tnews.n_id,
 						tnews.n_date,
 						tnews.autor,
 						tnews.title,

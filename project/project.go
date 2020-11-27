@@ -504,7 +504,17 @@ func SearchInProjects(c *gin.Context) {
 	param = "%" + param + "%"
 	text := `
 	select * from(
-	    SELECT (tproject.proj_id,
+		SELECT tproject.proj_id,
+		tproject.proj_name,
+		tproject.pd_id,
+		tproject.proj_decsr,
+		tproject.drealiz,
+		tproject_file.pf_id,
+		tproject_file.proj_id,
+		tproject_file.pf_name,
+		tproject_file.pf_path,
+		tproject_file.pf_type
+		,(tproject.proj_id,
 				tproject.proj_name,
 				tproject.pd_id,
 				tproject.proj_decsr,
