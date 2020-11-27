@@ -548,7 +548,8 @@ func SearchInNews(c *gin.Context) {
 
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
-	todo := fmt.Sprintf(`
+	param = "%" + param + "%"
+	text := `
 	select * from(
 	 SELECT (tnews.n_id,
 						tnews.n_date,
@@ -565,7 +566,8 @@ func SearchInNews(c *gin.Context) {
 					   FROM tnews tnews,
 						tnews_file tnews_file
 					  WHERE tnews_file.n_id = tnews.n_id and  tnews_file.nf_type = %s)
-					  news where lower(news.row) like lower('%`+param+`%');`, t)
+					  news where lower(news.row) like lower('%s');`
+	todo := fmt.Sprintf(text, t, param)
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)

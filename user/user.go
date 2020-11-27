@@ -752,7 +752,8 @@ func SearchInUsers(c *gin.Context) {
 
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
-	todo := fmt.Sprintf(`
+	param = "%" + param + "%"
+	text := `
 	select * from(
 		SELECT (tuser.user_id,
 					tuser.login,
@@ -772,7 +773,8 @@ func SearchInUsers(c *gin.Context) {
 					tuser.del,
 					tuser.post_id)::text
 				   FROM tuser
-		   ) news where lower(news.row) like lower('%` + param + `%');`)
+		   ) news where lower(news.row) like lower('%s');`
+	todo := fmt.Sprintf(text, param)
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
