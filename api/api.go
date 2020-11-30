@@ -94,7 +94,8 @@ func Orgstructure(c *gin.Context) {
 
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
-	todo := `SELECT dep_id, name, parent_id FROM public.tdep where dep_id != 1 and dep_id not in (3, 27, 29, 64, 67, 69) order by dep_id;`
+	todo := `SELECT dep_id, name, parent_id FROM public.tdep where dep_id != 1 and dep_id not in (3, 27, 29, 64, 67, 69)
+	order by parent_id, dep_id;`
 
 	rows, err := dbConnect.Query(todo)
 
@@ -116,7 +117,7 @@ func Orgstructure(c *gin.Context) {
 		log.Fatal(err)
 	}
 
-	todo = `SELECT post_id, dep_id, post_name FROM public.tpost;`
+	todo = `SELECT post_id, dep_id, post_name FROM public.tpost order by post_id;`
 	rows, err = dbConnect.Query(todo)
 	posts := []*Posts_id{}
 	defer rows.Close()
@@ -147,6 +148,7 @@ func Orgstructure(c *gin.Context) {
 			for _, post := range posts {
 
 				if dep.Dep_id == post.Dep_id {
+
 					result[i].Child_posts = append(result[i].Child_posts, post)
 
 				}
