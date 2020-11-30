@@ -38,7 +38,7 @@ for row in cursor:
 
 
 i = 0
-with open('C:\\Users\\Moriska32\\Downloads\\Список для нового портала.csv', 'r') as file:
+with open('C:\\Users\\Moriska32\\Downloads\\Telegram Desktop\\Сотрудники 2.csv', 'r') as file:
 	for line in file:
 
 		line = line.replace("\n", "")
