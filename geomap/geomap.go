@@ -34,7 +34,7 @@ func Map(c *gin.Context) {
 	FROM public.sobject_type sobject_type, public.tobject tobject
 	WHERE
 		tobject.type_id = sobject_type.type_id and tobject.container_id = %s 
-		and tobject.number not in ('электрощитовая', 'техническое помещение', 'лифтовая шахта', 'серверная', 'венткамера');`
+		and tobject.number not in ('электрощитовая', 'техническое помещение', 'лифтовая шахта', 'серверная', 'Архив Управления закупок','подсобное помещение','венткамера');`
 	_ = sql
 
 	todo := `SELECT sobject_type.*, tobject.object_id, tobject.number, St_asgeojson(tobject.geom), tobject.container_id
