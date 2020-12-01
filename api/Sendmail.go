@@ -95,10 +95,11 @@ func SendRequest(c *gin.Context) {
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 	sql, err := js.Marshal(json)
+	_ = sql
 	todo := fmt.Sprintf(`INSERT INTO public.mail
 	("json", type_id)
 	VALUES('%s'::json, %s);
-	`, sql, typeid)
+	`, pool, typeid)
 
 	_, err = dbConnect.Exec(todo)
 	if err != nil {
