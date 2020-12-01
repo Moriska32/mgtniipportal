@@ -312,7 +312,7 @@ func Updateuser(c *gin.Context) {
 //Getusers get news
 func Getusers(c *gin.Context) {
 	dbConnect := config.Connect()
-	todo := "SELECT * FROM public.tuser where login not in ('admin', 'moder', 'user');"
+	todo := "SELECT * FROM public.tuser where login not in ('admin', 'moder', 'user', 'mtp');"
 
 	defer dbConnect.Close()
 
@@ -373,7 +373,7 @@ func GetuserNotPass(c *gin.Context) {
 	dbConnect := config.Connect()
 	todo := fmt.Sprintf(`SELECT user_id, login, fam, "name", otch, birthday, foto, 
 	hobby, profskills, drecrut, dep_id, chief, tel, workplace, userrole, del,
-	 post_id from public.tuser where user_id = %s and login not in ('admin', 'moder', 'user');`, id)
+	 post_id from public.tuser where user_id = %s and login not in ('admin', 'moder', 'user', 'mtp');`, id)
 
 	defer dbConnect.Close()
 
@@ -406,7 +406,7 @@ func GetuserNotPass(c *gin.Context) {
 func GetUsersNotPass(c *gin.Context) {
 	dbConnect := config.Connect()
 	todo := `SELECT user_id, login, fam, "name", otch, birthday, foto, 
-	hobby, profskills, drecrut, dep_id, chief, tel, workplace, userrole, del, post_id FROM public.tuser where login not in ('admin', 'moder', 'user');`
+	hobby, profskills, drecrut, dep_id, chief, tel, workplace, userrole, del, post_id FROM public.tuser where login not in ('admin', 'moder', 'user', 'mtp');`
 
 	defer dbConnect.Close()
 
@@ -440,7 +440,7 @@ func Getsuperuser(c *gin.Context) {
 
 	dbConnect := config.Connect()
 	todo := `SELECT user_id, login, fam, "name", otch, birthday, foto, 
-	hobby, profskills, drecrut, dep_id, chief, tel, workplace, userrole, del, post_id FROM public.tuser where login in ('admin', 'moder', 'user');`
+	hobby, profskills, drecrut, dep_id, chief, tel, workplace, userrole, del, post_id FROM public.tuser where login in ('admin', 'moder', 'user', 'mtp');`
 
 	defer dbConnect.Close()
 
@@ -472,7 +472,7 @@ func Getuserslimit(c *gin.Context) {
 
 	todo := fmt.Sprintf(`SELECT user_id, login, fam, "name", otch, birthday, foto, 
 	hobby, profskills, drecrut, dep_id, chief, tel, workplace, userrole, del, post_id
-	FROM public.tuser where login not in ('admin', 'user', 'moder') limit %s offset %s;`, limit, offset)
+	FROM public.tuser where login not in ('admin', 'user', 'moder', 'mtp') limit %s offset %s;`, limit, offset)
 
 	defer dbConnect.Close()
 
@@ -543,7 +543,7 @@ func Getusersletter(c *gin.Context) {
 
 	todo := fmt.Sprintf(`SELECT user_id, login, fam, "name", otch, birthday, foto,
 	 hobby, profskills, drecrut, dep_id, chief, tel, workplace, userrole, del, post_id
-	FROM public.tuser where upper(substr(fam,1,1)) = upper('%s') and login not in ('admin', 'user', 'moder');`, letter)
+	FROM public.tuser where upper(substr(fam,1,1)) = upper('%s') and login not in ('admin', 'user', 'moder', 'mtp');`, letter)
 
 	defer dbConnect.Close()
 
@@ -611,7 +611,7 @@ func Getuserslimitcount(c *gin.Context) {
 
 	limit := c.PostForm("limit")
 
-	todo := fmt.Sprintf(`SELECT ceil(count(*)::real/%s::real) as pages_length from public.tuser where login not in ('admin', 'user', 'moder');`, limit)
+	todo := fmt.Sprintf(`SELECT ceil(count(*)::real/%s::real) as pages_length from public.tuser where login not in ('admin', 'user', 'moder', 'mtp');`, limit)
 
 	defer dbConnect.Close()
 
@@ -734,7 +734,7 @@ func Getusersletters(c *gin.Context) {
 	}
 
 	todo = fmt.Sprintf(`SELECT string_agg(distinct(substr(fam,1,1)), ',') as letter
-	FROM public.tuser where fam ~ '[a-z]+' and login not in ('admin', 'user', 'moder') order by letter;`)
+	FROM public.tuser where fam ~ '[a-z]+' and login not in ('admin', 'user', 'moder', 'mtp') order by letter;`)
 
 	eng, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
 
@@ -853,4 +853,37 @@ func SearchInUsers(c *gin.Context) {
 	})
 
 	return
+}
+
+//UpdatePass Update user Pass
+func UpdatePass(c *gin.Context) {
+
+	id := c.PostForm("user_id")
+	pass := c.PostForm("pass")
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+
+	todo := fmt.Sprintf(`UPDATE public.tuser
+	SET pass='%s'
+	WHERE user_id=%s;
+	`, pass, id)
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+
+	return
+
 }
