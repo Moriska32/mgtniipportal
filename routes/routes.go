@@ -85,6 +85,7 @@ func Routes(router *gin.Engine) {
 			root.GET("/getuserstime", user.Getuserstime)
 			root.POST("/searchinusers", user.SearchInUsers)
 			root.POST("/updatepass", user.UpdatePass)
+			root.POST("/updatephoto", user.UpdatePhoto)
 
 			//Object
 			root.GET("/objectstype", api.Objectstype)

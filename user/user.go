@@ -887,3 +887,115 @@ func UpdatePass(c *gin.Context) {
 	return
 
 }
+
+//UpdatePhoto user photo
+func UpdatePhoto(c *gin.Context) {
+
+	form, err := c.MultipartForm()
+
+	if err != nil {
+		c.String(http.StatusBadRequest, fmt.Sprintf("get form err: %s", err.Error()))
+		return
+	}
+
+	files := form.File["foto"]
+	folder := c.PostForm("folder")
+	subfolder := c.PostForm("subfolder")
+	newfullname := c.PostForm("new_fullname")
+	filepath := c.PostForm("filepath")
+	user := c.PostForm("user_id")
+	var path, filename string
+	os.Mkdir(fmt.Sprintf("public/%s/%s", folder, subfolder), os.ModePerm)
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+
+	switch {
+
+	case (len(folder) + len(subfolder) + len(filepath)) == 0:
+
+		path = "/file/photos/Пользователи/default-user-avatar.jpg"
+
+	case len(files) > 0:
+		os.Mkdir(fmt.Sprintf("public/%s/%s", folder, subfolder), os.ModePerm)
+
+		todo := fmt.Sprintf("select foto FROM public.tuser WHERE user_id = %s;", user)
+
+		theCase := "lower"
+		data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("Get file name err: %s", err.Error()))
+		}
+		if data[0]["foto"] != "/file/photos/Пользователи/default-user-avatar.jpg" {
+			err = os.Remove(strings.Replace(data[0]["foto"], "/file", "public", 1))
+			if err != nil {
+				c.String(http.StatusBadRequest, fmt.Sprintf("Can't delete file: %s", err.Error()))
+
+			}
+		}
+
+		for _, file := range files {
+
+			if err := c.SaveUploadedFile(file, fmt.Sprintf("public/%s/%s/%s", folder, subfolder, file.Filename)); err != nil {
+				c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+				return
+			}
+
+			path = fmt.Sprintf("/file/%s/%s/%s", folder, subfolder, file.Filename)
+			fl.Resize(fmt.Sprintf("public/%s/%s/%s", folder, subfolder, file.Filename))
+			filename = file.Filename
+
+		}
+	case len(filepath) > 1 && len(newfullname) < 2:
+
+		if err != nil {
+			fmt.Printf("Invalid buffer size: %q\n", err)
+			return
+		}
+
+		filepath = strings.Replace(filepath, "/file", "public", 1)
+		filename = strings.Split(filepath, "/")[len(strings.Split(filepath, "/"))-1]
+		destination := "public/photos/Пользователи/" + filename
+		fl.Resize(fmt.Sprintf(destination))
+		err = Copy(filepath, destination)
+		if err != nil {
+			fmt.Printf("File copying failed: %q\n", err)
+		}
+
+		print(filename)
+		path = strings.Replace(destination, "public", "/file", 1)
+
+	case len(newfullname) > 1:
+
+		filepath = strings.Replace(filepath, "/file", "public", 1)
+		err := os.Rename(filepath, "public/photos/Пользователи/"+newfullname)
+
+		fl.Resize("public/photos/Пользователи/" + newfullname)
+
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("rename file err: %s", err.Error()))
+		}
+		filename = newfullname
+
+		path = "/file/photos/Пользователи/" + filename
+
+	case len(filepath) > 0 && len(newfullname) < 1 && len(files) == 0:
+
+		path = filepath
+		filename = strings.Split(filepath, "/")[len(strings.Split(filepath, "/"))-1]
+
+	}
+
+	foto := path
+
+	insertuser := fmt.Sprintf(`UPDATE public.tuser SET foto='%s'WHERE user_id = %s ;`, foto, user)
+
+	_, err = dbConnect.Exec(insertuser)
+
+	if err != nil {
+		print(err)
+		c.String(http.StatusBadRequest, fmt.Sprintf("upload file err: %s", err.Error()))
+	}
+
+}
