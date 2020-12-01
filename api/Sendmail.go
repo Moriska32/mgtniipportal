@@ -118,7 +118,7 @@ func GetRequest(c *gin.Context) {
 	todo := fmt.Sprintf(`SELECT mail.json
 	FROM public.mail mail, public.mail_type mail_type
 	WHERE 
-		mail_type.type_id = mail.type_id and mail.type_id = %s order by mail.date desc;`, typeid)
+		mail_type.type_id = mail.type_id and mail.type_id = %s order by mail.json ->> 'date';`, typeid)
 	var (
 		pool string
 		data SendMailITJSON
@@ -158,7 +158,7 @@ func GetRequestLimit(c *gin.Context) {
 	todo := fmt.Sprintf(`SELECT mail.json
 	FROM public.mail mail, public.mail_type mail_type
 	WHERE 
-		mail_type.type_id = mail.type_id and mail.type_id = %s order by mail.date desc limit %s offset %s;`, t, limit, offset)
+		mail_type.type_id = mail.type_id and mail.type_id = %s order by mail.json ->> 'date' limit %s offset %s;`, t, limit, offset)
 	var (
 		pool string
 		data SendMailITJSON
