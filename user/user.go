@@ -661,7 +661,8 @@ func Getusersadmins(c *gin.Context) {
 		459,
 		89,
 		309,
-		549)
+		549,
+	97)
 order by array_position( array ['Горелов',
 'Барсуков',
 'Былин',
@@ -684,7 +685,8 @@ order by array_position( array ['Горелов',
 'Шурупов',
 'Саакян',
 'Савин',
-'Гурова']::varchar[], fam);`
+'Гурова',
+'Володина']::varchar[], fam);`
 
 	defer dbConnect.Close()
 
