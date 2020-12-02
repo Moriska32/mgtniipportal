@@ -2,10 +2,13 @@ package api
 
 import (
 	config "PortalMGTNIIP/config"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
+	"os/exec"
 	"strings"
 	"time"
 
@@ -570,5 +573,23 @@ func Objects(c *gin.Context) {
 	})
 
 	return
+
+}
+
+//PicFromVideo take oic from video
+func PicFromVideo(path string) {
+
+	filename := path
+	width := 640
+	height := 360
+	cmd := exec.Command("ffmpeg", "-i", filename, "-vframes", "1", "-s", fmt.Sprintf("%dx%d", width, height), "-f", "singlejpeg", "-")
+	var buffer bytes.Buffer
+	cmd.Stdout = &buffer
+	if cmd.Run() != nil {
+		panic("could not generate frame")
+	}
+	// Do something with buffer, which contains a JPEG image
+	file, _ := os.Create(strings.Replace(filename, "mp4", "jpg", 1))
+	file.Write(buffer.Bytes())
 
 }

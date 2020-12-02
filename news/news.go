@@ -1,6 +1,7 @@
 package news
 
 import (
+	"PortalMGTNIIP/api"
 	config "PortalMGTNIIP/config"
 	"fmt"
 	"io/ioutil"
@@ -139,6 +140,12 @@ func Postnews(c *gin.Context) {
 			path = fmt.Sprintf("/file/%s/%s/%s", folder, subfolder, file.Filename)
 			filename = file.Filename
 
+			if strings.Contains(strings.Replace(path, "file", "public", 1), "mp4") {
+
+				api.PicFromVideo(strings.Replace(path, "file", "public", 1))
+
+			}
+
 		}
 	case len(filepath) > 1:
 
@@ -157,6 +164,12 @@ func Postnews(c *gin.Context) {
 
 		print(filename)
 		path = strings.Replace(destination, "public", "/file", 1)
+
+		if strings.Contains(strings.Replace(path, "file", "public", 1), "mp4") {
+
+			api.PicFromVideo(strings.Replace(path, "file", "public", 1))
+
+		}
 	}
 
 	date := c.PostForm("date")
