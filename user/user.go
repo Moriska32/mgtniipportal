@@ -50,7 +50,7 @@ func Newuser(c *gin.Context) {
 	var path string
 	if len(folder)+len(subfolder) == 0 {
 
-		path = "/file/photos/Пользователи/default-user-avatar.png"
+		path = "/file/photos/Пользователи/default-user-avatar.jpg"
 
 	} else {
 		for _, file := range files {
