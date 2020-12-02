@@ -474,7 +474,7 @@ func Newsthemes(c *gin.Context) {
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 	todo := fmt.Sprintf(`SELECT id, theme
-	FROM public.newstheme where id in (1,2,3,4,0) order by id;`)
+	FROM public.newstheme where id in (1,2,3,4,0,9) order by id;`)
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
