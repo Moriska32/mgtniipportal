@@ -142,7 +142,7 @@ func Postnews(c *gin.Context) {
 
 			if strings.Contains(strings.Replace(path, "file", "public", 1), "mp4") {
 
-				api.PicFromVideo(strings.Replace(path, "file", "public", 1))
+				api.PicFromVideo(strings.Replace(path, "/file", "public", 1))
 
 			}
 
@@ -167,7 +167,7 @@ func Postnews(c *gin.Context) {
 
 		if strings.Contains(strings.Replace(path, "file", "public", 1), "mp4") {
 
-			api.PicFromVideo(strings.Replace(path, "file", "public", 1))
+			api.PicFromVideo(strings.Replace(path, "/file", "public", 1))
 
 		}
 	}
