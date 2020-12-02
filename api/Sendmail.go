@@ -59,6 +59,7 @@ type SendMailITJSON struct {
 	To      []string `json:"to"`
 	Subject string   `json:"subject"`
 	Text    string   `json:"text"`
+	HTML    string   `json:"html"`
 	UserID  int      `json:"user_id"`
 	Type    string   `json:"type"`
 	Date    string   `json:"date"`
@@ -73,6 +74,7 @@ func SendRequest(c *gin.Context) {
 	m := gomail.NewMessage()
 
 	pool := c.PostForm("json")
+
 	typeid := c.PostForm("type_id")
 	err := js.Unmarshal([]byte(pool), &json)
 
@@ -80,7 +82,7 @@ func SendRequest(c *gin.Context) {
 	m.SetHeader("To", json.To...)
 	m.SetHeader("Subject", json.Subject)
 
-	m.SetBody("text/html", json.Text)
+	m.SetBody("text/html", json.HTML)
 
 	from := "portal@mgtniip.ru"
 	password := "London106446"
