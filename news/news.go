@@ -293,6 +293,7 @@ func Updatenews(c *gin.Context) {
 	date := c.PostForm("date")
 	title := c.PostForm("title")
 	text := c.PostForm("text")
+	theme := c.PostForm("theme")
 
 	log.Println(nid)
 
@@ -305,7 +306,7 @@ func Updatenews(c *gin.Context) {
 		c.String(http.StatusBadRequest, fmt.Sprintf("insert: %s", err.Error()))
 	}
 
-	insertnews := fmt.Sprintf("UPDATE public.tnews SET n_date='%s', autor='', title='%s', textshort='', textfull='%s' WHERE n_id= %s;", date, title, text, nid)
+	insertnews := fmt.Sprintf("UPDATE public.tnews SET n_date='%s', autor='', title='%s', textshort='', textfull='%s', theme=%s WHERE n_id= %s;", date, title, text, theme, nid)
 
 	_, err = dbConnect.Exec(insertnews)
 
