@@ -7,6 +7,7 @@ import (
 	"PortalMGTNIIP/meetingroom"
 	news "PortalMGTNIIP/news"
 	projects "PortalMGTNIIP/project"
+	"PortalMGTNIIP/training"
 	user "PortalMGTNIIP/user"
 	"net/http"
 
@@ -134,6 +135,12 @@ func Routes(router *gin.Engine) {
 			//search
 			root.POST("/search", api.Search)
 			root.POST("/searchinfolder", api.SearchInFolder)
+
+			//TrainingTopic
+			root.POST("/posttrainingtopic", training.Posttrainingtopic)
+			root.POST("/updatetrainingtopic", training.Updatetrainingtopic)
+			root.POST("/gettrainingtopic", training.Gettrainingtopic)
+			root.POST("/gettrainingtopicslimit", training.Gettrainingtopicslimit)
 
 		}
 	}

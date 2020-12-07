@@ -381,7 +381,7 @@ func GetOneNews(c *gin.Context) {
 		"status": http.StatusOK,
 		"data":   data,
 	})
-	dbConnect.Close()
+
 	return
 }
 
