@@ -142,6 +142,14 @@ func Routes(router *gin.Engine) {
 			root.POST("/gettrainingtopic", training.Gettrainingtopic)
 			root.POST("/gettrainingtopicslimit", training.Gettrainingtopicslimit)
 
+			root.POST("/posttraining", training.Posttraining)
+			root.POST("/updatetraining", training.Updatetraining)
+			root.POST("/deletetraining", training.Deletetraining)
+			root.POST("/gettraining", training.Gettraining)
+			root.POST("/gettraininglimit", training.Gettraininglimit)
+
+			root.GET("/gettrainingstopicstypes", training.Gettrainingstopicstypes)
+
 		}
 	}
 
