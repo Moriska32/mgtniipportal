@@ -140,7 +140,7 @@ func Routes(router *gin.Engine) {
 			root.POST("/posttrainingtopic", training.Posttrainingtopic)
 			root.POST("/updatetrainingtopic", training.Updatetrainingtopic)
 			root.POST("/gettrainingtopic", training.Gettrainingtopic)
-			root.POST("/gettrainingtopicslimit", training.Gettrainingtopicslimit)
+			root.POST("/gettrainingstopicslimit", training.Gettrainingstopicslimit)
 
 			root.POST("/posttraining", training.Posttraining)
 			root.POST("/updatetraining", training.Updatetraining)

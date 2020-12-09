@@ -94,8 +94,8 @@ func Gettrainingtopic(c *gin.Context) {
 
 }
 
-//Gettrainingtopicslimit Get training to
-func Gettrainingtopicslimit(c *gin.Context) {
+//Gettrainingstopicslimit Get training to
+func Gettrainingstopicslimit(c *gin.Context) {
 
 	limit := c.PostForm("limit")
 	offset := c.PostForm("offset")
