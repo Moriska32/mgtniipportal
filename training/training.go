@@ -69,7 +69,7 @@ func Gettrainingtopic(c *gin.Context) {
 	id := c.PostForm("id")
 
 	dbConnect := config.Connect()
-	todo := fmt.Sprintf(`SELECT is_active, is_external, type_id, title, descr, id
+	todo := fmt.Sprintf(`SELECT *
 	FROM public.trainingtopic WHERE id= %s;
 	`, id)
 
@@ -102,7 +102,7 @@ func Gettrainingstopicslimit(c *gin.Context) {
 
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
-	todo := fmt.Sprintf(`SELECT is_active, is_external, type_id, title, descr, id
+	todo := fmt.Sprintf(`SELECT *
 	FROM public.trainingtopic order by is_active desc limit %s offset %s ;
 	`, limit, offset)
 
