@@ -168,7 +168,7 @@ func Posttraining(c *gin.Context) {
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 
-	speakers := c.PostForm("speakers")
+	speakers := c.PostFormArray("speakers")
 	users := c.PostForm("users")
 	type_id := c.PostForm("type_id")
 	topic_id := c.PostForm("topic_id")
@@ -195,7 +195,7 @@ func Updatetraining(c *gin.Context) {
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 
-	speakers := c.PostForm("speakers")
+	speakers := c.PostFormArray("speakers")
 	users := c.PostForm("users")
 	type_id := c.PostForm("type_id")
 	topic_id := c.PostForm("topic_id")
