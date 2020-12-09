@@ -177,7 +177,7 @@ func Posttraining(c *gin.Context) {
 
 	sql := fmt.Sprintf(`INSERT INTO public.training
 	(speakers, users, type_id, topic_id, has_free_places, dates_json)
-	VALUES(%s, %s, %s, %s, %s, '%s'::json);
+	VALUES(%s, '%s'::json, %s, %s, %s, '%s'::json);
 	`, speakers, users, type_id, topic_id, has_free_places, dates_json)
 
 	_, err := dbConnect.Exec(sql)
