@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/elgs/gosqljson"
 	"github.com/gin-gonic/gin"
@@ -177,8 +178,8 @@ func Posttraining(c *gin.Context) {
 
 	sql := fmt.Sprintf(`INSERT INTO public.training
 	(speakers, users, type_id, topic_id, has_free_places, dates_json)
-	VALUES('%s', '%s'::json, %s, %s, %s, '%s'::json);
-	`, speakers, users, type_id, topic_id, has_free_places, dates_json)
+	VALUES(array[%s], '%s'::json, %s, %s, %s, '%s'::json);
+	`, strings.Join(speakers, ","), users, type_id, topic_id, has_free_places, dates_json)
 
 	log.Print(sql)
 
