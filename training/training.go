@@ -132,9 +132,9 @@ func Gettrainingstopicslimit(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"status": http.StatusOK,
-		"data":   data,
-		count[0],
+		"status":       http.StatusOK,
+		"data":         data,
+		"pages_length": count[0]["pages_length"],
 	})
 	dbConnect.Close()
 	return
