@@ -42,7 +42,7 @@ func Updatetrainingtopic(c *gin.Context) {
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 
-	id := c.PostForm("id")
+	id := c.PostForm("topic_id")
 	is_active := c.PostForm("is_active")
 	is_external := c.PostForm("is_external")
 	type_id := c.PostForm("type_id")
@@ -51,7 +51,7 @@ func Updatetrainingtopic(c *gin.Context) {
 
 	sql := fmt.Sprintf(`UPDATE public.trainingtopic
 	SET is_active=%s, is_external=%s, type_id=%s, title='%s', descr='%s'
-	WHERE id= %s;
+	WHERE topic_id= %s;
 	`, is_active, is_external, type_id, title, descr, id)
 
 	_, err := dbConnect.Exec(sql)
