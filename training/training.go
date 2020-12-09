@@ -63,6 +63,27 @@ func Updatetrainingtopic(c *gin.Context) {
 
 }
 
+//Deletetrainingtopic Delete training topic
+func Deletetrainingtopic(c *gin.Context) {
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+
+	id := c.PostForm("topic_id")
+
+	sql := fmt.Sprintf(`DELETE FROM public.trainingtopic
+	WHERE topic_id = %s;
+	`, id)
+
+	_, err := dbConnect.Exec(sql)
+	if err != nil {
+		c.String(http.StatusBadRequest, fmt.Sprintf("insert: %s", err.Error()))
+	}
+
+	return
+
+}
+
 //Gettrainingtopic Get training to
 func Gettrainingtopic(c *gin.Context) {
 
