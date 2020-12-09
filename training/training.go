@@ -300,7 +300,7 @@ func Gettrainingstopicstypes(c *gin.Context) {
 
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
-	todo := fmt.Sprintf(`SELECT type_id, "type"
+	todo := fmt.Sprintf(`SELECT *
 	FROM public.training_type;
 	`)
 
