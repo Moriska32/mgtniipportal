@@ -103,7 +103,7 @@ func Gettrainingstopicslimit(c *gin.Context) {
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 	todo := fmt.Sprintf(`SELECT is_active, is_external, type_id, title, descr, id
-	FROM public.trainingtopic limit %s offset %s order by is_active desc;
+	FROM public.trainingtopic order by is_active desc limit %s offset %s ;
 	`, limit, offset)
 
 	theCase := "lower"
@@ -299,11 +299,10 @@ func Gettraininglimit(c *gin.Context) {
 func Gettrainingstopicstypes(c *gin.Context) {
 
 	dbConnect := config.Connect()
+	defer dbConnect.Close()
 	todo := fmt.Sprintf(`SELECT type_id, "type"
 	FROM public.training_type;
 	`)
-
-	defer dbConnect.Close()
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
@@ -319,7 +318,7 @@ func Gettrainingstopicstypes(c *gin.Context) {
 		"status": http.StatusOK,
 		"data":   data,
 	})
-	dbConnect.Close()
+
 	return
 
 }

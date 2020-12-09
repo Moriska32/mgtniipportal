@@ -1,7 +1,7 @@
 package files
 
 import (
-	"bytes"
+	_ "bytes"
 	"fmt"
 	"image"
 	"image/jpeg"
@@ -62,9 +62,5 @@ func Resize(name string) {
 
 	// write new image to file
 	jpeg.Encode(out, m, nil)
-
-	var bufer bytes.Buffer
-
-	file.Write(bufer.Bytes())
 
 }
