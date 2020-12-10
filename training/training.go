@@ -222,7 +222,7 @@ func Updatetraining(c *gin.Context) {
 }
 
 //Deletetraining Deletet training
-func Deletetraining(c *gin.Context) {
+func Deletetrainings(c *gin.Context) {
 
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
