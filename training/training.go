@@ -174,11 +174,12 @@ func Posttraining(c *gin.Context) {
 	topic_id := c.PostForm("topic_id")
 	has_free_places := c.PostForm("has_free_places")
 	dates_json := c.PostForm("dates_json")
+	is_active := c.PostForm("is_active")
 
 	sql := fmt.Sprintf(`INSERT INTO public.training
-	(speakers, users, type_id, topic_id, has_free_places, dates_json)
-	VALUES('%s'::json, '%s'::json, %s, %s, %s, '%s'::json);
-	`, speakers, users, type_id, topic_id, has_free_places, dates_json)
+	(speakers, users, type_id, topic_id, has_free_places, dates_json, is_active)
+	VALUES('%s'::json, '%s'::json, %s, %s, %s, '%s'::json, %s);
+	`, speakers, users, type_id, topic_id, has_free_places, dates_json, is_active)
 
 	log.Print(sql)
 
@@ -204,11 +205,12 @@ func Updatetraining(c *gin.Context) {
 	has_free_places := c.PostForm("has_free_places")
 	dates_json := c.PostForm("dates_json")
 	id := c.PostForm("id")
+	is_active := c.PostForm("is_active")
 
 	sql := fmt.Sprintf(`UPDATE public.training
-	SET speakers=%s, users=%s, type_id=%s, topic_id=%s, has_free_places=%s, dates_json='%s'
+	SET speakers=%s, users=%s, type_id=%s, topic_id=%s, has_free_places=%s, dates_json='%s', is_active = %s
 	WHERE training_id=%s;
-	`, speakers, users, type_id, topic_id, has_free_places, dates_json, id)
+	`, speakers, users, type_id, topic_id, has_free_places, dates_json, is_active, id)
 
 	_, err := dbConnect.Exec(sql)
 	if err != nil {
@@ -246,7 +248,7 @@ func Gettraining(c *gin.Context) {
 	id := c.PostForm("id")
 
 	dbConnect := config.Connect()
-	todo := fmt.Sprintf(`SELECT id, speakers, users, type_id, topic_id, has_free_places, dates_json
+	todo := fmt.Sprintf(`SELECT id, speakers, users, type_id, topic_id, has_free_places, dates_json, is_active
 	FROM public.training WHERE training_id= %s;
 	`, id)
 
@@ -272,7 +274,7 @@ func Gettraining(c *gin.Context) {
 
 }
 
-//Gettraininglimit Get training by limit
+//Gettrainingslimit Get training by limit
 func Gettrainingslimit(c *gin.Context) {
 
 	limit := c.PostForm("limit")
@@ -280,7 +282,7 @@ func Gettrainingslimit(c *gin.Context) {
 
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
-	todo := fmt.Sprintf(`SELECT training_id, speakers, users, type_id, topic_id, has_free_places, dates_json
+	todo := fmt.Sprintf(`SELECT training_id, speakers, users, type_id, topic_id, has_free_places, dates_json, is_active
 	FROM public.training limit %s offset %s;
 	`, limit, offset)
 
