@@ -208,7 +208,7 @@ func Updatetraining(c *gin.Context) {
 	is_active := c.PostForm("is_active")
 
 	sql := fmt.Sprintf(`UPDATE public.training
-	SET speakers='%s', users=%s, type_id=%s, topic_id=%s, has_free_places=%s, dates_json='%s', is_active = %s
+	SET speakers='%s', users='%s'::json, type_id=%s, topic_id=%s, has_free_places=%s, dates_json='%s'::json, is_active = %s
 	WHERE training_id=%s;
 	`, speakers, users, type_id, topic_id, has_free_places, dates_json, is_active, id)
 
