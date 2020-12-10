@@ -178,7 +178,7 @@ func Posttraining(c *gin.Context) {
 
 	sql := fmt.Sprintf(`INSERT INTO public.training
 	(speakers, users, type_id, topic_id, has_free_places, dates_json, is_active)
-	VALUES('%s'::json, '%s'::json, %s, %s, %s, '%s'::json, %s);
+	VALUES('%s', '%s'::json, %s, %s, %s, '%s'::json, %s);
 	`, speakers, users, type_id, topic_id, has_free_places, dates_json, is_active)
 
 	log.Print(sql)
@@ -208,7 +208,7 @@ func Updatetraining(c *gin.Context) {
 	is_active := c.PostForm("is_active")
 
 	sql := fmt.Sprintf(`UPDATE public.training
-	SET speakers=%s, users=%s, type_id=%s, topic_id=%s, has_free_places=%s, dates_json='%s', is_active = %s
+	SET speakers='%s', users=%s, type_id=%s, topic_id=%s, has_free_places=%s, dates_json='%s', is_active = %s
 	WHERE training_id=%s;
 	`, speakers, users, type_id, topic_id, has_free_places, dates_json, is_active, id)
 
@@ -221,7 +221,7 @@ func Updatetraining(c *gin.Context) {
 
 }
 
-//Deletetraining Deletet training
+//Deletetrainings Deletet training
 func Deletetrainings(c *gin.Context) {
 
 	dbConnect := config.Connect()
