@@ -227,15 +227,17 @@ func Deletetraining(c *gin.Context) {
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 
-	id := c.PostForm("id")
+	ids := c.PostFormArray("ids")
+	for _, id := range ids {
 
-	sql := fmt.Sprintf(`DELETE FROM public.training
+		sql := fmt.Sprintf(`DELETE FROM public.training
 	WHERE training_id= %s
 	`, id)
 
-	_, err := dbConnect.Exec(sql)
-	if err != nil {
-		c.String(http.StatusBadRequest, fmt.Sprintf("insert: %s", err.Error()))
+		_, err := dbConnect.Exec(sql)
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("insert: %s", err.Error()))
+		}
 	}
 
 	return
