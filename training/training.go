@@ -204,12 +204,13 @@ func Updatetraining(c *gin.Context) {
 	topic_id := c.PostForm("topic_id")
 	has_free_places := c.PostForm("has_free_places")
 	dates_json := c.PostForm("dates_json")
-	id := c.PostForm("id")
+	id := c.PostForm("training_id")
 	is_active := c.PostForm("is_active")
 
 	sql := fmt.Sprintf(`UPDATE public.training
-	SET speakers='%s', users='%s'::json, type_id=%s, topic_id=%s, has_free_places=%s, dates_json='%s'::json, is_active = %s
-	WHERE training_id=%s;
+	SET speakers='%s', users='%s'::json, type_id=%s,
+	topic_id=%s, has_free_places=%s, dates_json='%s'::json, is_active = %s
+	WHERE training_id= %s ;
 	`, speakers, users, type_id, topic_id, has_free_places, dates_json, is_active, id)
 
 	_, err := dbConnect.Exec(sql)
@@ -227,7 +228,7 @@ func Deletetrainings(c *gin.Context) {
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 
-	ids := c.PostFormArray("ids")
+	ids := c.PostFormArray("training_ids")
 	for _, id := range ids {
 
 		sql := fmt.Sprintf(`DELETE FROM public.training
@@ -247,7 +248,7 @@ func Deletetrainings(c *gin.Context) {
 //Gettraining Get training by limit
 func Gettraining(c *gin.Context) {
 
-	id := c.PostForm("id")
+	id := c.PostForm("training_id")
 
 	dbConnect := config.Connect()
 	todo := fmt.Sprintf(`SELECT id, speakers, users, type_id, topic_id, has_free_places, dates_json, is_active
