@@ -110,7 +110,7 @@ func Gettrainingtopic(c *gin.Context) {
 		"status": http.StatusOK,
 		"data":   data,
 	})
-	dbConnect.Close()
+
 	return
 
 }

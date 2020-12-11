@@ -151,6 +151,9 @@ func Routes(router *gin.Engine) {
 
 			root.GET("/gettrainingstopicstypes", training.Gettrainingstopicstypes)
 
+			//TrainingAnakitic
+			root.GET("/getpooltrainingbyyear", training.Getpooltrainingbyyear)
+
 		}
 	}
 
