@@ -176,11 +176,12 @@ func Posttraining(c *gin.Context) {
 	dates_json := c.PostForm("dates_json")
 	is_active := c.PostForm("is_active")
 	is_external := c.PostForm("is_external")
+	is_published := c.PostForm("is_published")
 
 	sql := fmt.Sprintf(`INSERT INTO public.training
-	(speakers, users, type_id, topic_id, has_free_places, dates_json, is_active, is_external)
-	VALUES('%s', '%s'::json, %s, %s, %s, '%s'::json, %s, %s);
-	`, speakers, users, type_id, topic_id, has_free_places, dates_json, is_active, is_external)
+	(speakers, users, type_id, topic_id, has_free_places, dates_json, is_active, is_external, is_published)
+	VALUES('%s', '%s'::json, %s, %s, %s, '%s'::json, %s, %s, %s);
+	`, speakers, users, type_id, topic_id, has_free_places, dates_json, is_active, is_external, is_published)
 
 	log.Print(sql)
 
@@ -208,12 +209,14 @@ func Updatetraining(c *gin.Context) {
 	id := c.PostForm("training_id")
 	is_active := c.PostForm("is_active")
 	is_external := c.PostForm("is_external")
+	is_published := c.PostForm("is_published")
 
 	sql := fmt.Sprintf(`UPDATE public.training
 	SET speakers='%s', users='%s'::json, type_id=%s,
-	topic_id=%s, has_free_places=%s, dates_json='%s'::json, is_active = %s, is_external = %s
+	topic_id=%s, has_free_places=%s, dates_json='%s'::json,
+	is_active = %s, is_external = %s, is_published = %s
 	WHERE training_id= %s ;
-	`, speakers, users, type_id, topic_id, has_free_places, dates_json, is_active, is_external, id)
+	`, speakers, users, type_id, topic_id, has_free_places, dates_json, is_active, is_external, is_published, id)
 
 	_, err := dbConnect.Exec(sql)
 	if err != nil {
