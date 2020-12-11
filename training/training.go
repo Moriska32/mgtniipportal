@@ -254,7 +254,8 @@ func Gettraining(c *gin.Context) {
 
 	dbConnect := config.Connect()
 	todo := fmt.Sprintf(`SELECT *
-	FROM public.training WHERE training_id= %s;
+	FROM public.training WHERE training_id= %s  
+	order by cast(training.dates_json -> 0 ->> 'date_start' as timestamp) desc ; 
 	`, id)
 
 	defer dbConnect.Close()
@@ -288,7 +289,7 @@ func Gettrainingslimit(c *gin.Context) {
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 	todo := fmt.Sprintf(`SELECT *
-	FROM public.training limit %s offset %s;
+	FROM public.training order by cast(training.dates_json -> 0 ->> 'date_start' as timestamp) desc limit %s offset %s ;
 	`, limit, offset)
 
 	theCase := "lower"

@@ -12,6 +12,7 @@ require (
 	github.com/gin-gonic/gin v1.6.3
 	github.com/lib/pq v1.8.0
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
+	github.com/scottleedavis/go-exif-remove v0.0.0-20190908021517-58bdbaac8636
 	gopkg.in/dgrijalva/jwt-go.v3 v3.2.0 // indirect
 	gopkg.in/gomail.v2 v2.0.0-20160411212932-81ebce5c23df
 )
