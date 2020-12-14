@@ -356,3 +356,63 @@ func Gettrainingstopicstypes(c *gin.Context) {
 	return
 
 }
+
+//Getactivetrainings Get active trainings
+func Getactivetrainings(c *gin.Context) {
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+	todo := fmt.Sprintf(`SELECT *
+	FROM public.training
+	where is_published = 1 and is_external = 0 and has_free_places = 1 
+	and (training.dates_json -> 0 ->> 'date_start')::timestamp > now();
+	`)
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+
+	return
+
+}
+
+//Getpasttrainings get past trainings
+func Getpasttrainings(c *gin.Context) {
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+	todo := fmt.Sprintf(`SELECT *
+	FROM public.training
+	where is_published = 1 and is_external = 0 
+	and (training.dates_json -> 0 ->> 'date_start')::timestamp >= now() - INTERVAL '30 DAY';
+	`)
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+
+	return
+
+}
