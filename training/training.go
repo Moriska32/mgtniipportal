@@ -366,7 +366,7 @@ func Getactivetrainings(c *gin.Context) {
 	FROM public.training, public.trainingtopic
 	where is_published = 1 and is_external = 0 and has_free_places = 1 
 	and (training.dates_json -> 0 ->> 'date_start')::timestamp > now()
-	and trainingtopic.topic_id = training.topic_id;;
+	and trainingtopic.topic_id = training.topic_id;
 	`)
 
 	theCase := "lower"
