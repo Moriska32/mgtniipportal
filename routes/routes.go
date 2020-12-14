@@ -153,6 +153,7 @@ func Routes(router *gin.Engine) {
 
 			//TrainingAnakitic
 			root.GET("/getpooltrainingbyyear", training.Getpooltrainingbyyear)
+			root.GET("/getpoolusersbydep", training.Getpoolusersbydep)
 
 		}
 	}
