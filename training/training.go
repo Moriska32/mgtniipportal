@@ -362,10 +362,11 @@ func Getactivetrainings(c *gin.Context) {
 
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
-	todo := fmt.Sprintf(`SELECT *
-	FROM public.training
+	todo := fmt.Sprintf(`SELECT training.*, trainingtopic.descr as topic_descr, trainingtopic.title as topic_title 
+	FROM public.training, public.trainingtopic
 	where is_published = 1 and is_external = 0 and has_free_places = 1 
-	and (training.dates_json -> 0 ->> 'date_start')::timestamp > now();
+	and (training.dates_json -> 0 ->> 'date_start')::timestamp > now()
+	and trainingtopic.topic_id = training.topic_id;;
 	`)
 
 	theCase := "lower"
@@ -392,10 +393,11 @@ func Getpasttrainings(c *gin.Context) {
 
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
-	todo := fmt.Sprintf(`SELECT *
-	FROM public.training
-	where is_published = 1 and is_external = 0 
-	and (training.dates_json -> 0 ->> 'date_end')::date between (now() - INTERVAL '30 DAY') and now();
+	todo := fmt.Sprintf(`SELECT training.*, trainingtopic.descr as topic_descr, trainingtopic.title as topic_title 
+	FROM public.training, public.trainingtopic
+	where training.is_published = 1 and training.is_external = 0 
+	and (training.dates_json -> 0 ->> 'date_end')::date between (now() - INTERVAL '30 DAY') and now()
+and trainingtopic.topic_id = training.topic_id;
 	`)
 
 	theCase := "lower"
