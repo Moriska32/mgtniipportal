@@ -395,7 +395,7 @@ func Getpasttrainings(c *gin.Context) {
 	todo := fmt.Sprintf(`SELECT *
 	FROM public.training
 	where is_published = 1 and is_external = 0 
-	and (training.dates_json -> 0 ->> 'date_end')::timestamp >= now() - INTERVAL '30 DAY';
+	and (training.dates_json -> 0 ->> 'date_end')::date between (now() - INTERVAL '30 DAY') and now();
 	`)
 
 	theCase := "lower"
