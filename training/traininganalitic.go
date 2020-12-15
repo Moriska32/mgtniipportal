@@ -202,15 +202,49 @@ type TrainingTime struct {
 	TimeEnd   string `json:"time_end"`
 }
 
-func allUsersIntrain() map[string][]string {
+func getdepbyuser() map[string]string {
 
-	var result = map[string][]string{}
+	var result = map[string]string{}
 
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 
-	todo := fmt.Sprintf(`select training.users, training.dates_json, trainingtopic.descr as topic_descr, trainingtopic.title as topic_title
-	FROM public.training, public.trainingtopic where training.users::text != '[]' and trainingtopic.topic_id = training.topic_id;`)
+	todo := fmt.Sprintf(`select tuser.user_id, tdep.name
+	FROM public.tdep tdep, public.tuser tuser
+	WHERE 
+		tuser.dep_id = tdep.dep_id;`)
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+
+	}
+
+	for _, items := range data {
+
+		result[items["user_id"]] = items["name"]
+
+	}
+
+	return result
+
+}
+
+func allUsersIntraining() map[string]map[int]map[string]string {
+
+	usersindeps := getdepbyuser()
+
+	var result = map[string]map[int]map[string]string{}
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+
+	todo := fmt.Sprintf(`select training.users, training.dates_json, training.is_external,
+	trainingtopic.descr as topic_descr, trainingtopic.title as topic_title
+	FROM public.training, public.trainingtopic where training.users::text != '[]' 
+	and trainingtopic.topic_id = training.topic_id;`)
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
@@ -230,7 +264,95 @@ func allUsersIntrain() map[string][]string {
 
 		for _, item := range users {
 
-			result[item.User] = append(result[item.User], "test")
+			if _, ok := result[item.User]; ok {
+
+				for j, date := range dates_json {
+
+					if _, ok := result[item.User]; ok {
+						result[item.User][j] = map[string]string{}
+
+						result[item.User][j]["date_start"] = date.DateStart
+						result[item.User][j]["date_end"] = date.DateEnd
+
+						if data[i]["is_external"] == "1" {
+
+							result[item.User][j]["is_external"] = "Внешнее"
+
+						} else {
+
+							result[item.User][j]["is_external"] = "Внутреннее" //внутреннее
+
+						}
+
+						result[item.User][j]["topic_title"] = data[i]["topic_title"]
+						result[item.User][j]["deps"] = usersindeps[item.User]
+
+					} else {
+						result[item.User][j]["date_start"] = date.DateStart
+						result[item.User][j]["date_end"] = date.DateEnd
+
+						if data[i]["is_external"] == "1" {
+
+							result[item.User][j]["is_external"] = "Внешнее"
+
+						} else {
+
+							result[item.User][j]["is_external"] = "Внутреннее" //внутреннее
+
+						}
+
+						result[item.User][j]["topic_title"] = data[i]["topic_title"]
+						result[item.User][j]["deps"] = usersindeps[item.User]
+
+					}
+				}
+
+			} else {
+
+				result[item.User] = map[int]map[string]string{}
+
+				for j, date := range dates_json {
+
+					if _, ok := result[item.User]; ok {
+						result[item.User][j] = map[string]string{}
+
+						result[item.User][j]["date_start"] = date.DateStart
+						result[item.User][j]["date_end"] = date.DateEnd
+
+						if data[i]["is_external"] == "1" {
+
+							result[item.User][j]["is_external"] = "Внешнее"
+
+						} else {
+
+							result[item.User][j]["is_external"] = "Внутреннее" //внутреннее
+
+						}
+
+						result[item.User][j]["topic_title"] = data[i]["topic_title"]
+						result[item.User][j]["deps"] = usersindeps[item.User]
+
+					} else {
+						result[item.User][j]["date_start"] = date.DateStart
+						result[item.User][j]["date_end"] = date.DateEnd
+
+						if data[i]["is_external"] == "1" {
+
+							result[item.User][j]["is_external"] = "Внешнее"
+
+						} else {
+
+							result[item.User][j]["is_external"] = "Внутреннее" //внутреннее
+
+						}
+
+						result[item.User][j]["topic_title"] = data[i]["topic_title"]
+						result[item.User][j]["deps"] = usersindeps[item.User]
+
+					}
+				}
+
+			}
 
 		}
 
@@ -242,7 +364,7 @@ func allUsersIntrain() map[string][]string {
 //GetExelAnaliticsTraining Get Exel Analitics Training
 func GetExelAnaliticsTraining(c *gin.Context) {
 
-	users := allUsersIntrain()
+	users := allUsersIntraining()
 	_ = users
 
 	c.JSON(http.StatusOK, gin.H{
