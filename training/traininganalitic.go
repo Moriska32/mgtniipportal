@@ -26,7 +26,7 @@ func Getpooltrainingbyyear(c *gin.Context) {
 	end_monthl := c.Query("end_monthl")
 
 	if year != "" {
-		year_text = fmt.Sprintf(`EXTRACT(YEAR from (training.dates_json -> 0 ->> 'date_start')::date) = %s `, year)
+		year_text = fmt.Sprintf(`where EXTRACT(YEAR from (training.dates_json -> 0 ->> 'date_start')::date) = %s `, year)
 	}
 
 	if month != "" {
@@ -49,7 +49,7 @@ func Getpooltrainingbyyear(c *gin.Context) {
 	defer dbConnect.Close()
 
 	todo := fmt.Sprintf(`SELECT *
-	FROM public.training where  %s %s %s %s
+	FROM public.training %s %s %s %s
 	order by cast(training.dates_json -> 0 ->> 'date_start' as timestamp) desc;
 	`, year_text, month_text, is_external_text, end_monthf_text)
 
@@ -132,7 +132,7 @@ func getusersintrain(year string, end_monthf string, end_monthl string) []string
 	month_text := ""
 
 	if year != "" {
-		year_text = fmt.Sprintf(`EXTRACT(YEAR from (training.dates_json -> 0 ->> 'date_start')::date) = %s `, year)
+		year_text = fmt.Sprintf(` and EXTRACT(YEAR from (training.dates_json -> 0 ->> 'date_start')::date) = %s `, year)
 	}
 
 	if end_monthf != "" && end_monthl != "" {
@@ -147,7 +147,7 @@ func getusersintrain(year string, end_monthf string, end_monthl string) []string
 	defer dbConnect.Close()
 
 	todo := fmt.Sprintf(`select users 
-	FROM public.training where %s %s and users::text != '[]';`, year_text, month_text)
+	FROM public.training where users::text != '[]' %s %s ;`, year_text, month_text)
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
@@ -191,4 +191,62 @@ func Getpoolusersbydep(c *gin.Context) {
 		"data":   data,
 	})
 
+}
+
+//TrainingTime Training Time of users
+type TrainingTime struct {
+	DateStart string `json:"date_start"`
+	DateEnd   string `json:"date_end"`
+	IsOnline  string `json:"is_online"`
+	TimeStart string `json:"time_start"`
+	TimeEnd   string `json:"time_end"`
+}
+
+func allUsersIntrain() map[string][]string {
+
+	var result = map[string][]string{}
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+
+	todo := fmt.Sprintf(`select training.users, training.dates_json, trainingtopic.descr as topic_descr, trainingtopic.title as topic_title
+	FROM public.training, public.trainingtopic where training.users::text != '[]' and trainingtopic.topic_id = training.topic_id;`)
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+
+	}
+
+	for i := range data {
+
+		var users []*Users
+		var dates_json []*TrainingTime
+
+		json.Unmarshal([]byte(data[i]["users"]), &users)
+		json.Unmarshal([]byte(data[i]["dates_json"]), &dates_json)
+
+		for _, item := range users {
+
+			result[item.User] = append(result[item.User], "test")
+
+		}
+
+	}
+	return result
+
+}
+
+//GetExelAnaliticsTraining Get Exel Analitics Training
+func GetExelAnaliticsTraining(c *gin.Context) {
+
+	users := allUsersIntrain()
+	_ = users
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   users,
+	})
 }
