@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/360EntSecGroup-Skylar/excelize/v2"
 	"github.com/elgs/gosqljson"
@@ -264,6 +265,12 @@ func allUsersIntraining() map[string]map[string]string {
 		json.Unmarshal([]byte(data[i]["users"]), &users)
 		json.Unmarshal([]byte(data[i]["dates_json"]), &dates_json)
 
+		datestart := strings.Split(dates_json[0].DateStart, "-")
+		dateend := strings.Split(dates_json[0].DateEnd, "-")
+
+		DateStart := datestart[2] + "-" + datestart[1] + "-" + datestart[0]
+		DateEnd := dateend[2] + "-" + dateend[1] + "-" + dateend[0]
+
 		for _, item := range users {
 
 			if _, ok := result[item.User]; ok {
@@ -271,8 +278,8 @@ func allUsersIntraining() map[string]map[string]string {
 				if _, ok := result[item.User]; ok {
 					result[item.User] = map[string]string{}
 
-					result[item.User]["date_start"] = dates_json[0].DateStart
-					result[item.User]["date_end"] = dates_json[len(dates_json)-1].DateEnd
+					result[item.User]["date_start"] = DateStart
+					result[item.User]["date_end"] = DateEnd
 
 					if data[i]["is_external"] == "1" {
 
@@ -288,8 +295,8 @@ func allUsersIntraining() map[string]map[string]string {
 					result[item.User]["deps"] = usersindeps[item.User]
 
 				} else {
-					result[item.User]["date_start"] = dates_json[0].DateStart
-					result[item.User]["date_end"] = dates_json[len(dates_json)-1].DateEnd
+					result[item.User]["date_start"] = DateStart
+					result[item.User]["date_end"] = DateEnd
 
 					if data[i]["is_external"] == "1" {
 
@@ -313,8 +320,8 @@ func allUsersIntraining() map[string]map[string]string {
 				if _, ok := result[item.User]; ok {
 					result[item.User] = map[string]string{}
 
-					result[item.User]["date_start"] = dates_json[0].DateStart
-					result[item.User]["date_end"] = dates_json[len(dates_json)-1].DateEnd
+					result[item.User]["date_start"] = DateStart
+					result[item.User]["date_end"] = DateEnd
 
 					if data[i]["is_external"] == "1" {
 
@@ -330,8 +337,8 @@ func allUsersIntraining() map[string]map[string]string {
 					result[item.User]["deps"] = usersindeps[item.User]
 
 				} else {
-					result[item.User]["date_start"] = dates_json[0].DateStart
-					result[item.User]["date_end"] = dates_json[len(dates_json)-1].DateEnd
+					result[item.User]["date_start"] = DateStart
+					result[item.User]["date_end"] = DateEnd
 
 					if data[i]["is_external"] == "1" {
 
