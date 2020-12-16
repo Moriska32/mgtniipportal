@@ -448,7 +448,7 @@ func GetExelAnaliticsTraining(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
-		"file":   "172.20.0.82:4747/file/documents//excel/Данные по пользователям по обучениям.xlsx",
+		"file":   "172.20.0.82:4747/file/documents/excel/Данные по пользователям по обучениям.xlsx",
 	})
 
 }
