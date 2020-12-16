@@ -3,6 +3,7 @@ module PortalMGTNIIP
 go 1.14
 
 require (
+	github.com/360EntSecGroup-Skylar/excelize/v2 v2.3.1
 	github.com/appleboy/gin-jwt v2.5.0+incompatible
 	github.com/appleboy/gin-jwt/v2 v2.6.4
 	github.com/briandowns/openweathermap v0.16.0

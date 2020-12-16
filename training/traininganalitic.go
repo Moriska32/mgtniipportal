@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
+	"github.com/360EntSecGroup-Skylar/excelize/v2"
 	"github.com/elgs/gosqljson"
 	"github.com/gin-gonic/gin"
 )
@@ -232,11 +234,11 @@ func getdepbyuser() map[string]string {
 
 }
 
-func allUsersIntraining() map[string]map[int]map[string]string {
+func allUsersIntraining() map[string]map[string]string {
 
 	usersindeps := getdepbyuser()
 
-	var result = map[string]map[int]map[string]string{}
+	var result = map[string]map[string]string{}
 
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
@@ -266,90 +268,84 @@ func allUsersIntraining() map[string]map[int]map[string]string {
 
 			if _, ok := result[item.User]; ok {
 
-				for j, date := range dates_json {
+				if _, ok := result[item.User]; ok {
+					result[item.User] = map[string]string{}
 
-					if _, ok := result[item.User]; ok {
-						result[item.User][j] = map[string]string{}
+					result[item.User]["date_start"] = dates_json[0].DateStart
+					result[item.User]["date_end"] = dates_json[len(dates_json)-1].DateEnd
 
-						result[item.User][j]["date_start"] = date.DateStart
-						result[item.User][j]["date_end"] = date.DateEnd
+					if data[i]["is_external"] == "1" {
 
-						if data[i]["is_external"] == "1" {
-
-							result[item.User][j]["is_external"] = "Внешнее"
-
-						} else {
-
-							result[item.User][j]["is_external"] = "Внутреннее" //внутреннее
-
-						}
-
-						result[item.User][j]["topic_title"] = data[i]["topic_title"]
-						result[item.User][j]["deps"] = usersindeps[item.User]
+						result[item.User]["is_external"] = "Внешнее"
 
 					} else {
-						result[item.User][j]["date_start"] = date.DateStart
-						result[item.User][j]["date_end"] = date.DateEnd
 
-						if data[i]["is_external"] == "1" {
-
-							result[item.User][j]["is_external"] = "Внешнее"
-
-						} else {
-
-							result[item.User][j]["is_external"] = "Внутреннее" //внутреннее
-
-						}
-
-						result[item.User][j]["topic_title"] = data[i]["topic_title"]
-						result[item.User][j]["deps"] = usersindeps[item.User]
+						result[item.User]["is_external"] = "Внутреннее" //внутреннее
 
 					}
+
+					result[item.User]["topic_title"] = data[i]["topic_title"]
+					result[item.User]["deps"] = usersindeps[item.User]
+
+				} else {
+					result[item.User]["date_start"] = dates_json[0].DateStart
+					result[item.User]["date_end"] = dates_json[len(dates_json)-1].DateEnd
+
+					if data[i]["is_external"] == "1" {
+
+						result[item.User]["is_external"] = "Внешнее"
+
+					} else {
+
+						result[item.User]["is_external"] = "Внутреннее" //внутреннее
+
+					}
+
+					result[item.User]["topic_title"] = data[i]["topic_title"]
+					result[item.User]["deps"] = usersindeps[item.User]
+
 				}
 
 			} else {
 
-				result[item.User] = map[int]map[string]string{}
+				result[item.User] = map[string]string{}
 
-				for j, date := range dates_json {
+				if _, ok := result[item.User]; ok {
+					result[item.User] = map[string]string{}
 
-					if _, ok := result[item.User]; ok {
-						result[item.User][j] = map[string]string{}
+					result[item.User]["date_start"] = dates_json[0].DateStart
+					result[item.User]["date_end"] = dates_json[len(dates_json)-1].DateEnd
 
-						result[item.User][j]["date_start"] = date.DateStart
-						result[item.User][j]["date_end"] = date.DateEnd
+					if data[i]["is_external"] == "1" {
 
-						if data[i]["is_external"] == "1" {
-
-							result[item.User][j]["is_external"] = "Внешнее"
-
-						} else {
-
-							result[item.User][j]["is_external"] = "Внутреннее" //внутреннее
-
-						}
-
-						result[item.User][j]["topic_title"] = data[i]["topic_title"]
-						result[item.User][j]["deps"] = usersindeps[item.User]
+						result[item.User]["is_external"] = "Внешнее"
 
 					} else {
-						result[item.User][j]["date_start"] = date.DateStart
-						result[item.User][j]["date_end"] = date.DateEnd
 
-						if data[i]["is_external"] == "1" {
-
-							result[item.User][j]["is_external"] = "Внешнее"
-
-						} else {
-
-							result[item.User][j]["is_external"] = "Внутреннее" //внутреннее
-
-						}
-
-						result[item.User][j]["topic_title"] = data[i]["topic_title"]
-						result[item.User][j]["deps"] = usersindeps[item.User]
+						result[item.User]["is_external"] = "Внутреннее" //внутреннее
 
 					}
+
+					result[item.User]["topic_title"] = data[i]["topic_title"]
+					result[item.User]["deps"] = usersindeps[item.User]
+
+				} else {
+					result[item.User]["date_start"] = dates_json[0].DateStart
+					result[item.User]["date_end"] = dates_json[len(dates_json)-1].DateEnd
+
+					if data[i]["is_external"] == "1" {
+
+						result[item.User]["is_external"] = "Внешнее"
+
+					} else {
+
+						result[item.User]["is_external"] = "Внутреннее" //внутреннее
+
+					}
+
+					result[item.User]["topic_title"] = data[i]["topic_title"]
+					result[item.User]["deps"] = usersindeps[item.User]
+
 				}
 
 			}
@@ -357,18 +353,102 @@ func allUsersIntraining() map[string]map[int]map[string]string {
 		}
 
 	}
+
 	return result
+
+}
+
+func userwithname() map[string]map[string]string {
+
+	result := map[string]map[string]string{}
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+
+	todo := fmt.Sprintf(`select tuser.user_id, tuser.fam, tuser."name", tuser.otch 
+	FROM public.tuser;`)
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+
+	}
+
+	for _, item := range data {
+
+		if _, ok := result[item["user_id"]]; ok {
+
+			result[item["user_id"]]["fam"] = item["fam"]
+			result[item["user_id"]]["name"] = item["name"]
+			result[item["user_id"]]["otch"] = item["otch"]
+
+		} else {
+
+			result[item["user_id"]] = map[string]string{}
+
+			result[item["user_id"]]["fam"] = item["fam"]
+			result[item["user_id"]]["name"] = item["name"]
+			result[item["user_id"]]["otch"] = item["otch"]
+
+		}
+
+	}
+	return result
+}
+
+func writeUsersrTrainingToExcel() {
+
+	users := allUsersIntraining()
+	name := userwithname()
+
+	f := excelize.NewFile()
+	// Create a new sheet.
+	index := f.NewSheet("Sheet1")
+	// Set value of a cell.
+	f.SetCellValue("Sheet1", "A1", "Фамилия")
+	f.SetCellValue("Sheet1", "B1", "Имя")
+	f.SetCellValue("Sheet1", "C1", "Отчество")
+	f.SetCellValue("Sheet1", "D1", "Начало обучения")
+	f.SetCellValue("Sheet1", "E1", "Конец обучения")
+	f.SetCellValue("Sheet1", "F1", "Вид обучения")
+	f.SetCellValue("Sheet1", "G1", "Тема обучения")
+	f.SetCellValue("Sheet1", "H1", "Подразделение сотрудников")
+	// Set active sheet of the workbook.
+
+	i := 2
+
+	for user, items := range users {
+
+		f.SetCellValue("Sheet1", "A"+strconv.Itoa(i), name[user]["fam"])
+		f.SetCellValue("Sheet1", "B"+strconv.Itoa(i), name[user]["name"])
+		f.SetCellValue("Sheet1", "C"+strconv.Itoa(i), name[user]["otch"])
+		f.SetCellValue("Sheet1", "D"+strconv.Itoa(i), items["date_start"])
+		f.SetCellValue("Sheet1", "E"+strconv.Itoa(i), items["date_end"])
+		f.SetCellValue("Sheet1", "F"+strconv.Itoa(i), items["is_external"])
+		f.SetCellValue("Sheet1", "G"+strconv.Itoa(i), items["topic_title"])
+		f.SetCellValue("Sheet1", "H"+strconv.Itoa(i), items["deps"])
+
+		i++
+
+	}
+	f.SetActiveSheet(index)
+	// Save spreadsheet by the given path.
+	if err := f.SaveAs("public//documents//excel//Данные по пользователям по обучениям.xlsx"); err != nil {
+		fmt.Println(err)
+	}
 
 }
 
 //GetExelAnaliticsTraining Get Exel Analitics Training
 func GetExelAnaliticsTraining(c *gin.Context) {
 
-	users := allUsersIntraining()
-	_ = users
+	writeUsersrTrainingToExcel()
 
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
-		"data":   users,
+		"file":   "172.20.0.82:4747/file/documents//excel/Данные по пользователям по обучениям.xlsx",
 	})
+
 }
