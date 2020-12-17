@@ -21,14 +21,13 @@ func PostTrainingRequest(c *gin.Context) {
 
 	user_id := data["user_id"]
 	training_id := c.PostForm("training_id")
-	status_req := c.PostForm("status_req")
+
 	date_send_req := c.PostForm("date_send_req")
-	date_answer_req := c.PostForm("date_answer_req")
 
 	sql := fmt.Sprintf(`INSERT INTO public.trainingsrequests
-	( user_id, training_id, status_req, date_send_req, date_answer_req)
-	VALUES(%s, %s, %s, '%s', '%s');
-	`, user_id, training_id, status_req, date_send_req, date_answer_req)
+	( user_id, training_id, date_send_req)
+	VALUES(%s, %s, '%s');
+	`, user_id, training_id, date_send_req)
 
 	_, err := dbConnect.Exec(sql)
 	if err != nil {
