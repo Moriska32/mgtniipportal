@@ -158,6 +158,11 @@ func Routes(router *gin.Engine) {
 			root.GET("/getpoolusersbydep", training.Getpoolusersbydep)
 			root.GET("/getexelanaliticstraining", training.GetExelAnaliticsTraining)
 
+			//TrainingRequest
+
+			root.POST("/posttrainingrequest", training.PostTrainingRequest)
+			root.POST("/updatetrainingrequest", training.UpdateTrainingRequest)
+			root.POST("/gettrainingrequestslimit", training.GetTrainingRequestsLimit)
 		}
 	}
 
