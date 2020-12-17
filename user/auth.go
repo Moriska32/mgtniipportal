@@ -223,6 +223,6 @@ func GetTokenInfo(c *gin.Context) {
 		"data":   data,
 	})
 
-	return data
+	return
 
 }
