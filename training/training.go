@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/elgs/gosqljson"
 	"github.com/gin-gonic/gin"
@@ -287,12 +288,39 @@ func Gettrainingslimit(c *gin.Context) {
 
 	limit := c.PostForm("limit")
 	offset := c.PostForm("offset")
+	year := c.PostForm("year")
+	is_external := c.PostForm("is_external")
+	type_ids := c.PostFormArray("type_ids")
+
+	yeartext := ""
+	is_externaltext := ""
+	type_ids_text := ""
+
+	if year != "" {
+
+		yeartext = fmt.Sprintf(` and EXTRACT(YEAR from (training.dates_json -> 0 ->> 'date_start')::date) = %s `, year)
+
+	}
+
+	if is_external != "" {
+
+		is_externaltext = fmt.Sprintf(` and is_external = %s`, is_external)
+
+	}
+
+	if len(type_ids) != 0 {
+
+		type_ids_text = strings.ReplaceAll(strings.ReplaceAll(fmt.Sprintf(` and type_id in (%s)`, strings.Join(type_ids, ",")), "[", ""), "]", "")
+
+	}
 
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 	todo := fmt.Sprintf(`SELECT *
-	FROM public.training order by cast(training.dates_json -> 0 ->> 'date_start' as timestamp) desc limit %s offset %s ;
-	`, limit, offset)
+	FROM public.training where 1=1 %s %s %s order by cast(training.dates_json -> 0 ->> 'date_start' as timestamp) desc limit %s offset %s ;
+	`, yeartext, is_externaltext, type_ids_text, limit, offset)
+
+	log.Println(todo)
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
