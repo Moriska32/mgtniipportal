@@ -72,6 +72,7 @@ func Auth() *jwt.GinJWTMiddleware {
 			userID := loginVals.Username
 			password := loginVals.Password
 			location := loginVals.Location
+
 			dbConnect := config.Connect()
 			defer dbConnect.Close()
 
@@ -208,5 +209,20 @@ func Blacklist(c *gin.Context) {
 		return
 	}
 	c.Next()
+
+}
+
+//GetTokenInfo Get Token Info
+func GetTokenInfo(c *gin.Context) {
+
+	//data := jwt.GetToken(c)
+	data := jwt.ExtractClaims(c)
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+
+	return data
 
 }

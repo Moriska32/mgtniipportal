@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/elgs/gosqljson"
 	"github.com/gin-gonic/gin"
 )
@@ -13,10 +14,12 @@ import (
 //PostTrainingRequest Post Training Requset
 func PostTrainingRequest(c *gin.Context) {
 
+	data := jwt.ExtractClaims(c)
+
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 
-	user_id := c.PostForm("user_id")
+	user_id := data["user_id"]
 	training_id := c.PostForm("training_id")
 	status_req := c.PostForm("status_req")
 	date_send_req := c.PostForm("date_send_req")
@@ -38,6 +41,14 @@ func PostTrainingRequest(c *gin.Context) {
 
 //UpdateTrainingRequest Update Training Request
 func UpdateTrainingRequest(c *gin.Context) {
+
+	data := jwt.ExtractClaims(c)
+
+	if data["userrole"] != "2" {
+		c.String(http.StatusNotAcceptable, "You are not Admin!")
+
+		return
+	}
 
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
