@@ -100,14 +100,23 @@ func SendRequest(c *gin.Context) {
 	_ = sql
 	todo := fmt.Sprintf(`INSERT INTO public.mail
 	("json", type_id)
-	VALUES('%s'::json, %s);
+	VALUES('%s'::json, %s) RETURNING id;
 	`, pool, typeid)
 
-	_, err = dbConnect.Exec(todo)
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
 	if err != nil {
-		c.String(http.StatusBadRequest, fmt.Sprintf("insert: %s", err.Error()))
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+
 	}
 
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+
+	return
 }
 
 //GetRequest mail
