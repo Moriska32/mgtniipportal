@@ -122,3 +122,36 @@ func GetTrainingRequestsLimit(c *gin.Context) {
 	return
 
 }
+
+//GetUserWithTrainingsRequest Get User With Trainings
+func GetUserWithTrainingsRequest(c *gin.Context) {
+
+	items := jwt.ExtractClaims(c)
+
+	dbConnect := config.Connect()
+	todo := fmt.Sprintf(`SELECT tuser.*, trainingsrequests.*
+	FROM public.tuser tuser, public.trainingsrequests trainingsrequests
+	WHERE 
+		tuser.user_id = trainingsrequests.user_id and tuser.user_id = %s;
+	`, items["user_id"])
+
+	defer dbConnect.Close()
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+
+	return
+
+}
