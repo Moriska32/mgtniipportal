@@ -170,24 +170,9 @@ func GetRequestLimit(c *gin.Context) {
 	FROM public.mail mail, public.mail_type mail_type
 	WHERE 
 		mail_type.type_id = mail.type_id and mail.type_id = %s order by cast(mail.json ->> 'date' as timestamp) desc limit %s offset %s;`, t, limit, offset)
-	var (
-		pool string
-		data SendMailITJSON
-	)
-	sql, _ := dbConnect.Query(todo)
 
-	var result SendMailSITJSON
-
-	for sql.Next() {
-		sql.Scan(&pool)
-		//pool = strings.Replace(pool, `\`, ``, 1)
-		err := json.Unmarshal([]byte(pool), &data)
-
-		if err != nil {
-			panic(err.Error())
-		}
-		result = append(result, data)
-	}
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
 
 	todo = fmt.Sprintf(`SELECT ceil(count(*)::real/%s::real) as pages_length from
 	(SELECT mail.json
@@ -195,7 +180,6 @@ func GetRequestLimit(c *gin.Context) {
 	WHERE 
 		mail_type.type_id = mail.type_id and mail.type_id = %s) a;`, limit, t)
 
-	theCase := "lower"
 	count, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
 
 	if err != nil {
@@ -208,7 +192,7 @@ func GetRequestLimit(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
-		"data":   result,
+		"data":   data,
 		"count":  count[0]["pages_length"],
 	})
 
