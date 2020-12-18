@@ -166,7 +166,7 @@ func GetRequestLimit(c *gin.Context) {
 
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
-	todo := fmt.Sprintf(`SELECT mail.json
+	todo := fmt.Sprintf(`SELECT mail.json, mail.id
 	FROM public.mail mail, public.mail_type mail_type
 	WHERE 
 		mail_type.type_id = mail.type_id and mail.type_id = %s order by cast(mail.json ->> 'date' as timestamp) desc limit %s offset %s;`, t, limit, offset)
