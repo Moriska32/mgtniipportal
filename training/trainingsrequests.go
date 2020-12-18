@@ -57,12 +57,13 @@ func UpdateTrainingRequest(c *gin.Context) {
 	status_req := c.PostForm("status_req")
 	date_send_req := c.PostForm("date_send_req")
 	date_answer_req := c.PostForm("date_answer_req")
+	descr_answer_req := c.PostForm("descr_answer_req")
 
 	sql := fmt.Sprintf(`UPDATE public.trainingsrequests
 	SET req_id=%s, 
-	user_id=%s, training_id=%s, status_req=%s, date_send_req='%s', date_answer_req='%s';
+	user_id=%s, training_id=%s, status_req=%s, date_send_req='%s', date_answer_req='%s', descr_answer_req='%s';
 	;
-	`, req_id, user_id, training_id, status_req, date_send_req, date_answer_req)
+	`, req_id, user_id, training_id, status_req, date_send_req, date_answer_req, descr_answer_req)
 
 	_, err := dbConnect.Exec(sql)
 	if err != nil {
