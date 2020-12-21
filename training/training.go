@@ -446,3 +446,31 @@ and trainingtopic.topic_id = training.topic_id;
 	return
 
 }
+
+//Gettrainingreqstatuses Get training reqs tatuses
+func Gettrainingreqstatuses(c *gin.Context) {
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+	todo := fmt.Sprintf(`SELECT id, status
+	FROM public.training_status;
+	`)
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+
+	return
+
+}
