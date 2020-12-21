@@ -167,7 +167,7 @@ func Routes(router *gin.Engine) {
 			root.POST("/gettrainingsrequestslimit", training.GetTrainingRequestsLimit)
 			root.GET("/getuserwithtrainingsandrequests", training.GetUserWithTrainingsAndRequests)
 
-			root.GET("/test", user.GetTokenInfo)
+			//root.GET("/test", user.GetTokenInfo)
 
 		}
 	}
