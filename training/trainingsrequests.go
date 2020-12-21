@@ -168,7 +168,7 @@ func GetUserWithTrainingsAndRequests(c *gin.Context) {
 	todo = fmt.Sprintf(`select training.training_id, trainingtopic.title, training.dates_json
 	FROM public.training training, public.trainingtopic trainingtopic
 	WHERE 
-		trainingtopic.topic_id = training.topic_id and training.users::text like '%suser":"%s%s';`, "%s", items["user_id"], "%s")
+		trainingtopic.topic_id = training.topic_id and training.users::text like '%suser":"%s%s';`, "%", items["user_id"], "%")
 
 	theCase = "lower"
 	training, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
