@@ -10,6 +10,7 @@ import (
 	"os"
 	"strings"
 
+	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/elgs/gosqljson"
 
 	"github.com/gin-gonic/gin"
@@ -859,7 +860,9 @@ func SearchInUsers(c *gin.Context) {
 //UpdatePass Update user Pass
 func UpdatePass(c *gin.Context) {
 
-	id := c.PostForm("user_id")
+	key := jwt.ExtractClaims(c)
+
+	id := key["user_id"]
 	pass := c.PostForm("pass")
 
 	dbConnect := config.Connect()
@@ -892,6 +895,8 @@ func UpdatePass(c *gin.Context) {
 //UpdatePhoto user photo
 func UpdatePhoto(c *gin.Context) {
 
+	key := jwt.ExtractClaims(c)
+
 	form, err := c.MultipartForm()
 
 	if err != nil {
@@ -904,7 +909,7 @@ func UpdatePhoto(c *gin.Context) {
 	subfolder := c.PostForm("subfolder")
 	newfullname := c.PostForm("new_fullname")
 	filepath := c.PostForm("filepath")
-	user := c.PostForm("user_id")
+	user := key["user_id"]
 	var path, filename string
 	os.Mkdir(fmt.Sprintf("public/%s/%s", folder, subfolder), os.ModePerm)
 
