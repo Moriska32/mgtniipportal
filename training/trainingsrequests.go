@@ -191,3 +191,37 @@ func GetUserWithTrainingsAndRequests(c *gin.Context) {
 	return
 
 }
+
+//PostAnswerTrainigRequest Post Answer Trainig Request
+func PostAnswerTrainigRequest(c *gin.Context) {
+
+	data := jwt.ExtractClaims(c)
+
+	if data["userrole"] != "2" {
+		c.String(http.StatusNotAcceptable, "You are not Admin!")
+
+		return
+	}
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+	req_id := c.PostForm("req_id")
+	status_req := c.PostForm("status_req")
+
+	date_answer_req := c.PostForm("date_answer_req")
+	descr_answer_req := c.PostForm("descr_answer_req")
+
+	sql := fmt.Sprintf(`UPDATE public.trainingsrequests
+	SET	status_req=%s, date_answer_req='%s', descr_answer_req='%s'
+	where req_id = %s;
+	
+	`, status_req, date_answer_req, descr_answer_req, req_id)
+
+	_, err := dbConnect.Exec(sql)
+	if err != nil {
+		c.String(http.StatusBadRequest, fmt.Sprintf("insert: %s", err.Error()))
+	}
+
+	return
+
+}

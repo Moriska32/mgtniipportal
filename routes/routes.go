@@ -164,6 +164,7 @@ func Routes(router *gin.Engine) {
 
 			root.POST("/posttrainingrequest", training.PostTrainingRequest)
 			root.POST("/updatetrainingrequest", training.UpdateTrainingRequest)
+			root.POST("/postanswertrainigrequest", training.PostAnswerTrainigRequest)
 			root.POST("/gettrainingsrequestslimit", training.GetTrainingRequestsLimit)
 			root.GET("/getuserwithtrainingsandrequests", training.GetUserWithTrainingsAndRequests)
 
