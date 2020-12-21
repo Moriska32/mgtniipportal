@@ -129,18 +129,15 @@ func GetUserWithTrainingsAndRequests(c *gin.Context) {
 	items := jwt.ExtractClaims(c)
 
 	dbConnect := config.Connect()
-	todo := fmt.Sprintf(`SELECT tuser.*, 
-	trainingsrequests.training_id, trainingsrequests.status_req, trainingsrequests.date_send_req,
-	 trainingsrequests.date_answer_req
-	FROM public.tuser tuser, public.trainingsrequests trainingsrequests
+	todo := fmt.Sprintf(`SELECT 
+	trainingsrequests.training_id, trainingsrequests.status_req, trainingsrequests.date_send_req, trainingsrequests.date_answer_req
+	FROM public.trainingsrequests trainingsrequests
 	WHERE 
-		tuser.user_id = trainingsrequests.user_id and tuser.user_id = %s
+		trainingsrequests.user_id = %s
 	union
-	select tuser.*, training.training_id, t.*
-	FROM public.tuser tuser,public.training training, (values (3,'','')) as t(status_req, date_send_req,
-		 date_answer_req)
-	where training.users::text like '%suser":"%s%s'
-	and tuser.user_id = %s;`, items["user_id"], "%", items["user_id"], "%", items["user_id"])
+	select training.training_id, t.*
+	FROM public.training training, (values (3,'','')) as t(status_req, date_send_req, date_answer_req)
+	where training.users::text like '%suser":"%s%s';`, items["user_id"], "%", items["user_id"], "%")
 
 	defer dbConnect.Close()
 
