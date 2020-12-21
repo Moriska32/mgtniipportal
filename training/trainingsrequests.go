@@ -129,20 +129,18 @@ func GetUserWithTrainingsAndRequests(c *gin.Context) {
 	items := jwt.ExtractClaims(c)
 
 	dbConnect := config.Connect()
-	todo := fmt.Sprintf(`SELECT 
-	trainingsrequests.training_id, trainingsrequests.status_req, trainingsrequests.date_send_req, trainingsrequests.date_answer_req
-	FROM public.trainingsrequests trainingsrequests
+	todo := fmt.Sprintf(`SELECT trainingsrequests.training_id, trainingtopic.title, training.dates_json, trainingsrequests.status_req,
+	trainingsrequests.date_send_req, trainingsrequests.date_answer_req, trainingsrequests.descr_answer_req
+	FROM public.training training, public.trainingtopic trainingtopic, public.trainingsrequests trainingsrequests
 	WHERE 
-		trainingsrequests.user_id = %s
-	union
-	select training.training_id, t.*
-	FROM public.training training, (values (3,'','')) as t(status_req, date_send_req, date_answer_req)
-	where training.users::text like '%suser":"%s%s';`, items["user_id"], "%", items["user_id"], "%")
+		trainingtopic.topic_id = training.topic_id
+		AND training.training_id = trainingsrequests.training_id 
+		and trainingsrequests.user_id = %s;`, items["user_id"])
 
 	defer dbConnect.Close()
 
 	theCase := "lower"
-	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+	trainingrequest, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
 
 	if err != nil {
 		log.Printf("Error while getting a single todo, Reason: %v\n", err)
@@ -151,9 +149,43 @@ func GetUserWithTrainingsAndRequests(c *gin.Context) {
 		})
 		return
 	}
+
+	todo = fmt.Sprintf(`SELECT *
+	FROM public.tuser
+	where user_id = %s;`, items["user_id"])
+
+	theCase = "lower"
+	user, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+
+	todo = fmt.Sprintf(`select training.training_id, trainingtopic.title, training.dates_json
+	FROM public.training training, public.trainingtopic trainingtopic
+	WHERE 
+		trainingtopic.topic_id = training.topic_id and training.users::text like '%suser":"%s%s';`, "%s", items["user_id"], "%s")
+
+	theCase = "lower"
+	training, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
-		"status": http.StatusOK,
-		"data":   data,
+		"status":             http.StatusOK,
+		"trainings_requests": trainingrequest,
+		"user":               user,
+		"training":           training,
 	})
 
 	return
