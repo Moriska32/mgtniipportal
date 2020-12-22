@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"PortalMGTNIIP/absence"
 	"PortalMGTNIIP/api"
 	files "PortalMGTNIIP/files"
 	"PortalMGTNIIP/geomap"
@@ -155,7 +156,7 @@ func Routes(router *gin.Engine) {
 
 			root.GET("/gettrainingreqstatuses", training.Gettrainingreqstatuses)
 
-			//TrainingAnakitic
+			//TrainingAnalitic
 			root.GET("/getpooltrainingbyyear", training.Getpooltrainingbyyear)
 			root.GET("/getpoolusersbydep", training.Getpoolusersbydep)
 			root.GET("/getexcelanaliticstraining", training.GetExelAnaliticsTraining)
@@ -169,6 +170,11 @@ func Routes(router *gin.Engine) {
 			root.GET("/getuserwithtrainingsandrequests", training.GetUserWithTrainingsAndRequests)
 
 			//root.GET("/test", user.GetTokenInfo)
+
+			//Absence
+			root.POST("/postabsence", absence.PostAbsence)
+			root.POST("/getabsenceslimit", absence.GetAbsencesLimit)
+			root.GET("/getabsencesmonth", absence.GetAbsencesMonth)
 
 		}
 	}

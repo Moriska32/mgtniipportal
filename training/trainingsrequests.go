@@ -119,7 +119,7 @@ func GetTrainingRequestsLimit(c *gin.Context) {
 		"data":         data,
 		"pages_length": count[0]["pages_length"],
 	})
-	dbConnect.Close()
+
 	return
 
 }
