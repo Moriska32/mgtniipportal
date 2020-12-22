@@ -394,7 +394,8 @@ func Getactivetrainings(c *gin.Context) {
 	FROM public.training, public.trainingtopic
 	where training.is_published = 1 and training.is_external = 0 and training.has_free_places = 1 
 	and (training.dates_json -> 0 ->> 'date_start')::timestamp > now()
-	and trainingtopic.topic_id = training.topic_id;
+	and trainingtopic.topic_id = training.topic_id
+	order by cast(training.dates_json -> 0 ->> 'date_start' as timestamp) desc;
 	`)
 
 	theCase := "lower"
@@ -425,7 +426,8 @@ func Getpasttrainings(c *gin.Context) {
 	FROM public.training, public.trainingtopic
 	where training.is_published = 1 and training.is_external = 0 
 	and (training.dates_json -> 0 ->> 'date_end')::date between (now() - INTERVAL '30 DAY') and now()
-and trainingtopic.topic_id = training.topic_id;
+and trainingtopic.topic_id = training.topic_id
+order by cast(training.dates_json -> 0 ->> 'date_start' as timestamp) desc;
 	`)
 
 	theCase := "lower"

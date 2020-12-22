@@ -150,7 +150,11 @@ func GetUserWithTrainingsAndRequests(c *gin.Context) {
 		return
 	}
 
-	todo = fmt.Sprintf(`SELECT *
+	todo = fmt.Sprintf(`SELECT SESELECT user_id, login,
+	fam, "name", otch, birthday, foto,
+	hobby, profskills, drecrut, dep_id, chief, tel, workplace, userrole, del, post_id
+	FROM public.tuser;
+	
 	FROM public.tuser
 	where user_id = %s;`, items["user_id"])
 
