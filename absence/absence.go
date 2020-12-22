@@ -128,3 +128,31 @@ func GetAbsencesMonth(c *gin.Context) {
 	return
 
 }
+
+//GetAbsenceReasons Get Absence Reasons
+func GetAbsenceReasons(c *gin.Context) {
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+	todo := fmt.Sprintf(`SELECT absence_reason_id, absence_reason, color, bg
+	FROM public.absence_reason;
+	`)
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+
+	return
+
+}
