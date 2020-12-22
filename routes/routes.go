@@ -175,7 +175,7 @@ func Routes(router *gin.Engine) {
 			root.POST("/postabsence", absence.PostAbsence)
 			root.POST("/getabsenceslimit", absence.GetAbsencesLimit)
 			root.GET("/getabsencesmonth", absence.GetAbsencesMonth)
-			root.GET("/GetAbsenceReasons", absence.GetAbsenceReasons)
+			root.GET("/getabsencereasons", absence.GetAbsenceReasons)
 
 		}
 	}
