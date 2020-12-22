@@ -83,7 +83,8 @@ func GetTrainingRequestsLimit(c *gin.Context) {
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 	todo := fmt.Sprintf(`SELECT *
-	FROM public.trainingsrequests limit %s offset %s ;
+	FROM public.trainingsrequests order by date_send_req::timestamp desc
+	limit %s offset %s ;
 	`, limit, offset)
 
 	log.Println(todo)
