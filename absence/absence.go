@@ -104,10 +104,10 @@ func GetAbsencesMonth(c *gin.Context) {
 	defer dbConnect.Close()
 	todo := fmt.Sprintf(`SELECT absence_id, user_id, date_start, date_end, absence_reason_id
 	FROM public.absence where 
-	%s between EXTRACT(YEAR from date_start::date) and EXTRACT(YEAR from date_end::date) 
-	and (%s between EXTRACT(month from date_start::date) and EXTRACT(month from date_end::date)
-	or %s between EXTRACT(month from date_end::date) and EXTRACT(month from date_start::date));
-	`, year, month, month)
+	'%s-%s-01'::date between CONCAT(EXTRACT(YEAR from date_start::date)::text,'-',EXTRACT(month from date_start::date)::text,'-01')::date
+	and 
+	CONCAT(EXTRACT(YEAR from date_end::date)::text,'-',EXTRACT(month from date_end::date)::text,'-01')::date;
+	`, year, month)
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
