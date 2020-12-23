@@ -155,3 +155,68 @@ func GetAbsenceReasons(c *gin.Context) {
 	return
 
 }
+
+//DeleteAbsence Delete Absence
+func DeleteAbsence(c *gin.Context) {
+
+	data := jwt.ExtractClaims(c)
+
+	if data["userrole"] != "2" {
+		c.String(http.StatusNotAcceptable, "You are not Admin!")
+
+		return
+	}
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+
+	absence_id := c.PostForm("absence_id")
+
+	sql := fmt.Sprintf(`DELETE FROM public.absence
+	WHERE absence_id = %s
+	
+	`, absence_id)
+
+	_, err := dbConnect.Exec(sql)
+	if err != nil {
+		c.String(http.StatusBadRequest, fmt.Sprintf("insert: %s", err.Error()))
+	}
+
+	return
+
+}
+
+//UpdateAbsence Update Absence
+func UpdateAbsence(c *gin.Context) {
+
+	data := jwt.ExtractClaims(c)
+
+	if data["userrole"] != "2" {
+		c.String(http.StatusNotAcceptable, "You are not Admin!")
+
+		return
+	}
+
+	user_id := c.PostForm("user_id")
+	date_start := c.PostForm("date_start")
+	date_end := c.PostForm("date_end")
+	absence_reason_id := c.PostForm("absence_reason_id")
+	absence_id := c.PostForm("absence_id")
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+
+	sql := fmt.Sprintf(`UPDATE public.absence
+	SET user_id=%s, date_start='%s', date_end='%s', absence_reason_id=%s
+	where absence_id = %s;
+	
+	`, user_id, date_start, date_end, absence_reason_id, absence_id)
+
+	_, err := dbConnect.Exec(sql)
+	if err != nil {
+		c.String(http.StatusBadRequest, fmt.Sprintf("insert: %s", err.Error()))
+	}
+
+	return
+
+}
