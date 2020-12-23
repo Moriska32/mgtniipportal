@@ -105,9 +105,8 @@ func GetAbsencesMonth(c *gin.Context) {
 	todo := fmt.Sprintf(`SELECT absence_id, user_id, date_start, date_end, absence_reason_id
 	FROM public.absence where 
 	%s between EXTRACT(YEAR from date_start::date) and EXTRACT(YEAR from date_end::date) 
-	and 
-	%s between EXTRACT(month from date_start::date) and EXTRACT(month from date_end::date); 
-	
+	and (%s between EXTRACT(month from date_start::date) and EXTRACT(month from date_end::date)
+	or %s between EXTRACT(month from date_end::date) and EXTRACT(month from date_start::date))
 	`, year, month)
 
 	theCase := "lower"
