@@ -53,8 +53,9 @@ func GetAbsencesLimit(c *gin.Context) {
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 	todo := fmt.Sprintf(`SELECT *
-	FROM public.absence	
-	limit %s offset %s ;
+	FROM public.absence
+	order by date_start desc
+		limit %s offset %s ;
 	`, limit, offset)
 
 	log.Println(todo)
