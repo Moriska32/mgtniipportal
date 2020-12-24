@@ -454,9 +454,27 @@ func GetProjectsLimit(c *gin.Context) {
 		})
 		return
 	}
+
+	todo = fmt.Sprintf(`select ceil(count(*)::real/%s::real) as pages_length from
+	(SELECT *
+	FROM public.tproject tproject, public.tproject_file tproject_file
+	WHERE 
+		tproject_file.proj_id = tproject.proj_id order by tproject.drealiz desc) a;`, limit)
+
+	count, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
 		"data":   data,
+		"count":  count,
 	})
 	dbConnect.Close()
 	return
