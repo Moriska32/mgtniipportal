@@ -248,7 +248,7 @@ func allUsersIntraining() map[string]map[string]string {
 	trainingtopic.descr as topic_descr, trainingtopic.title as topic_title
 	FROM public.training, public.trainingtopic where training.users::text != '[]' 
 	and trainingtopic.topic_id = training.topic_id
-	order by cast(training.dates_json -> 0 ->> 'date_start' as timestamp) desc;`)
+	;`)
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)

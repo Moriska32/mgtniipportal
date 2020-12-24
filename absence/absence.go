@@ -135,8 +135,7 @@ func GetAbsenceReasons(c *gin.Context) {
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 	todo := fmt.Sprintf(`SELECT *
-	FROM public.absence_reason;
-	`)
+	FROM public.absence_reason;	`)
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
