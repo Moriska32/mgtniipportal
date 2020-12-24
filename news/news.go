@@ -433,7 +433,8 @@ func GetnewsLimit(c *gin.Context) {
 
 	todo = fmt.Sprintf(`select ceil(count(*)::real/%s::real) as pages_length from
 	(SELECT * FROM public.tnews tnews, public.tnews_file tnews_file 
-		WHERE tnews_file.n_id = tnews.n_id and nf_type = %s  order by tnews.n_date desc) a ;`, limit, t)
+	WHERE tnews_file.n_id = tnews.n_id and nf_type = %s 
+	order by tnews.n_date desc) a ;`, limit, t)
 
 	count, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
 
@@ -448,7 +449,7 @@ func GetnewsLimit(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
 		"data":   data,
-		"count":  count,
+		"count":  count[0]["pages_length"],
 	})
 
 	return
