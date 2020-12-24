@@ -23,11 +23,12 @@ func PostTrainingRequest(c *gin.Context) {
 	training_id := c.PostForm("training_id")
 
 	date_send_req := c.PostForm("date_send_req")
+	training_topic_title := c.PostForm("training_topic_title")
 
 	sql := fmt.Sprintf(`INSERT INTO public.trainingsrequests
-	( user_id, training_id, date_send_req)
-	VALUES(%s, %s, '%s');
-	`, user_id, training_id, date_send_req)
+	( user_id, training_id, date_send_req, training_topic_title)
+	VALUES(%s, %s, '%s', '%s');
+	`, user_id, training_id, date_send_req, training_topic_title)
 
 	_, err := dbConnect.Exec(sql)
 	if err != nil {
@@ -58,12 +59,14 @@ func UpdateTrainingRequest(c *gin.Context) {
 	date_send_req := c.PostForm("date_send_req")
 	date_answer_req := c.PostForm("date_answer_req")
 	descr_answer_req := c.PostForm("descr_answer_req")
+	training_topic_title := c.PostForm("training_topic_title")
 
 	sql := fmt.Sprintf(`UPDATE public.trainingsrequests
-	SET	user_id=%s, training_id=%s, status_req=%s, date_send_req='%s', date_answer_req='%s', descr_answer_req='%s'
+	SET	user_id=%s, training_id=%s, status_req=%s, date_send_req='%s', date_answer_req='%s', descr_answer_req='%s',
+	training_topic_title = '%s'
 	where req_id = %s;
 	
-	`, user_id, training_id, status_req, date_send_req, date_answer_req, descr_answer_req, req_id)
+	`, user_id, training_id, status_req, date_send_req, date_answer_req, descr_answer_req, training_topic_title, req_id)
 
 	_, err := dbConnect.Exec(sql)
 	if err != nil {
