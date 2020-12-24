@@ -134,7 +134,7 @@ func GetAbsenceReasons(c *gin.Context) {
 
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
-	todo := fmt.Sprintf(`SELECT absence_reason_id, absence_reason, color, bg
+	todo := fmt.Sprintf(`SELECT *
 	FROM public.absence_reason;
 	`)
 
