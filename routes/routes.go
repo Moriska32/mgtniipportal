@@ -60,7 +60,7 @@ func Routes(router *gin.Engine) {
 			root.POST("/deletenews", news.Deletenews)
 			root.POST("/getonenews", news.GetOneNews)
 			root.POST("/getnewslimit", news.GetnewsLimit)
-			root.POST("/getnewslimitcount", news.GetnewsLimitCount)
+			//root.POST("/getnewslimitcount", news.GetnewsLimitCount)
 			root.GET("/newsthemes", news.Newsthemes)
 			root.POST("/getnewsbytheme", news.GetNewsByTheme)
 			root.POST("/getnewsbytime", news.GetNewsByTime)
@@ -81,7 +81,7 @@ func Routes(router *gin.Engine) {
 			root.POST("/getusersobj", user.Getusersobj)
 			root.POST("/getusersletter", user.Getusersletter)
 			root.POST("/getusersbyobj", user.Getusersbyobj)
-			root.POST("/getuserslimitcount", user.Getuserslimitcount)
+			//root.POST("/getuserslimitcount", user.Getuserslimitcount)
 			root.GET("/getusersadmins", user.Getusersadmins)
 			root.GET("/getusersletters", user.Getusersletters)
 			root.GET("/getuserstime", user.Getuserstime)
@@ -102,7 +102,7 @@ func Routes(router *gin.Engine) {
 			root.POST("/deleteprojects", projects.DeleteProjects)
 			root.POST("/getprojectsbydirectionid", projects.GetProjectsByID)
 			root.POST("/getprojectslimit", projects.GetProjectsLimit)
-			root.POST("/getprojectslimitcount", projects.GetProjectsLimitCount)
+			//root.POST("/getprojectslimitcount", projects.GetProjectsLimitCount)
 			root.POST("/searchinprojects", projects.SearchInProjects)
 
 			//Meetingroom
