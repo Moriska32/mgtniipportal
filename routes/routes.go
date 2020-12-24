@@ -178,6 +178,7 @@ func Routes(router *gin.Engine) {
 			root.POST("/deleteabsence", absence.DeleteAbsence)
 			root.GET("/getabsencesmonth", absence.GetAbsencesMonth)
 			root.GET("/getabsencereasons", absence.GetAbsenceReasons)
+			root.GET("/getabsencesdate", absence.GetAbsencesDate)
 
 		}
 	}

@@ -220,3 +220,34 @@ func UpdateAbsence(c *gin.Context) {
 	return
 
 }
+
+//GetAbsencesDate Get Absences Date
+func GetAbsencesDate(c *gin.Context) {
+
+	date := c.Query("date")
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+	todo := fmt.Sprintf(`SELECT absence_id, user_id, date_start, date_end, absence_reason_id
+	FROM public.absence where 
+	'%s'::date between date_start::date	and date_end::date;
+	`, date)
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+
+	return
+
+}
