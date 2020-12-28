@@ -81,6 +81,10 @@ func Routes(router *gin.Engine) {
 			root.POST("/getusersobj", user.Getusersobj)
 			root.POST("/getusersletter", user.Getusersletter)
 			root.POST("/getusersbyobj", user.Getusersbyobj)
+
+			root.POST("/updatehobby", user.UpdateHobby)
+			root.POST("/updateprofskills", user.UpdateProfskills)
+
 			//root.POST("/getuserslimitcount", user.Getuserslimitcount)
 			root.GET("/getusersadmins", user.Getusersadmins)
 			root.GET("/getusersletters", user.Getusersletters)

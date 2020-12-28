@@ -1019,3 +1019,73 @@ func UpdatePhoto(c *gin.Context) {
 	}
 
 }
+
+//UpdateHobby Update user Hobby
+func UpdateHobby(c *gin.Context) {
+
+	key := jwt.ExtractClaims(c)
+
+	id := key["user_id"]
+	hobby := c.PostForm("hobby")
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+
+	todo := fmt.Sprintf(`UPDATE public.tuser
+	SET hobby='%s'
+	WHERE user_id=%s;
+	`, hobby, id)
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+
+	return
+
+}
+
+//UpdateProfskills Update user Profskills
+func UpdateProfskills(c *gin.Context) {
+
+	key := jwt.ExtractClaims(c)
+
+	id := key["user_id"]
+	profskills := c.PostForm("profskills")
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+
+	todo := fmt.Sprintf(`UPDATE public.tuser
+	SET profskills ='%s'
+	WHERE user_id=%s;
+	`, profskills, id)
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+
+	return
+
+}
