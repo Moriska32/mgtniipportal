@@ -85,6 +85,8 @@ func Routes(router *gin.Engine) {
 			root.POST("/updatehobby", user.UpdateHobby)
 			root.POST("/updateprofskills", user.UpdateProfskills)
 
+			root.POST("/updateuserdata", user.UpdateUserData)
+
 			//root.POST("/getuserslimitcount", user.Getuserslimitcount)
 			root.GET("/getusersadmins", user.Getusersadmins)
 			root.GET("/getusersletters", user.Getusersletters)
