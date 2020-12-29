@@ -109,7 +109,7 @@ func Routes(router *gin.Engine) {
 			root.GET("/getprojectsdirections", projects.GetProjectsDirection)
 			root.POST("/deleteprojects", projects.DeleteProjects)
 			root.POST("/getprojectsbydirectionid", projects.GetProjectsByID)
-			root.POST("/getprojectsbyidlimit", projects.GetProjectsByIDLimit)
+			root.POST("/getprojectsbydirectionidlimit", projects.GetProjectsByIDLimit)
 
 			root.POST("/getprojectslimit", projects.GetProjectsLimit)
 			//root.POST("/getprojectslimitcount", projects.GetProjectsLimitCount)
