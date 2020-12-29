@@ -65,6 +65,8 @@ func Routes(router *gin.Engine) {
 			root.POST("/getnewsbytheme", news.GetNewsByTheme)
 			root.POST("/getnewsbytime", news.GetNewsByTime)
 
+			root.POST("/getnewsbythemelimit", news.GetnewsByThemeLimit)
+
 			root.POST("/searchinnews", news.SearchInNews)
 
 			//User
