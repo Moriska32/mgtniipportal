@@ -393,7 +393,7 @@ func Getactivetrainings(c *gin.Context) {
 	todo := fmt.Sprintf(`SELECT training.*, trainingtopic.descr as topic_descr, trainingtopic.title as topic_title 
 	FROM public.training, public.trainingtopic
 	where training.is_published = 1 and training.has_free_places = 1 
-	and (training.dates_json -> 0 ->> 'date_start')::timestamp > now() - INTERVAL '1 DAY'
+	and (training.dates_json -> 0 ->> 'date_start')::timestamp > now()
 	and trainingtopic.topic_id = training.topic_id
 	order by cast(training.dates_json -> 0 ->> 'date_start' as timestamp) desc;
 	`)
@@ -425,7 +425,7 @@ func Getpasttrainings(c *gin.Context) {
 	todo := fmt.Sprintf(`SELECT training.*, trainingtopic.descr as topic_descr, trainingtopic.title as topic_title 
 	FROM public.training, public.trainingtopic
 	where training.is_published = 1 
-	and (training.dates_json -> 0 ->> 'date_end')::date between (now() - INTERVAL '30 DAY') and now()
+	and (training.dates_json -> 0 ->> 'date_end')::date between (now() - INTERVAL '30 DAY') and now() - INTERVAL '1 DAY'
 and trainingtopic.topic_id = training.topic_id
 order by cast(training.dates_json -> 0 ->> 'date_start' as timestamp) desc;
 	`)
