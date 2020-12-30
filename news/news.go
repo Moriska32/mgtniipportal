@@ -657,7 +657,7 @@ func GetnewsByThemeLimit(c *gin.Context) {
 
 	todo = fmt.Sprintf(`select ceil(count(*)::real/%s::real) as pages_length from
 	(SELECT * FROM public.tnews tnews, public.tnews_file tnews_file 
-	WHERE tnews_file.n_id = tnews.n_id and nf_type = %s 
+	WHERE tnews_file.n_id = tnews.n_id and theme = %s 
 	order by tnews.n_date desc) a ;`, limit, t)
 
 	count, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
