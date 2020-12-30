@@ -595,7 +595,8 @@ func GetProjectsByIDLimit(c *gin.Context) {
 	(SELECT *
 	FROM public.tproject tproject, public.tproject_file tproject_file
 	WHERE 
-		tproject_file.proj_id = tproject.proj_id order by tproject.drealiz desc) a;`, limit)
+		tproject_file.proj_id = tproject.proj_id and tproject.pd_id = %s
+		order by tproject.drealiz desc) a;`, limit, id)
 
 	count, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
 
