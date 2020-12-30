@@ -138,6 +138,7 @@ func GetUserWithTrainingsAndRequests(c *gin.Context) {
 	FROM public.training training, public.trainingtopic trainingtopic, public.trainingsrequests trainingsrequests
 	WHERE 
 		trainingtopic.topic_id = training.topic_id
+		
 		AND training.training_id = trainingsrequests.training_id 
 		and trainingsrequests.user_id = %s;`, items["user_id"])
 
@@ -158,7 +159,7 @@ func GetUserWithTrainingsAndRequests(c *gin.Context) {
 	fam, "name", otch, birthday, foto,
 	hobby, profskills, drecrut, dep_id, chief, tel, workplace, userrole, del, post_id
 	FROM public.tuser
-	where user_id = %s;`, items["user_id"])
+	where user_id = %s and del != 1;`, items["user_id"])
 
 	theCase = "lower"
 	user, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)

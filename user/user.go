@@ -374,7 +374,7 @@ func GetuserNotPass(c *gin.Context) {
 	dbConnect := config.Connect()
 	todo := fmt.Sprintf(`SELECT user_id, login, fam, "name", otch, birthday, foto, 
 	hobby, profskills, drecrut, dep_id, chief, tel, workplace, userrole, del,
-	 post_id from public.tuser where user_id = %s and login not in ('admin', 'moder', 'user', 'mtp');`, id)
+	 post_id from public.tuser where user_id = %s and del != 1 and login not in ('admin', 'moder', 'user', 'mtp');`, id)
 
 	defer dbConnect.Close()
 
@@ -558,7 +558,7 @@ func Getusersletter(c *gin.Context) {
 
 	todo := fmt.Sprintf(`SELECT user_id, login, fam, "name", otch, birthday, foto,
 	 hobby, profskills, drecrut, dep_id, chief, tel, workplace, userrole, del, post_id
-	FROM public.tuser where upper(substr(fam,1,1)) = upper('%s') and login not in ('admin', 'user', 'moder', 'mtp');`, letter)
+	FROM public.tuser where upper(substr(fam,1,1)) = upper('%s') and del != 1 and login not in ('admin', 'user', 'moder', 'mtp');`, letter)
 
 	defer dbConnect.Close()
 
@@ -677,7 +677,7 @@ func Getusersadmins(c *gin.Context) {
 		89,
 		309,
 		549,
-	97)
+	97) and del != 1
 order by array_position( array ['Горелов',
 'Барсуков',
 'Былин',
@@ -736,7 +736,7 @@ func Getusersletters(c *gin.Context) {
 	defer dbConnect.Close()
 
 	todo := fmt.Sprintf(`SELECT string_agg(distinct(substr(fam,1,1)), ',') as letter
-	FROM public.tuser where fam ~ '[а-я]+' order by letter;`)
+	FROM public.tuser where fam ~ '[а-я]+' and del != 1 order by letter ;`)
 
 	theCase := "lower"
 	rus, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
@@ -776,7 +776,7 @@ func Getuserstime(c *gin.Context) {
 	dbConnect := config.Connect()
 
 	todo := `SELECT user_id, login, fam, "name", otch, birthday, foto, hobby, profskills, drecrut, dep_id, chief, tel, workplace, userrole, del, post_id
-	FROM public.tuser where drecrut between now() - INTERVAL '14 DAY' DAY and now();`
+	FROM public.tuser where  drecrut between now() - INTERVAL '14 DAY' DAY and now() and del != 1;`
 
 	defer dbConnect.Close()
 
