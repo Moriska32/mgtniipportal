@@ -317,7 +317,7 @@ func Post(c *gin.Context) {
 	dbConnect := config.Connect()
 	ID := c.Param("id")
 	todo := "SELECT  post_id, dep_id, post_name, post_count FROM public.tdep where dep_id = " + ID + ";"
-
+	defer dbConnect.Close()
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
 
@@ -333,7 +333,7 @@ func Post(c *gin.Context) {
 		"status": http.StatusOK,
 		"data":   data,
 	})
-	dbConnect.Close()
+
 	return
 
 }
