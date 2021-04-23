@@ -192,7 +192,7 @@ func Routes(router *gin.Engine) {
 			root.GET("/getabsencesdate", absence.GetAbsencesDate)
 
 			//TASKS
-			root.GET("/tasks/:tmax/:tmin/:id", tasks.GetTasks)
+			root.GET("/tasks", tasks.GetTasks)
 			root.POST("/tasks", tasks.PostTasks)
 			root.PUT("/tasks", tasks.UpdateTasks)
 			root.DELETE("/tasks", tasks.DeleteTasks)

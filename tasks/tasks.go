@@ -78,7 +78,7 @@ func UpdateTasks(c *gin.Context) {
 		return
 	}
 
-	id := c.Param("id")
+	id := c.Params.ByName("id")
 
 	var json TasksJSON
 
@@ -121,7 +121,7 @@ func DeleteTasks(c *gin.Context) {
 		return
 	}
 
-	id := c.Param("id")
+	id := c.Query("id")
 
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
@@ -141,9 +141,9 @@ func DeleteTasks(c *gin.Context) {
 //Get it tasks in bd
 func GetTasks(c *gin.Context) {
 
-	tmin := c.Param("tmin")
-	tmax := c.Param("tmax")
-	id := c.Param("id")
+	tmin := c.Query("tmin")
+	tmax := c.Query("tmax")
+	id := c.Query("id")
 	log.Println(tmin, tmax)
 	sql := ""
 	switch {
