@@ -21,7 +21,7 @@ import (
 //Dep list if dep by id
 func Dep(c *gin.Context) {
 	dbConnect := config.Connect()
-	ID := c.Param("id")
+	ID := c.Query("id")
 	todo := "SELECT dep_id, name, parent_id FROM public.tdep where parent_id = " + ID + " and parent_id not in (3, 27, 29, 64, 67, 69);"
 
 	theCase := "lower"
@@ -315,7 +315,7 @@ func Posts(c *gin.Context) {
 //Post list if dep by id
 func Post(c *gin.Context) {
 	dbConnect := config.Connect()
-	ID := c.Param("id")
+	ID := c.Query("id")
 	todo := "SELECT  post_id, dep_id, post_name, post_count FROM public.tdep where dep_id = " + ID + ";"
 	defer dbConnect.Close()
 	theCase := "lower"
@@ -550,7 +550,7 @@ func Meetingrooms(c *gin.Context) {
 //Objects get Object
 func Objects(c *gin.Context) {
 
-	ID := c.Param("id")
+	ID := c.Query("id")
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 	todo := `SELECT object_id, type_id, container_id, "number"

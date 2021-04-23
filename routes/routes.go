@@ -34,7 +34,7 @@ func Routes(router *gin.Engine) {
 
 			//GET
 
-			root.GET("/dep/:id", api.Dep)
+			root.GET("/dep", api.Dep)
 			root.GET("/deps", api.Deps)
 			root.GET("/chiefs", api.Chief)
 			root.GET("/orgstructure", api.Orgstructure)
@@ -42,7 +42,7 @@ func Routes(router *gin.Engine) {
 				c.HTML(http.StatusOK, "select_file.html", gin.H{})
 			})
 
-			root.GET("/post/:id", api.Post)
+			root.GET("/post", api.Post)
 			root.GET("/posts", api.Posts)
 			root.GET("/cbrdaily", api.Cbrdaily)
 			root.GET("/weather", api.Weathers)
@@ -100,7 +100,7 @@ func Routes(router *gin.Engine) {
 
 			//Object
 			root.GET("/objectstype", api.Objectstype)
-			root.GET("/objects/:id", api.Objects)
+			root.GET("/objects", api.Objects)
 
 			//Project
 			root.POST("/postproject", projects.Postprojects)
