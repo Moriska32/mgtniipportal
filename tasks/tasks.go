@@ -43,7 +43,9 @@ func PostTasks(c *gin.Context) {
 
 	var json TasksJSON
 
-	pool := c.PostForm("json")
+	pool, _ := c.GetRawData()
+
+	log.Println(pool)
 
 	err := js.Unmarshal([]byte(pool), &json)
 
