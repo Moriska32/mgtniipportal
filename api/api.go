@@ -550,7 +550,7 @@ func Meetingrooms(c *gin.Context) {
 //Objects get Object
 func Objects(c *gin.Context) {
 
-	ID := c.Query("id")
+	ID := c.Param("id")
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 	todo := `SELECT object_id, type_id, container_id, "number"

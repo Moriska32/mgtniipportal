@@ -100,7 +100,7 @@ func Routes(router *gin.Engine) {
 
 			//Object
 			root.GET("/objectstype", api.Objectstype)
-			root.GET("/objects", api.Objects)
+			root.GET("/objects/:id", api.Objects)
 
 			//Project
 			root.POST("/postproject", projects.Postprojects)
