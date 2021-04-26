@@ -20,7 +20,7 @@ type TasksJSON struct {
 	AuthorID             string `json:"author_id"`
 	OperatorID           string `json:"operator_id"`
 	ExecutorID           string `json:"executor_id"`
-	Phone                int    `json:"phone"`
+	Phone                string `json:"phone"`
 	OperatorAcceptTime   string `json:"operator_accept_time"`
 	OperatorDeclineTime  string `json:"operator_decline_time"`
 	ExecuteStartTime     string `json:"execute_start_time"`
@@ -58,7 +58,7 @@ func PostTasks(c *gin.Context) {
 
 	sql := fmt.Sprintf(`INSERT INTO public.tasks
 	(type_id, description, phone,author_id, create_time)
-	VALUES('%d', '%s', %d,%s, '%s')
+	VALUES('%d', '%s', %s,%s, '%s')
 	;
 	`, json.TypeID, json.Description, json.Phone, data["user_id"], time.Now().Format("2006-01-02 15:04:05"))
 
@@ -84,7 +84,7 @@ func UpdateTasks(c *gin.Context) {
 
 	var json TasksJSON
 
-	pool := c.PostForm("json")
+	pool, _ := c.GetRawData()
 
 	err := js.Unmarshal([]byte(pool), &json)
 
