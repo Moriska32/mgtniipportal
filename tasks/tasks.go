@@ -58,7 +58,7 @@ func PostTasks(c *gin.Context) {
 
 	sql := fmt.Sprintf(`INSERT INTO public.tasks
 	(type_id, description, phone,author_id, create_time)
-	VALUES('%d', '%s', %s,%s, '%s')
+	VALUES('%d', '%s', '%s',%s, '%s')
 	;
 	`, json.TypeID, json.Description, json.Phone, data["user_id"], time.Now().Format("2006-01-02 15:04:05"))
 
