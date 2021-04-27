@@ -117,22 +117,41 @@ func UpdateTasks(c *gin.Context) {
 func DeleteTasks(c *gin.Context) {
 	data := jwt.ExtractClaims(c)
 
-	if data["userrole"] != "2" {
-		c.String(http.StatusNotAcceptable, "You are not Admin!")
-
-		return
-	}
-
 	id := c.Query("id")
 
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 
-	sql := fmt.Sprintf(`DELETE FROM public.tasks
+	sql := fmt.Sprintf(`SELECT *
+	FROM public.tasks where id = '%s' order by create_time;
+	`, id)
+
+	theCase := "lower"
+	dataDB, err := gosqljson.QueryDbToMap(dbConnect, theCase, sql)
+
+	if err != nil {
+		log.Printf("Error while getting a single sql, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+
+	if dataDB[0]["author_id"] != data["user_id"] && data["userrole"] != "2" {
+		c.String(http.StatusNotAcceptable, "You are not Admin!")
+
+		return
+	} else if data["userrole"] == "2" || dataDB[0]["author_id"] == data["user_id"] {
+
+		c.String(http.StatusAccepted, "OK")
+
+	}
+
+	sql = fmt.Sprintf(`DELETE FROM public.tasks
 	WHERE id='%s';	
 	`, id)
 
-	_, err := dbConnect.Exec(sql)
+	_, err = dbConnect.Exec(sql)
 	if err != nil {
 		c.String(http.StatusBadRequest, fmt.Sprintf("insert: %s", err.Error()))
 	}
