@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	js "encoding/json"
@@ -80,18 +81,18 @@ func UpdateTasks(c *gin.Context) {
 		return
 	}
 
-	id := c.Params.ByName("id")
+	id := c.Query("id")
 
 	var json TasksJSON
 
 	pool, _ := c.GetRawData()
 
-	err := js.Unmarshal([]byte(pool), &json)
+	err := js.Unmarshal(pool, &json)
 
 	if err != nil {
 		c.String(http.StatusBadRequest, fmt.Sprintf("Get file name err: %s", err.Error()))
 	}
-
+	log.Println(json)
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 
@@ -104,6 +105,12 @@ func UpdateTasks(c *gin.Context) {
 	`, json.OperatorID, json.ExecutorID, json.OperatorAcceptTime, json.OperatorDeclineTime,
 		json.ExecuteStartTime, json.ExecuteEndTime, json.ExecuteStartPlanTime, json.ExecuteEndPlanTime,
 		json.OperatorComment, json.ExecutorComment, id)
+	log.Println(sql)
+
+	sql = strings.ReplaceAll(sql, "=,", "= null,")
+	sql = strings.ReplaceAll(sql, "=''", "= null")
+
+	log.Println(sql)
 
 	_, err = dbConnect.Exec(sql)
 	if err != nil {
