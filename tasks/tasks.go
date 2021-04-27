@@ -50,7 +50,7 @@ func PostTasks(c *gin.Context) {
 	err := js.Unmarshal([]byte(pool), &json)
 
 	if err != nil {
-		c.String(http.StatusBadRequest, fmt.Sprintf("Get file name err: %s", err.Error()))
+		c.String(http.StatusBadRequest, fmt.Sprintf("Json parse err: %s", err.Error()))
 	}
 
 	dbConnect := config.Connect()
