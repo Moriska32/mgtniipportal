@@ -184,9 +184,9 @@ func GetTasks(c *gin.Context) {
 		sql = fmt.Sprintf(`SELECT *
 	FROM public.tasks where create_time between '%s' and '%s' order by create_time;
 	`, tmin, tmax)
-	case tmin == "" || tmax == "":
+	case tmin == "" && tmax == "":
 		sql = fmt.Sprintf(`SELECT *
-	FROM public.tasks order by create_time;
+	FROM public.tasks where create_time > ((now()) - INTERVAL '7 DAY') order by create_time;
 	`)
 
 	}
