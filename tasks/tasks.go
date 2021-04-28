@@ -67,13 +67,7 @@ func PostTasks(c *gin.Context) {
 
 //Update it tasks in bd
 func UpdateTasks(c *gin.Context) {
-	data := jwt.ExtractClaims(c)
-
-	if data["userrole"] != "2" {
-		c.String(http.StatusNotAcceptable, "You are not Admin!")
-
-		return
-	}
+	//data := jwt.ExtractClaims(c)
 
 	id := c.Query("id")
 
