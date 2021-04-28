@@ -91,12 +91,12 @@ func UpdateTasks(c *gin.Context) {
 	defer dbConnect.Close()
 
 	sql := fmt.Sprintf(`UPDATE public.tasks
-	SET operator_id=%s, executor_id=%s, operator_accept_time='%s',
+	SET type_id = %d,operator_id=%s, executor_id=%s, operator_accept_time='%s',
 	  operator_decline_time='%s', execute_start_time='%s', execute_end_time='%s',
 	   execute_start_plan_time='%s', execute_end_plan_time='%s', operator_comment='%s',
 	    executor_comment='%s'
 	WHERE id='%s';	
-	`, json.OperatorID, json.ExecutorID, json.OperatorAcceptTime, json.OperatorDeclineTime,
+	`, json.TypeID, json.OperatorID, json.ExecutorID, json.OperatorAcceptTime, json.OperatorDeclineTime,
 		json.ExecuteStartTime, json.ExecuteEndTime, json.ExecuteStartPlanTime, json.ExecuteEndPlanTime,
 		json.OperatorComment, json.ExecutorComment, id)
 	log.Println(sql)
