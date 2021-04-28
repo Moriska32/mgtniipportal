@@ -1127,3 +1127,45 @@ func UpdateUserData(c *gin.Context) {
 	return
 
 }
+
+//UpdateUserTaskRole Update  User Task Role
+func UpdateUserTaskRole(c *gin.Context) {
+
+	key := jwt.ExtractClaims(c)
+
+	if key["userrole"] != "2" {
+		c.String(http.StatusNotAcceptable, "You are not Admin!")
+
+		return
+	}
+
+	id := key["user_id"]
+
+	tasks_role := c.PostForm("tasks_role")
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+
+	todo := fmt.Sprintf(`UPDATE public.tuser
+	SET tasks_role=%s
+	WHERE user_id = %s;
+	`, tasks_role, id)
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+
+	return
+
+}
