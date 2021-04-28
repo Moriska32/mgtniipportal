@@ -1140,7 +1140,8 @@ func UpdateUserTaskRole(c *gin.Context) {
 	}
 
 	id := key["user_id"]
-
+	user := c.PostForm("user_id")
+	_ = user
 	tasks_role := c.PostForm("tasks_role")
 
 	dbConnect := config.Connect()

@@ -236,3 +236,31 @@ func GetTasksByID(c *gin.Context) {
 
 	return
 }
+
+//GetTasksRoles Get Tasks Roles
+func GetTasksRoles(c *gin.Context) {
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+
+	todo := fmt.Sprintf(`SELECT id, "role"
+	FROM public.tasks_role;`)
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		log.Printf("Error while getting a single todo, Reason: %v\n", err)
+		c.JSON(http.StatusNotFound, gin.H{
+			"status": http.StatusNotFound,
+		})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+
+	return
+
+}
