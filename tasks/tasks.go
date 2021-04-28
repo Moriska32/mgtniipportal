@@ -36,12 +36,6 @@ type TasksJSON struct {
 func PostTasks(c *gin.Context) {
 	data := jwt.ExtractClaims(c)
 
-	if data["userrole"] != "2" {
-		c.String(http.StatusNotAcceptable, "You are not Admin!")
-
-		return
-	}
-
 	var json TasksJSON
 
 	pool, _ := c.GetRawData()
@@ -186,7 +180,7 @@ func GetTasks(c *gin.Context) {
 	`, tmin, tmax)
 	case tmin == "" && tmax == "":
 		sql = fmt.Sprintf(`SELECT *
-	FROM public.tasks where create_time > ((now()) - INTERVAL '7 DAY') order by create_time;
+	FROM public.tasks where create_time > (now() - INTERVAL '7 DAY') order by create_time;
 	`)
 
 	}

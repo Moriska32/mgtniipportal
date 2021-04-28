@@ -32,9 +32,10 @@ func helloHandler(c *gin.Context) {
 
 // User demo
 type User struct {
-	userid   string
-	login    string
-	userrole string
+	userid    string
+	login     string
+	userrole  string
+	tasksrole string
 }
 
 //Auth JWT
@@ -49,9 +50,10 @@ func Auth() *jwt.GinJWTMiddleware {
 		PayloadFunc: func(data interface{}) jwt.MapClaims {
 			if v, ok := data.(*User); ok {
 				return jwt.MapClaims{
-					"user_id":  v.userid,
-					"login":    v.login,
-					"userrole": v.userrole,
+					"user_id":   v.userid,
+					"login":     v.login,
+					"userrole":  v.userrole,
+					"tasksrole": v.tasksrole,
 				}
 			}
 			return jwt.MapClaims{}
@@ -59,9 +61,10 @@ func Auth() *jwt.GinJWTMiddleware {
 		IdentityHandler: func(c *gin.Context) interface{} {
 			claims := jwt.ExtractClaims(c)
 			return &User{
-				userid:   claims["user_id"].(string),
-				login:    claims["login"].(string),
-				userrole: claims["userrole"].(string),
+				userid:    claims["user_id"].(string),
+				login:     claims["login"].(string),
+				userrole:  claims["userrole"].(string),
+				tasksrole: claims["tasks_role"].(string),
 			}
 		},
 		Authenticator: func(c *gin.Context) (interface{}, error) {
@@ -97,9 +100,10 @@ func Auth() *jwt.GinJWTMiddleware {
 			}
 
 			pool := &User{
-				userid:   data[0]["user_id"],
-				login:    data[0]["login"],
-				userrole: data[0]["userrole"],
+				userid:    data[0]["user_id"],
+				login:     data[0]["login"],
+				userrole:  data[0]["userrole"],
+				tasksrole: data[0]["tasks_role"],
 			}
 
 			if err != nil {
