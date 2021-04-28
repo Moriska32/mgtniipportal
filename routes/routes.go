@@ -198,6 +198,7 @@ func Routes(router *gin.Engine) {
 			root.POST("/tasks", tasks.PostTasks)
 			root.PUT("/tasks", tasks.UpdateTasks)
 			root.DELETE("/tasks", tasks.DeleteTasks)
+			root.GET("/tasksroles", tasks.GetTasksRoles)
 
 		}
 	}
