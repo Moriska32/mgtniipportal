@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 
+	jwt "github.com/appleboy/gin-jwt"
 	"github.com/elgs/gosqljson"
 	"github.com/gin-gonic/gin"
 	"gopkg.in/gomail.v2"
@@ -194,6 +195,70 @@ func GetRequestLimit(c *gin.Context) {
 		"status": http.StatusOK,
 		"data":   data,
 		"count":  count[0]["pages_length"],
+	})
+
+	return
+
+}
+
+func MailSender(json SendMailITJSON) {
+
+	m := gomail.NewMessage()
+
+	m.SetHeader("From", "portal@mgtniip.ru")
+	m.SetHeader("To", json.To...)
+	m.SetHeader("Subject", json.Subject)
+
+	m.SetBody("text/html", json.HTML)
+
+	from := "portal@mgtniip.ru"
+	password := "London106446"
+
+	emailDialer := gomail.NewDialer("exchange.mgtniip.ru", 25, from, password)
+	emailDialer.TLSConfig = &tls.Config{InsecureSkipVerify: true}
+
+	if err := emailDialer.DialAndSend(m); err != nil {
+		panic(err)
+	}
+	return
+}
+
+//SendLongMail send long mail
+func SendLongMail(c *gin.Context) {
+
+	token, _ := c.Get("JWT_TOKEN")
+	data := jwt.ExtractClaims(c)
+	pool, _ := c.GetRawData()
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+
+	todo := fmt.Sprintf(`INSERT INTO public.mailtoken
+	(user_id, "token")
+	VALUES(%s, '%s');
+	`, data["user_id"], token)
+
+	_, err := dbConnect.Exec(todo)
+	if err != nil {
+		c.String(http.StatusBadRequest, fmt.Sprintf("insert: %s", err.Error()))
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   data,
+	})
+
+	var json SendMailITJSON
+
+	err = js.Unmarshal([]byte(pool), &json)
+
+	if err != nil {
+		c.String(http.StatusBadRequest, fmt.Sprintf("Json parse err: %s", err.Error()))
+	}
+
+	MailSender(json)
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
 	})
 
 	return

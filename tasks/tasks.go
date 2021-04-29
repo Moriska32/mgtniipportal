@@ -40,8 +40,6 @@ func PostTasks(c *gin.Context) {
 
 	pool, _ := c.GetRawData()
 
-	log.Println(pool)
-
 	err := js.Unmarshal([]byte(pool), &json)
 
 	if err != nil {

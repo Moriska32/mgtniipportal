@@ -92,6 +92,8 @@ func Routes(router *gin.Engine) {
 
 			root.POST("/updateusertasksrole", user.UpdateUserTaskRole)
 
+			//root.GET("/longtoken", user.Refresher().LoginHandler)
+
 			//root.POST("/getuserslimitcount", user.Getuserslimitcount)
 			root.GET("/getusersadmins", user.Getusersadmins)
 			root.GET("/getusersletters", user.Getusersletters)
@@ -135,6 +137,8 @@ func Routes(router *gin.Engine) {
 			//root.POST("/sendmailit", api.SendMailIT)
 
 			root.POST("/getrequestlimit", api.GetRequestLimit)
+
+			root.POST("/sendlongmail", api.SendLongMail)
 
 			//HH
 			root.POST("/posthh", api.PostHH)
