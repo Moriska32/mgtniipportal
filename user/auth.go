@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"time"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
@@ -207,9 +208,10 @@ func Blacklist(c *gin.Context) {
 
 	sql := dbConnect.QueryRow(todo)
 	sql.Scan(&blacktoken)
-
+	loc := url.URL{Path: "http://newportal.mgtniip.ru/tasks"}
 	if blacktoken != "" {
-		c.AbortWithStatusJSON(401, gin.H{"Error": "Your token is blacklisted"})
+
+		c.Redirect(http.StatusFound, loc.RequestURI())
 		return
 	}
 	c.Next()
