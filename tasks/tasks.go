@@ -288,18 +288,20 @@ func AcceptTask(c *gin.Context) {
 		fmt.Println(err)
 	}
 	//Данные по автору  омеру задачи
-	sql = fmt.Sprintf(`select author_id, number from public.tasks
+	sql = fmt.Sprintf(`select author_id, number from public.tasks where
 	id='%s';`, id)
 	theCase := "lower"
 	task, err := gosqljson.QueryDbToMap(dbConnect, theCase, sql)
+
 	//Почта юзера заявки
-	sql = fmt.Sprintf(`select login from public.tuser
-	id='%s';`, task[0]["author_id"])
+	sql = fmt.Sprintf(`select login from public.tuser where
+	user_id=%s;`, task[0]["author_id"])
 
 	user, err := gosqljson.QueryDbToMap(dbConnect, theCase, sql)
+
 	//Оператор
-	sql = fmt.Sprintf(`select fam, name from public.tuser
-	id='%s';`, "507")
+	sql = fmt.Sprintf(`select fam, name from public.tuser where
+	user_id=%s;`, "507")
 	operator, err := gosqljson.QueryDbToMap(dbConnect, theCase, sql)
 
 	var json api.SendMailITJSON
