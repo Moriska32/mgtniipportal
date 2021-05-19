@@ -2,6 +2,7 @@ package api
 
 import (
 	"PortalMGTNIIP/config"
+
 	"crypto/tls"
 	"encoding/json"
 	js "encoding/json"
@@ -9,7 +10,8 @@ import (
 	"log"
 	"net/http"
 
-	jwt "github.com/appleboy/gin-jwt"
+	user "PortalMGTNIIP/user"
+
 	"github.com/elgs/gosqljson"
 	"github.com/gin-gonic/gin"
 	"gopkg.in/gomail.v2"
@@ -224,43 +226,76 @@ func MailSender(json SendMailITJSON) {
 }
 
 //SendLongMail send long mail
-func SendLongMail(c *gin.Context) {
-
-	token, _ := c.Get("JWT_TOKEN")
-	data := jwt.ExtractClaims(c)
-	pool, _ := c.GetRawData()
+func SendLongMail(task map[string]string) error {
 
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 
-	todo := fmt.Sprintf(`INSERT INTO public.mailtoken
-	(user_id, "token")
-	VALUES(%s, '%s');
-	`, data["user_id"], token)
+	todo := fmt.Sprintf(`SELECT user_id, login, fam, "name", otch, tel, userrole, tasks_role
+	FROM public.tuser where user_id = %s;`, "535")
 
-	_, err := dbConnect.Exec(todo)
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
 	if err != nil {
-		c.String(http.StatusBadRequest, fmt.Sprintf("insert: %s", err.Error()))
+		return err
+
 	}
-	c.JSON(http.StatusOK, gin.H{
-		"status": http.StatusOK,
-		"data":   data,
-	})
+
+	token := user.Refresher(data[0])
+
+	textmail := fmt.Sprintf(`
+
+<!doctype html>
+
+<html>
+
+  <head>
+
+  </head>
+
+  <body style="margin: 0; padding: 0; border: none;">
+
+    <div style="padding: 20px;">
+
+      Новая заявка  %s от %s  %s :  %s <br /><br />
+
+      Для связи %s 
+
+    </div>
+
+	
+
+  </body>
+  <body>
+  <p><a href="{{.http://localhost:4747/v1/api/accepеttask?token=%s&id=%s}}">#ПРИНЯТЬ</a></p>
+  </body>
+
+</html>
+`, task["number"], data[0]["name"], data[0]["fam"], task["descr"],
+		data[0]["tel"], token, task["id"])
+
+	log.Println(textmail)
 
 	var json SendMailITJSON
 
-	err = js.Unmarshal([]byte(pool), &json)
-
-	if err != nil {
-		c.String(http.StatusBadRequest, fmt.Sprintf("Json parse err: %s", err.Error()))
-	}
+	json.HTML = textmail
+	json.To = []string{data[0]["login"]}
+	json.Subject = fmt.Sprintf(`Новая заявка %s от  %s %s :  %s `,
+		task["number"], data[0]["name"], data[0]["fam"], task["descr"])
 
 	MailSender(json)
 
-	c.JSON(http.StatusOK, gin.H{
-		"status": http.StatusOK,
-	})
+	inserttoken := fmt.Sprintf(`INSERT INTO public.logout
+	("token")
+	VALUES('%s');`, token)
 
-	return
+	_, err = dbConnect.Exec(inserttoken)
+
+	if err != nil {
+		log.Fatal("Insert token:" + err.Error())
+	}
+
+	return nil
 
 }

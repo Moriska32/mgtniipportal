@@ -1,6 +1,7 @@
 package tasks
 
 import (
+	"PortalMGTNIIP/api"
 	"PortalMGTNIIP/config"
 	"fmt"
 	"log"
@@ -30,6 +31,8 @@ type TasksJSON struct {
 	ExecuteEndPlanTime   string `json:"execute_end_plan_time"`
 	OperatorComment      string `json:"operator_comment"`
 	ExecutorComment      string `json:"executor_comment"`
+	ExecuteAcceptTime    string `json:"execute_accept_time"`
+	ExecuteDeclineTime   string `json:"execute_decline_time"`
 }
 
 //Insert it tasks in bd
@@ -52,10 +55,19 @@ func PostTasks(c *gin.Context) {
 	sql := fmt.Sprintf(`INSERT INTO public.tasks
 	(type_id, description, phone,author_id, create_time)
 	VALUES('%d', '%s', '%s',%s, '%s')
-	;
+	RETURNING id;
 	`, json.TypeID, json.Description, json.Phone, data["user_id"], time.Now().Format("2006-01-02 15:04:05"))
 
-	_, err = dbConnect.Exec(sql)
+	theCase := "lower"
+	id, err := gosqljson.QueryDbToMap(dbConnect, theCase, sql)
+	if err != nil {
+		c.String(http.StatusBadRequest, fmt.Sprintf("insert: %s", err.Error()))
+	}
+	task := make(map[string]string)
+	task["descr"] = json.Description
+	task["id"] = id[0]["id"]
+	err = api.SendLongMail(task)
+
 	if err != nil {
 		c.String(http.StatusBadRequest, fmt.Sprintf("insert: %s", err.Error()))
 	}
@@ -86,17 +98,14 @@ func UpdateTasks(c *gin.Context) {
 	SET type_id = %d,operator_id=%s, executor_id=%s, operator_accept_time='%s',
 	  operator_decline_time='%s', execute_start_time='%s', execute_end_time='%s',
 	   execute_start_plan_time='%s', execute_end_plan_time='%s', operator_comment='%s',
-	    executor_comment='%s'
+	    executor_comment='%s', execute_accept_time ='%s', execute_decline_time='%s'
 	WHERE id='%s';	
 	`, json.TypeID, json.OperatorID, json.ExecutorID, json.OperatorAcceptTime, json.OperatorDeclineTime,
 		json.ExecuteStartTime, json.ExecuteEndTime, json.ExecuteStartPlanTime, json.ExecuteEndPlanTime,
-		json.OperatorComment, json.ExecutorComment, id)
-	log.Println(sql)
+		json.OperatorComment, json.ExecutorComment, json.ExecuteAcceptTime, json.ExecuteDeclineTime, id)
 
 	sql = strings.ReplaceAll(sql, "=,", "= null,")
 	sql = strings.ReplaceAll(sql, "=''", "= null")
-
-	log.Println(sql)
 
 	_, err = dbConnect.Exec(sql)
 	if err != nil {
@@ -252,6 +261,27 @@ func GetTasksRoles(c *gin.Context) {
 		"status": http.StatusOK,
 		"data":   data,
 	})
+
+	return
+
+}
+
+func AcceptTask(c *gin.Context) {
+
+	id := c.Query("id")
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+
+	sql := fmt.Sprintf(`UPDATE public.tasks
+	SET operator_accept_time='%s', operator_id = %s
+	WHERE id='%s';`,
+		time.Now().Format("2006-01-02 15:04:05"), "507", id)
+
+	_, err := dbConnect.Exec(sql)
+	if err != nil {
+		fmt.Println(err)
+	}
 
 	return
 

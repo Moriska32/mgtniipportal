@@ -231,38 +231,35 @@ func GetTokenInfo(c *gin.Context) {
 
 }
 
-func Refresher() *jwt.GinJWTMiddleware {
+// User demo
+type UserLongToken struct {
+	userid    string
+	login     string
+	userrole  string
+	tasksrole string
+	orig_iat  int64
+	//exp       int64
+}
 
-	longtoken, _ := jwt.New(&jwt.GinJWTMiddleware{
-		Realm:       "test zone",
-		Key:         []byte("secret key"),
-		Timeout:     time.Hour*100 ^ 10,
-		MaxRefresh:  time.Hour*100 ^ 10,
-		IdentityKey: identityKey,
-		PayloadFunc: func(data interface{}) jwt.MapClaims {
-			if v, ok := data.(*User); ok {
-				return jwt.MapClaims{
-					"user_id":   v.userid,
-					"login":     v.login,
-					"userrole":  v.userrole,
-					"tasksrole": v.tasksrole,
-				}
-			}
-			return jwt.MapClaims{}
-		},
-		IdentityHandler: func(c *gin.Context) interface{} {
-			claims := jwt.ExtractClaims(c)
-			return &User{
-				userid:    claims["user_id"].(string),
-				login:     claims["login"].(string),
-				userrole:  claims["userrole"].(string),
-				tasksrole: claims["tasksrole"].(string),
-			}
-		},
-	},
-	)
-	_ = longtoken
+//Test long token
+func Refresher(data map[string]string) string {
 
-	return longtoken
+	pool := &User{
+		userid:    fmt.Sprintf("%s", data["user_id"]),
+		login:     fmt.Sprintf("%s", data["login"]),
+		userrole:  fmt.Sprintf("%s", data["userrole"]),
+		tasksrole: fmt.Sprintf("%s", data["tasks_role"]),
+		//orig_iat:  1619705507 * 2,
+		//exp:       1619709107 * 2,
+	}
 
+	auth := Auth()
+	auth.Timeout = time.Hour * (24 * 7)
+	token, _, err := auth.TokenGenerator(pool)
+
+	if err != nil {
+		fmt.Sprintf("Error: %s", err.Error())
+	}
+
+	return token
 }
