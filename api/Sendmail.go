@@ -246,33 +246,24 @@ func SendLongMail(task map[string]string) error {
 
 	textmail := fmt.Sprintf(`
 
-<!doctype html>
-
-<html>
-
-  <head>
-
-  </head>
-
-  <body style="margin: 0; padding: 0; border: none;">
-
-    <div style="padding: 20px;">
-
-      Новая заявка  %s от %s  %s :  %s <br /><br />
-
-      Для связи %s 
-
-    </div>
-
-	
-
-  </body>
-  <body>
-  <p><a href="{{.http://localhost:4747/v1/api/accepеttask?token=%s&id=%s}}">#ПРИНЯТЬ</a></p>
-  </body>
-
-</html>
-`, task["number"], data[0]["name"], data[0]["fam"], task["descr"],
+	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+	  <meta charset="utf-8">
+	  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+	  <title>Письмо</title>
+	</head>
+	<body style="font-size: 16px;">
+	 
+	   <div style="margin-bottom: 20px;">%s %s создал новую заявку: %s</div>
+	   <div style="margin-bottom: 20px;">Обратная связь: %s</div>
+	   
+	   <a href="http://localhost:4747/v1/api/accepеttask?token=%s&id=%s" style="display: block; padding: 10px; background: #090; color: #fff; cursor: pointer; border: none; text-decoration: none; font-size: 24px; text-align: center;">Принять</a>
+	 
+	 </body>
+	 </html>
+`, data[0]["name"], data[0]["fam"], task["descr"],
 		data[0]["tel"], token, task["id"])
 
 	log.Println(textmail)
@@ -286,15 +277,15 @@ func SendLongMail(task map[string]string) error {
 
 	MailSender(json)
 
-	inserttoken := fmt.Sprintf(`INSERT INTO public.logout
-	("token")
-	VALUES('%s');`, token)
+	// inserttoken := fmt.Sprintf(`INSERT INTO public.logout
+	// ("token")
+	// VALUES('%s');`, token)
 
-	_, err = dbConnect.Exec(inserttoken)
+	// _, err = dbConnect.Exec(inserttoken)
 
-	if err != nil {
-		log.Fatal("Insert token:" + err.Error())
-	}
+	// if err != nil {
+	// 	log.Fatal("Insert token:" + err.Error())
+	// }
 
 	return nil
 
