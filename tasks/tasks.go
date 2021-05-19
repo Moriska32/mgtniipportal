@@ -287,6 +287,46 @@ func AcceptTask(c *gin.Context) {
 	if err != nil {
 		fmt.Println(err)
 	}
+	//Данные по автору  омеру задачи
+	sql = fmt.Sprintf(`select author_id, number from public.tasks
+	id='%s';`, id)
+	theCase := "lower"
+	task, err := gosqljson.QueryDbToMap(dbConnect, theCase, sql)
+	//Почта юзера заявки
+	sql = fmt.Sprintf(`select login from public.tuser
+	id='%s';`, task[0]["author_id"])
+
+	user, err := gosqljson.QueryDbToMap(dbConnect, theCase, sql)
+	//Оператор
+	sql = fmt.Sprintf(`select fam, name from public.tuser
+	id='%s';`, "507")
+	operator, err := gosqljson.QueryDbToMap(dbConnect, theCase, sql)
+
+	var json api.SendMailITJSON
+
+	json.To = []string{user[0]["login"]}
+	json.HTML = fmt.Sprintf(`
+	<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Письмо</title>
+  </head>
+  <body style="font-size: 16px;">
+
+    <div>Вашу заявку IT-%s принял оператор %s %s. Ожидайте назначения исполнителя.</div>
+    
+    <a href="http://portal.mgtniip.ru/tasks">Все заявки</a>
+  
+  </body>
+  </html>
+	`, task[0]["number"], operator[0]["name"], operator[0]["fam"])
+
+	json.Subject = fmt.Sprintf(`Вашу заявку IT-%s принял оператор %s %s.`, task[0]["number"], operator[0]["name"], operator[0]["fam"])
+
+	api.MailSender(json)
 
 	token, _ := c.Get("JWT_TOKEN")
 
