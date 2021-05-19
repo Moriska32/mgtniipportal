@@ -290,7 +290,7 @@ func AcceptTask(c *gin.Context) {
 	("token")
 	VALUES('%s');`, token)
 
-	_, err := dbConnect.Exec(inserttoken)
+	_, err = dbConnect.Exec(inserttoken)
 
 	if err != nil {
 		log.Fatal("Insert token:" + err.Error())
