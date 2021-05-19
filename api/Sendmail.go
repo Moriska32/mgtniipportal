@@ -259,7 +259,7 @@ func SendLongMail(task map[string]string) error {
 	   <div style="margin-bottom: 20px;">%s %s создал новую заявку: %s</div>
 	   <div style="margin-bottom: 20px;">Обратная связь: %s</div>
 	   
-	   <a href="http://172.20.82:4747/v1/api/accepеttask?token=%s&id=%s" style="display: block; padding: 10px; background: #090; color: #fff; cursor: pointer; border: none; text-decoration: none; font-size: 24px; text-align: center;">Принять</a>
+	   <a href="http://portal.mgtniip.ru:4747/v1/api//accepttask?token=%s&id=%s" style="display: block; padding: 10px; background: #090; color: #fff; cursor: pointer; border: none; text-decoration: none; font-size: 24px; text-align: center;">Принять</a>
 	 
 	 </body>
 	 </html>

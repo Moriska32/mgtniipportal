@@ -63,6 +63,7 @@ func PostTasks(c *gin.Context) {
 	if err != nil {
 		c.String(http.StatusBadRequest, fmt.Sprintf("insert: %s", err.Error()))
 	}
+
 	task := make(map[string]string)
 	task["descr"] = json.Description
 	task["id"] = id[0]["id"]
@@ -282,6 +283,23 @@ func AcceptTask(c *gin.Context) {
 	if err != nil {
 		fmt.Println(err)
 	}
+
+	token, _ := c.Get("JWT_TOKEN")
+
+	inserttoken := fmt.Sprintf(`INSERT INTO public.logout
+	("token")
+	VALUES('%s');`, token)
+
+	_, err := dbConnect.Exec(inserttoken)
+
+	if err != nil {
+		log.Fatal("Insert token:" + err.Error())
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   "Принята заявка",
+	})
 
 	return
 
