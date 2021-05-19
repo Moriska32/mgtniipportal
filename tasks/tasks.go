@@ -6,10 +6,13 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
 	"strings"
 	"time"
 
 	js "encoding/json"
+
+	"net/url"
 
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/elgs/gosqljson"
@@ -296,8 +299,8 @@ func AcceptTask(c *gin.Context) {
 	if err != nil {
 		log.Fatal("Insert token:" + err.Error())
 	}
-
-	c.Redirect(200, "http://newportal.mgtniip.ru/tasks")
+	loc := url.URL{Path: "http://newportal.mgtniip.ru/tasks"}
+	c.Redirect(http.StatusFound, loc.RequestURI())
 
 	return
 
