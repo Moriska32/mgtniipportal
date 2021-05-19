@@ -258,6 +258,7 @@ func GetTasksRoles(c *gin.Context) {
 		})
 		return
 	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
 		"data":   data,
@@ -296,10 +297,7 @@ func AcceptTask(c *gin.Context) {
 		log.Fatal("Insert token:" + err.Error())
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"status": http.StatusOK,
-		"data":   "Принята заявка",
-	})
+	c.Redirect(200, "http://newportal.mgtniip.ru/tasks")
 
 	return
 
