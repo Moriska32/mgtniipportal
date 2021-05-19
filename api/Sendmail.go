@@ -232,7 +232,7 @@ func SendLongMail(task map[string]string) error {
 	defer dbConnect.Close()
 
 	todo := fmt.Sprintf(`SELECT user_id, login, fam, "name", otch, tel, userrole, tasks_role
-	FROM public.tuser where user_id = %s;`, "535")
+	FROM public.tuser where user_id = %s;`, "507")
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
@@ -259,7 +259,7 @@ func SendLongMail(task map[string]string) error {
 	   <div style="margin-bottom: 20px;">%s %s создал новую заявку: %s</div>
 	   <div style="margin-bottom: 20px;">Обратная связь: %s</div>
 	   
-	   <a href="http://localhost:4747/v1/api/accepеttask?token=%s&id=%s" style="display: block; padding: 10px; background: #090; color: #fff; cursor: pointer; border: none; text-decoration: none; font-size: 24px; text-align: center;">Принять</a>
+	   <a href="http://172.20.82:4747/v1/api/accepеttask?token=%s&id=%s" style="display: block; padding: 10px; background: #090; color: #fff; cursor: pointer; border: none; text-decoration: none; font-size: 24px; text-align: center;">Принять</a>
 	 
 	 </body>
 	 </html>
