@@ -20,7 +20,9 @@ import (
 )
 
 type TasksJSON struct {
+	ID                   string `json:"id"`
 	TypeID               int    `json:"type_id"`
+	Number               int    `json:"number"`
 	Description          string `json:"description"`
 	AuthorID             string `json:"author_id"`
 	OperatorID           string `json:"operator_id"`
@@ -85,7 +87,7 @@ func UpdateTasks(c *gin.Context) {
 
 	id := c.Query("id")
 
-	var json TasksJSON
+	var json api.TasksJSON
 
 	pool, _ := c.GetRawData()
 
@@ -114,6 +116,16 @@ func UpdateTasks(c *gin.Context) {
 	_, err = dbConnect.Exec(sql)
 	if err != nil {
 		c.String(http.StatusBadRequest, fmt.Sprintf("insert: %s", err.Error()))
+	}
+
+	switch {
+	case json.ExecutorID != "" && json.ExecuteStartPlanTime != "" && json.ExecuteEndPlanTime != "" && json.ExecuteAcceptTime == "":
+
+		err = api.SendLongMailAny(json)
+		if err != nil {
+			c.String(http.StatusBadRequest, fmt.Sprintf("insert: %s", err.Error()))
+		}
+
 	}
 
 	return
@@ -287,7 +299,7 @@ func AcceptTask(c *gin.Context) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	//Данные по автору  омеру задачи
+	//Данные по автору  номеру задачи
 	sql = fmt.Sprintf(`select author_id, number from public.tasks where
 	id='%s';`, id)
 	theCase := "lower"
@@ -331,6 +343,102 @@ func AcceptTask(c *gin.Context) {
 	api.MailSender(json)
 
 	token, _ := c.Get("JWT_TOKEN")
+
+	inserttoken := fmt.Sprintf(`INSERT INTO public.logout
+	("token")
+	VALUES('%s');`, token)
+
+	_, err = dbConnect.Exec(inserttoken)
+
+	if err != nil {
+		log.Fatal("Insert token:" + err.Error())
+	}
+	loc := url.URL{Path: "http://newportal.mgtniip.ru/tasks"}
+	c.Redirect(http.StatusFound, loc.RequestURI())
+
+	return
+
+}
+
+func TestTest(c *gin.Context) {
+
+	claims := jwt.ExtractClaims(c)
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": http.StatusOK,
+		"data":   claims,
+	})
+
+}
+
+func AcceptTaskAny(c *gin.Context) {
+
+	id := c.Query("id")
+	token, _ := c.Get("JWT_TOKEN")
+
+	claims := jwt.ExtractClaims(c)
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+
+	sql := fmt.Sprintf(`UPDATE public.tasks
+	SET executer_accept_time='%s', executer_id = %s
+	WHERE id='%s';`,
+		time.Now().Format("2006-01-02 15:04:05"), claims["user_id"], id)
+
+	_, err := dbConnect.Exec(sql)
+	if err != nil {
+		fmt.Println(err)
+	}
+	theCase := "lower"
+	//данные по испольнителю
+	//Оператор
+	sql = fmt.Sprintf(`select login,fam, name from public.tuser where
+	user_id=%s;`, claims["user_id"])
+	operator, err := gosqljson.QueryDbToMap(dbConnect, theCase, sql)
+
+	//Данные по автору  номеру задачи = author_id, number
+	sql = fmt.Sprintf(`select author_id, number from public.tasks where
+	id='%s';`, id)
+
+	task, err := gosqljson.QueryDbToMap(dbConnect, theCase, sql)
+
+	//Почта заявителя = login
+	sql = fmt.Sprintf(`select login from public.tuser where
+	user_id=%s;`, task[0]["author_id"])
+
+	user, err := gosqljson.QueryDbToMap(dbConnect, theCase, sql)
+
+	//Оператор
+	sql = fmt.Sprintf(`select login,fam, name from public.tuser where
+	user_id=%s;`, "507")
+	operator, err = gosqljson.QueryDbToMap(dbConnect, theCase, sql)
+
+	var json api.SendMailITJSON
+
+	json.To = []string{user[0]["login"]}
+	json.HTML = fmt.Sprintf(`
+	<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Письмо</title>
+  </head>
+  <body style="font-size: 16px;">
+
+    <div>Вашу заявку IT-%s принял исполнитель %s %s. Ожидайте начала исполнения.</div>
+    
+    <a href="http://portal.mgtniip.ru/tasks">Все заявки</a>
+  
+  </body>
+  </html>
+	`, task[0]["number"], operator[0]["name"], operator[0]["fam"])
+
+	json.Subject = fmt.Sprintf(`Вашу заявку IT-%s принял оператор %s %s.`, task[0]["number"], operator[0]["name"], operator[0]["fam"])
+
+	api.MailSender(json)
 
 	inserttoken := fmt.Sprintf(`INSERT INTO public.logout
 	("token")

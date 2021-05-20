@@ -17,6 +17,27 @@ import (
 	"gopkg.in/gomail.v2"
 )
 
+type TasksJSON struct {
+	ID                   string `json:"id"`
+	TypeID               int    `json:"type_id"`
+	Number               int    `json:"number"`
+	Description          string `json:"description"`
+	AuthorID             string `json:"author_id"`
+	OperatorID           string `json:"operator_id"`
+	ExecutorID           string `json:"executor_id"`
+	Phone                string `json:"phone"`
+	OperatorAcceptTime   string `json:"operator_accept_time"`
+	OperatorDeclineTime  string `json:"operator_decline_time"`
+	ExecuteStartTime     string `json:"execute_start_time"`
+	ExecuteEndTime       string `json:"execute_end_time"`
+	ExecuteStartPlanTime string `json:"execute_start_plan_time"`
+	ExecuteEndPlanTime   string `json:"execute_end_plan_time"`
+	OperatorComment      string `json:"operator_comment"`
+	ExecutorComment      string `json:"executor_comment"`
+	ExecuteAcceptTime    string `json:"execute_accept_time"`
+	ExecuteDeclineTime   string `json:"execute_decline_time"`
+}
+
 // smtpServer data to smtp server
 type smtpServer struct {
 	host string
@@ -274,6 +295,72 @@ func SendLongMail(task map[string]string) error {
 	json.To = []string{data[0]["login"]}
 	json.Subject = fmt.Sprintf(`Новая заявка %s от  %s %s :  %s `,
 		task["number"], data[0]["name"], data[0]["fam"], task["descr"])
+
+	MailSender(json)
+
+	// inserttoken := fmt.Sprintf(`INSERT INTO public.logout
+	// ("token")
+	// VALUES('%s');`, token)
+
+	// _, err = dbConnect.Exec(inserttoken)
+
+	// if err != nil {
+	// 	log.Fatal("Insert token:" + err.Error())
+	// }
+
+	return nil
+
+}
+
+//SendLongMail send long mail
+func SendLongMailAny(task TasksJSON) error {
+
+	dbConnect := config.Connect()
+	defer dbConnect.Close()
+
+	todo := fmt.Sprintf(`SELECT user_id, login, fam, "name", otch, tel, userrole, tasks_role
+	FROM public.tuser where user_id = %s;`, task.ExecutorID)
+
+	theCase := "lower"
+	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		return err
+
+	}
+
+	token := user.Refresher(data[0])
+
+	textmail := fmt.Sprintf(`
+
+	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+	  <meta charset="utf-8">
+	  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+	  <title>Письмо</title>
+	</head>
+	<body style="font-size: 16px;">
+	 
+	   <div style="margin-bottom: 20px;">%s %s создал новую заявку: %s</div>
+	   <div style="margin-bottom: 20px;">Обратная связь: %s</div>
+	   
+	   <a href="http://portal.mgtniip.ru:4747/v1/api/accepttask?token=%s&id=%s" style="display: block; padding: 10px; background: #090; color: #fff; cursor: pointer; border: none; text-decoration: none; font-size: 24px; text-align: center;">Принять</a>
+	 
+	 </body>
+	 </html>
+`, data[0]["name"], data[0]["fam"], task.Description,
+		data[0]["tel"], token, task.ID)
+
+	log.Println(textmail)
+
+	var json SendMailITJSON
+
+	json.HTML = textmail
+	json.To = []string{data[0]["login"]}
+	json.Subject = fmt.Sprintf(`Новая заявка %d от  %s %s :  %s `,
+		task.Number, data[0]["name"], data[0]["fam"], task.Description)
 
 	MailSender(json)
 

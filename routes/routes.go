@@ -204,6 +204,8 @@ func Routes(router *gin.Engine) {
 			root.DELETE("/tasks", tasks.DeleteTasks)
 			root.GET("/tasksroles", tasks.GetTasksRoles)
 			root.GET("/accepttask", tasks.AcceptTask)
+			root.GET("/accepttaskany", tasks.AcceptTaskAny)
+			root.GET("/testestest", tasks.TestTest)
 
 		}
 	}

@@ -219,7 +219,7 @@ func Blacklist(c *gin.Context) {
 }
 
 //GetTokenInfo Get Token Info
-func GetTokenInfo(c *gin.Context) {
+func GetTokenInfo(c *gin.Context) jwt.MapClaims {
 
 	//data := jwt.GetToken(c)
 	data := jwt.ExtractClaims(c)
@@ -229,7 +229,7 @@ func GetTokenInfo(c *gin.Context) {
 		"data":   data,
 	})
 
-	return
+	return data
 
 }
 
