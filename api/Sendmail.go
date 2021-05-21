@@ -253,10 +253,20 @@ func SendLongMail(task map[string]string) error {
 	defer dbConnect.Close()
 
 	todo := fmt.Sprintf(`SELECT user_id, login, fam, "name", otch, tel, userrole, tasks_role
-	FROM public.tuser where user_id = %s;`, task["user_id"])
+	FROM public.tuser where user_id = %s;`, "507")
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		return err
+
+	}
+
+	todo = fmt.Sprintf(`SELECT fam, "name"
+	FROM public.tuser where user_id = %s;`, "507")
+
+	usrname, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
 
 	if err != nil {
 		return err
@@ -284,7 +294,7 @@ func SendLongMail(task map[string]string) error {
 	 
 	 </body>
 	 </html>
-`, data[0]["name"], data[0]["fam"], task["descr"],
+`, usrname[0]["name"], usrname[0]["fam"], task["descr"],
 		data[0]["tel"], token, task["id"])
 
 	log.Println(textmail)
@@ -293,7 +303,7 @@ func SendLongMail(task map[string]string) error {
 
 	json.HTML = textmail
 	json.To = []string{data[0]["login"]}
-	json.Subject = fmt.Sprintf(`Новая заявка %s от  %s %s :  %s `,
+	json.Subject = fmt.Sprintf(`Новая заявка %s от %s %s: %s`,
 		task["number"], data[0]["name"], data[0]["fam"], task["descr"])
 
 	MailSender(json)
