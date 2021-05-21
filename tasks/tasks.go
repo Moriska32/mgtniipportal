@@ -440,7 +440,7 @@ func AcceptTaskAny(c *gin.Context) {
   </body>
   </html>
 	`, executer[0]["name"], executer[0]["fam"], task[0]["number"], task[0]["execute_start_plan_time"][0:10],
-		task[0]["execute_start_plan_time"][11:], task[0]["execute_end_plan_time"][11:])
+		task[0]["execute_start_plan_time"][11:16], task[0]["execute_end_plan_time"][11:16])
 
 	api.MailSender(json)
 	//Письмо оператору
