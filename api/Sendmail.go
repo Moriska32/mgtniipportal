@@ -324,6 +324,11 @@ func SendLongMailAny(task TasksJSON) error {
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
 
+	todo = fmt.Sprintf(`SELECT user_id, login, fam, "name", otch, tel, userrole, tasks_role
+	FROM public.tuser where user_id = %s;`, "507")
+
+	operator, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
 	if err != nil {
 		return err
 
@@ -342,7 +347,7 @@ func SendLongMailAny(task TasksJSON) error {
 	  <title>Письмо</title>
 	</head>
 	<body style="font-size: 16px;"> 
-	<div style="margin-bottom: 20px;">Оператор Операторов назначил вас исполнителем по заявке</div>
+	<div style="margin-bottom: 20px;">%s %s назначил вас исполнителем по заявке</div>
 	<div style="margin-bottom: 20px;">IT-%s на %s с %s по %s</div>
 	   <div style="margin-bottom: 20px;"> Заказчик: %s %s. Обратная связь: %s</div>
 	   
@@ -350,7 +355,7 @@ func SendLongMailAny(task TasksJSON) error {
 	 
 	 </body>
 	 </html>
-`, task.Number, task.ExecuteStartPlanTime[0:11], task.ExecuteStartPlanTime[11:], task.ExecuteEndPlanTime[11:], data[0]["name"], data[0]["fam"],
+`, operator[0]["name"], operator[0]["fam"], task.Number, task.ExecuteStartPlanTime[0:10], task.ExecuteStartPlanTime[11:], task.ExecuteEndPlanTime[11:], data[0]["name"], data[0]["fam"],
 		data[0]["tel"], token, task.ID)
 
 	log.Println(textmail)
