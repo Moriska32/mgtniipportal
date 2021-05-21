@@ -392,10 +392,11 @@ func AcceptTaskAny(c *gin.Context) {
 	}
 	theCase := "lower"
 	//данные по испольнителю
+
 	//Оператор
 	sql = fmt.Sprintf(`select login,fam, name from public.tuser where
 	user_id=%s;`, claims["user_id"])
-	operator, err := gosqljson.QueryDbToMap(dbConnect, theCase, sql)
+	executer, err := gosqljson.QueryDbToMap(dbConnect, theCase, sql)
 
 	//Данные по автору  номеру задачи = author_id, number
 	sql = fmt.Sprintf(`select author_id, number from public.tasks where
@@ -412,7 +413,7 @@ func AcceptTaskAny(c *gin.Context) {
 	//Оператор
 	sql = fmt.Sprintf(`select login,fam, name from public.tuser where
 	user_id=%s;`, "507")
-	operator, err = gosqljson.QueryDbToMap(dbConnect, theCase, sql)
+	operator, err := gosqljson.QueryDbToMap(dbConnect, theCase, sql)
 
 	var json api.SendMailITJSON
 
@@ -428,15 +429,19 @@ func AcceptTaskAny(c *gin.Context) {
   </head>
   <body style="font-size: 16px;">
 
-    <div>Вашу заявку IT-%s принял исполнитель %s %s. Ожидайте начала исполнения.</div>
+    <div>Заявку IT-%s принял исполнитель %s %s. Ожидайте начала исполнения.</div>
     
     <a href="http://portal.mgtniip.ru/tasks">Все заявки</a>
   
   </body>
   </html>
-	`, task[0]["number"], operator[0]["name"], operator[0]["fam"])
+	`, task[0]["number"], executer[0]["name"], executer[0]["fam"])
 
-	json.Subject = fmt.Sprintf(`Вашу заявку IT-%s принял оператор %s %s.`, task[0]["number"], operator[0]["name"], operator[0]["fam"])
+	json.Subject = fmt.Sprintf(`Вашу заявку IT-%s принял оператор %s %s.`, task[0]["number"], executer[0]["name"], executer[0]["fam"])
+
+	api.MailSender(json)
+
+	json.To = []string{operator[0]["login"]}
 
 	api.MailSender(json)
 
