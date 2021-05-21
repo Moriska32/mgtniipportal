@@ -304,7 +304,7 @@ func SendLongMail(task map[string]string) error {
 	json.HTML = textmail
 	json.To = []string{data[0]["login"]}
 	json.Subject = fmt.Sprintf(`Новая заявка %s от %s %s: %s`,
-		task["number"], data[0]["name"], data[0]["fam"], task["descr"])
+		task["number"], usrname[0]["name"], usrname[0]["fam"], task["descr"])
 
 	MailSender(json)
 
