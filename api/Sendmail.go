@@ -2,7 +2,6 @@ package api
 
 import (
 	"PortalMGTNIIP/config"
-	"strings"
 
 	"crypto/tls"
 	"encoding/json"
@@ -351,7 +350,7 @@ func SendLongMailAny(task TasksJSON) error {
 	 
 	 </body>
 	 </html>
-`, task.Number, strings.Split(task.ExecuteStartPlanTime, " ")[0], strings.Split(task.ExecuteStartPlanTime, " ")[1], strings.Split(task.ExecuteEndPlanTime, " ")[0], data[0]["name"], data[0]["fam"],
+`, task.Number, task.ExecuteStartPlanTime[0:11], task.ExecuteStartPlanTime[11:], task.ExecuteEndPlanTime[11:], data[0]["name"], data[0]["fam"],
 		data[0]["tel"], token, task.ID)
 
 	log.Println(textmail)
