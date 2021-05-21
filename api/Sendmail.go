@@ -359,7 +359,7 @@ func SendLongMailAny(task TasksJSON) error {
 
 	json.HTML = textmail
 	json.To = []string{data[0]["login"]}
-	json.Subject = fmt.Sprintf(`Новая заявка %d от  %s %s :  %s `,
+	json.Subject = fmt.Sprintf(`Новая заявка %s от  %s %s :  %s `,
 		task.Number, data[0]["name"], data[0]["fam"], task.Description)
 
 	MailSender(json)
