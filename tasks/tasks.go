@@ -295,7 +295,7 @@ func AcceptTask(c *gin.Context) {
 	sql := fmt.Sprintf(`UPDATE public.tasks
 	SET operator_accept_time='%s', operator_id = %s
 	WHERE id='%s';`,
-		time.Now().Format("2006-01-02 15:04:05"), "507", id)
+		time.Now().Format("2006-01-02 15:04:05"), "525", id)
 
 	_, err := dbConnect.Exec(sql)
 	if err != nil {
@@ -315,7 +315,7 @@ func AcceptTask(c *gin.Context) {
 
 	//Оператор
 	sql = fmt.Sprintf(`select fam, name from public.tuser where
-	user_id=%s;`, "507")
+	user_id=%s;`, "525")
 	operator, err := gosqljson.QueryDbToMap(dbConnect, theCase, sql)
 
 	var json api.SendMailITJSON
