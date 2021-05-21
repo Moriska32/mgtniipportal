@@ -344,6 +344,16 @@ func SendLongMailAny(task TasksJSON) error {
 
 	}
 
+	todo = fmt.Sprintf(`SELECT user_id, login, fam, "name", otch, tel, userrole, tasks_role
+	FROM public.tuser where user_id = %s;`, task.AuthorID)
+
+	user, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+
+	if err != nil {
+		return err
+
+	}
+
 	token := user.Refresher(data[0])
 
 	textmail := fmt.Sprintf(`
@@ -365,8 +375,8 @@ func SendLongMailAny(task TasksJSON) error {
 	 
 	 </body>
 	 </html>
-`, operator[0]["name"], operator[0]["fam"], task.Number, task.ExecuteStartPlanTime[0:10], task.ExecuteStartPlanTime[11:16], task.ExecuteEndPlanTime[11:16], data[0]["name"], data[0]["fam"],
-		data[0]["tel"], token, task.ID)
+`, operator[0]["name"], operator[0]["fam"], task.Number, task.ExecuteStartPlanTime[0:10], task.ExecuteStartPlanTime[11:16], task.ExecuteEndPlanTime[11:16], user[0]["name"], user[0]["fam"],
+		user[0]["tel"], token, task.ID)
 
 	log.Println(textmail)
 
@@ -374,8 +384,8 @@ func SendLongMailAny(task TasksJSON) error {
 
 	json.HTML = textmail
 	json.To = []string{data[0]["login"]}
-	json.Subject = fmt.Sprintf(`Новая заявка %s от  %s %s :  %s `,
-		task.Number, data[0]["name"], data[0]["fam"], task.Description)
+	json.Subject = fmt.Sprintf(`Тема: IT-%s вы назначены исполнителем`,
+		task.Number)
 
 	MailSender(json)
 
