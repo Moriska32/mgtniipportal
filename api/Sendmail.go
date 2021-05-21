@@ -2,6 +2,7 @@ package api
 
 import (
 	"PortalMGTNIIP/config"
+	"strings"
 
 	"crypto/tls"
 	"encoding/json"
@@ -341,16 +342,16 @@ func SendLongMailAny(task TasksJSON) error {
 	  <meta name="viewport" content="width=device-width,initial-scale=1.0">
 	  <title>Письмо</title>
 	</head>
-	<body style="font-size: 16px;">
-	 
-	   <div style="margin-bottom: 20px;">%s %s создал новую заявку: %s</div>
-	   <div style="margin-bottom: 20px;">Обратная связь: %s</div>
+	<body style="font-size: 16px;"> 
+	<div style="margin-bottom: 20px;">Оператор Операторов назначил вас исполнителем по заявке</div>
+	<div style="margin-bottom: 20px;">IT-%s на %s с %s по %s</div>
+	   <div style="margin-bottom: 20px;"> Заказчик: %s %s. Обратная связь: %s</div>
 	   
 	   <a href="http://portal.mgtniip.ru:4747/v1/api/accepttaskany?token=%s&id=%s" style="display: block; padding: 10px; background: #090; color: #fff; cursor: pointer; border: none; text-decoration: none; font-size: 24px; text-align: center;">Принять</a>
 	 
 	 </body>
 	 </html>
-`, data[0]["name"], data[0]["fam"], task.Description,
+`, task.Number, strings.Split(task.ExecuteStartPlanTime, " ")[0], strings.Split(task.ExecuteStartPlanTime, " ")[1], strings.Split(task.ExecuteEndPlanTime, " ")[0], data[0]["name"], data[0]["fam"],
 		data[0]["tel"], token, task.ID)
 
 	log.Println(textmail)

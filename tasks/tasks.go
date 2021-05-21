@@ -399,7 +399,7 @@ func AcceptTaskAny(c *gin.Context) {
 	executer, err := gosqljson.QueryDbToMap(dbConnect, theCase, sql)
 
 	//Данные по автору  номеру задачи = author_id, number
-	sql = fmt.Sprintf(`select author_id, number from public.tasks where
+	sql = fmt.Sprintf(`select author_id, number, execute_start_plan_time, execute_end_plan_time from public.tasks where
 	id='%s';`, id)
 
 	task, err := gosqljson.QueryDbToMap(dbConnect, theCase, sql)
@@ -416,7 +416,8 @@ func AcceptTaskAny(c *gin.Context) {
 	operator, err := gosqljson.QueryDbToMap(dbConnect, theCase, sql)
 
 	var json api.SendMailITJSON
-
+	//Письмо пользователю
+	json.Subject = fmt.Sprintf(`IT-%s: назначен исполнитель.`, task[0]["number"])
 	json.To = []string{user[0]["login"]}
 	json.HTML = fmt.Sprintf(`
 	<!DOCTYPE html>
@@ -429,17 +430,38 @@ func AcceptTaskAny(c *gin.Context) {
   </head>
   <body style="font-size: 16px;">
 
-    <div>Заявку IT-%s принял исполнитель %s %s. Ожидайте начала исполнения.</div>
+    <div>%s %s назначен исполнителем на заявку IT-%s</div>
+	<div>Заявка будет выполнена %s с %s до %s</div>
     
     <a href="http://portal.mgtniip.ru/tasks">Все заявки</a>
   
   </body>
   </html>
-	`, task[0]["number"], executer[0]["name"], executer[0]["fam"])
-
-	json.Subject = fmt.Sprintf(`Вашу заявку IT-%s принял оператор %s %s.`, task[0]["number"], executer[0]["name"], executer[0]["fam"])
+	`, executer[0]["name"], executer[0]["fam"], task[0]["number"], strings.Split(task[0]["execute_start_plan_time"], " ")[0],
+		strings.Split(task[0]["execute_start_plan_time"], " ")[1], strings.Split(task[0]["execute_end_plan_time"], " ")[1])
 
 	api.MailSender(json)
+	//Письмо оператору
+	json.Subject = fmt.Sprintf(`IT-%s: исполнитель принял заявку.`, task[0]["number"])
+	json.HTML = fmt.Sprintf(`
+	<!DOCTYPE html>
+  <html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Письмо</title>
+  </head>
+  <body style="font-size: 16px;">
+
+    <div>%s %s принял заявку IT-%s</div>
+	
+    
+    <a href="http://portal.mgtniip.ru/tasks">Все заявки</a>
+  
+  </body>
+  </html>
+	`, executer[0]["name"], executer[0]["fam"], task[0]["number"])
 
 	json.To = []string{operator[0]["login"]}
 
