@@ -382,7 +382,7 @@ func AcceptTaskAny(c *gin.Context) {
 	defer dbConnect.Close()
 
 	sql := fmt.Sprintf(`UPDATE public.tasks
-	SET executer_accept_time='%s', executer_id = %s
+	SET execute_accept_time='%s', executor_id = %s
 	WHERE id='%s';`,
 		time.Now().Format("2006-01-02 15:04:05"), claims["user_id"], id)
 
