@@ -253,7 +253,7 @@ func SendLongMail(task map[string]string) error {
 	defer dbConnect.Close()
 
 	todo := fmt.Sprintf(`SELECT user_id, login, fam, "name", otch, tel, userrole, tasks_role
-	FROM public.tuser where user_id = %s;`, "507")
+	FROM public.tuser where user_id = %s;`, task["user_id"])
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)

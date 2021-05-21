@@ -72,6 +72,8 @@ func PostTasks(c *gin.Context) {
 	task := make(map[string]string)
 	task["descr"] = json.Description
 	task["id"] = id[0]["id"]
+	task["user_id"] = fmt.Sprintf("%s", data["user_id"])
+
 	err = api.SendLongMail(task)
 
 	if err != nil {
@@ -437,7 +439,7 @@ func AcceptTaskAny(c *gin.Context) {
   
   </body>
   </html>
-	`, executer[0]["name"], executer[0]["fam"], task[0]["number"], task[0]["execute_start_plan_time"][0:11],
+	`, executer[0]["name"], executer[0]["fam"], task[0]["number"], task[0]["execute_start_plan_time"][0:10],
 		task[0]["execute_start_plan_time"][11:], task[0]["execute_end_plan_time"][11:])
 
 	api.MailSender(json)
