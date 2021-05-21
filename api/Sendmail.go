@@ -253,7 +253,7 @@ func SendLongMail(task map[string]string) error {
 	defer dbConnect.Close()
 
 	todo := fmt.Sprintf(`SELECT user_id, login, fam, "name", otch, tel, userrole, tasks_role
-	FROM public.tuser where user_id = %s;`, "507")
+	FROM public.tuser where user_id = %s;`, "525")
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
@@ -335,7 +335,7 @@ func SendLongMailAny(task TasksJSON) error {
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
 
 	todo = fmt.Sprintf(`SELECT user_id, login, fam, "name", otch, tel, userrole, tasks_role
-	FROM public.tuser where user_id = %s;`, "507")
+	FROM public.tuser where user_id = %s;`, "525")
 
 	operator, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
 
@@ -376,7 +376,7 @@ func SendLongMailAny(task TasksJSON) error {
 	 </body>
 	 </html>
 `, operator[0]["name"], operator[0]["fam"], task.Number, task.ExecuteStartPlanTime[0:10], task.ExecuteStartPlanTime[11:16], task.ExecuteEndPlanTime[11:16], usern[0]["name"], usern[0]["fam"],
-		usern[0]["tel"], token, task.ID)
+		task.Phone, token, task.ID)
 
 	log.Println(textmail)
 

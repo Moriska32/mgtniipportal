@@ -414,7 +414,7 @@ func AcceptTaskAny(c *gin.Context) {
 
 	//Оператор
 	sql = fmt.Sprintf(`select login,fam, name from public.tuser where
-	user_id=%s;`, "507")
+	user_id=%s;`, "525")
 	operator, err := gosqljson.QueryDbToMap(dbConnect, theCase, sql)
 
 	var json api.SendMailITJSON
