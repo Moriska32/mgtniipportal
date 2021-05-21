@@ -20,7 +20,7 @@ import (
 type TasksJSON struct {
 	ID                   string `json:"id"`
 	TypeID               int    `json:"type_id"`
-	Number               int    `json:"number"`
+	Number               string `json:"number"`
 	Description          string `json:"description"`
 	AuthorID             string `json:"author_id"`
 	OperatorID           string `json:"operator_id"`
@@ -346,7 +346,7 @@ func SendLongMailAny(task TasksJSON) error {
 	   <div style="margin-bottom: 20px;">%s %s создал новую заявку: %s</div>
 	   <div style="margin-bottom: 20px;">Обратная связь: %s</div>
 	   
-	   <a href="http://portal.mgtniip.ru:4747/v1/api/accepttask?token=%s&id=%s" style="display: block; padding: 10px; background: #090; color: #fff; cursor: pointer; border: none; text-decoration: none; font-size: 24px; text-align: center;">Принять</a>
+	   <a href="http://portal.mgtniip.ru:4747/v1/api/accepttaskany?token=%s&id=%s" style="display: block; padding: 10px; background: #090; color: #fff; cursor: pointer; border: none; text-decoration: none; font-size: 24px; text-align: center;">Принять</a>
 	 
 	 </body>
 	 </html>
