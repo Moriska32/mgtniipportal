@@ -17,6 +17,8 @@ import (
 	"gopkg.in/gomail.v2"
 )
 
+var Operatortasks string = "507"
+
 type TasksJSON struct {
 	ID                   string `json:"id"`
 	TypeID               int    `json:"type_id"`
@@ -253,7 +255,7 @@ func SendLongMail(task map[string]string) error {
 	defer dbConnect.Close()
 
 	todo := fmt.Sprintf(`SELECT user_id, login, fam, "name", otch, tel, userrole, tasks_role
-	FROM public.tuser where user_id = %s;`, "525")
+	FROM public.tuser where user_id = %s;`, Operatortasks)
 
 	theCase := "lower"
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
@@ -335,7 +337,7 @@ func SendLongMailAny(task TasksJSON) error {
 	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
 
 	todo = fmt.Sprintf(`SELECT user_id, login, fam, "name", otch, tel, userrole, tasks_role
-	FROM public.tuser where user_id = %s;`, "525")
+	FROM public.tuser where user_id = %s;`, Operatortasks)
 
 	operator, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
 

@@ -19,7 +19,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var Operatortasks string = "507"
+var Operatortasks string = api.Operatortasks
 
 type TasksJSON struct {
 	ID                   string `json:"id"`
