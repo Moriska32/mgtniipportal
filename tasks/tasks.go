@@ -19,6 +19,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var Operatortasks string = "507"
+
 type TasksJSON struct {
 	ID                   string `json:"id"`
 	TypeID               int    `json:"type_id"`
@@ -295,7 +297,7 @@ func AcceptTask(c *gin.Context) {
 	sql := fmt.Sprintf(`UPDATE public.tasks
 	SET operator_accept_time='%s', operator_id = %s
 	WHERE id='%s';`,
-		time.Now().Format("2006-01-02 15:04:05"), "525", id)
+		time.Now().Format("2006-01-02 15:04:05"), Operatortasks, id)
 
 	_, err := dbConnect.Exec(sql)
 	if err != nil {
@@ -315,7 +317,7 @@ func AcceptTask(c *gin.Context) {
 
 	//Оператор
 	sql = fmt.Sprintf(`select fam, name from public.tuser where
-	user_id=%s;`, "525")
+	user_id=%s;`, Operatortasks)
 	operator, err := gosqljson.QueryDbToMap(dbConnect, theCase, sql)
 
 	var json api.SendMailITJSON
@@ -414,7 +416,7 @@ func AcceptTaskAny(c *gin.Context) {
 
 	//Оператор
 	sql = fmt.Sprintf(`select login,fam, name from public.tuser where
-	user_id=%s;`, "525")
+	user_id=%s;`, Operatortasks)
 	operator, err := gosqljson.QueryDbToMap(dbConnect, theCase, sql)
 
 	var json api.SendMailITJSON
