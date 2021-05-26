@@ -91,7 +91,7 @@ func UpdateTasks(c *gin.Context) {
 	//data := jwt.ExtractClaims(c)
 
 	id := c.Query("id")
-
+	theCase := "lower"
 	var json api.TasksJSON
 
 	pool, _ := c.GetRawData()
@@ -130,6 +130,49 @@ func UpdateTasks(c *gin.Context) {
 		if err != nil {
 			c.String(http.StatusBadRequest, fmt.Sprintf("insert: %s", err.Error()))
 		}
+	case json.ExecutorID != "" && json.ExecuteStartTime != "" && json.ExecuteEndTime == "" && json.ExecuteAcceptTime != "" && json.OperatorAcceptTime != "":
+
+		var jsonMail api.SendMailITJSON
+		//Исполнитель
+		sql = fmt.Sprintf(`select login,fam, name, user_id, userrole, tasks_role from public.tuser where
+	user_id=%s;`, json.ExecutorID)
+		executer, err := gosqljson.QueryDbToMap(dbConnect, theCase, sql)
+
+		sql := fmt.Sprintf(`UPDATE public.tasks
+	SET execute_accept_time='%s'
+	WHERE id='%s';`,
+			time.Now().Format("2006-01-02 15:04:05"), id)
+
+		_, err = dbConnect.Exec(sql)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		token := user.Refresher(executer[0])
+		jsonMail.Subject = fmt.Sprintf(`IT-%s: вы приступили к выполнению заявки.`, json.Number)
+
+		jsonMail.HTML = fmt.Sprintf(`
+
+	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+	  <meta charset="utf-8">
+	  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+	  <title>Письмо</title>
+	</head>
+	<body style="font-size: 16px;"> 
+	
+	<div style="margin-bottom: 20px;">Вы приступили к выполнению заявки IT-%s</div>
+	   
+	   
+	   <a href="http://portal.mgtniip.ru:4747/v1/api/accepttaskany?token=%s&id=%s&start=0" style="display: block; padding: 10px; background: #090; color: #fff; cursor: pointer; border: none; text-decoration: none; font-size: 24px; text-align: center;">Завершить</a>
+	 
+	 </body>
+	 </html>
+`, json.Number, token, id)
+		jsonMail.To = []string{executer[0]["login"]}
+		api.MailSender(jsonMail)
 
 	}
 
@@ -517,7 +560,7 @@ func AcceptTaskAny(c *gin.Context) {
 	case start == "1":
 		//Письмо исполнителю
 		sql := fmt.Sprintf(`UPDATE public.tasks
-	SET execute_start_time='%s'
+	SET execute_accept_time='%s'
 	WHERE id='%s';`,
 			time.Now().Format("2006-01-02 15:04:05"), id)
 
