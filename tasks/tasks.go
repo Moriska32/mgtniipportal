@@ -3,6 +3,7 @@ package tasks
 import (
 	"PortalMGTNIIP/api"
 	"PortalMGTNIIP/config"
+	"PortalMGTNIIP/user"
 	"fmt"
 	"log"
 	"net/http"
@@ -378,6 +379,7 @@ func TestTest(c *gin.Context) {
 func AcceptTaskAny(c *gin.Context) {
 
 	id := c.Query("id")
+	start := c.Query("start")
 	token, _ := c.Get("JWT_TOKEN")
 
 	claims := jwt.ExtractClaims(c)
@@ -397,7 +399,7 @@ func AcceptTaskAny(c *gin.Context) {
 	theCase := "lower"
 	//данные по испольнителю
 
-	//Оператор
+	//Исполнитель
 	sql = fmt.Sprintf(`select login,fam, name from public.tuser where
 	user_id=%s;`, claims["user_id"])
 	executer, err := gosqljson.QueryDbToMap(dbConnect, theCase, sql)
@@ -412,7 +414,7 @@ func AcceptTaskAny(c *gin.Context) {
 	sql = fmt.Sprintf(`select login from public.tuser where
 	user_id=%s;`, task[0]["author_id"])
 
-	user, err := gosqljson.QueryDbToMap(dbConnect, theCase, sql)
+	usersite, err := gosqljson.QueryDbToMap(dbConnect, theCase, sql)
 
 	//Оператор
 	sql = fmt.Sprintf(`select login,fam, name from public.tuser where
@@ -420,10 +422,13 @@ func AcceptTaskAny(c *gin.Context) {
 	operator, err := gosqljson.QueryDbToMap(dbConnect, theCase, sql)
 
 	var json api.SendMailITJSON
-	//Письмо пользователю
-	json.Subject = fmt.Sprintf(`IT-%s: назначен исполнитель.`, task[0]["number"])
-	json.To = []string{user[0]["login"]}
-	json.HTML = fmt.Sprintf(`
+
+	switch {
+	case start == "":
+		//Письмо пользователю
+		json.Subject = fmt.Sprintf(`IT-%s: назначен исполнитель.`, task[0]["number"])
+		json.To = []string{usersite[0]["login"]}
+		json.HTML = fmt.Sprintf(`
 	<!DOCTYPE html>
   <html lang="en">
   <head>
@@ -442,12 +447,12 @@ func AcceptTaskAny(c *gin.Context) {
   </body>
   </html>
 	`, executer[0]["name"], executer[0]["fam"], task[0]["number"], task[0]["execute_start_plan_time"][0:10],
-		task[0]["execute_start_plan_time"][11:16], task[0]["execute_end_plan_time"][11:16])
+			task[0]["execute_start_plan_time"][11:16], task[0]["execute_end_plan_time"][11:16])
+		api.MailSender(json)
 
-	api.MailSender(json)
-	//Письмо оператору
-	json.Subject = fmt.Sprintf(`IT-%s: исполнитель принял заявку.`, task[0]["number"])
-	json.HTML = fmt.Sprintf(`
+		//Письмо оператору
+		json.Subject = fmt.Sprintf(`IT-%s: исполнитель принял заявку.`, task[0]["number"])
+		json.HTML = fmt.Sprintf(`
 	<!DOCTYPE html>
   <html lang="en">
   <head>
@@ -466,19 +471,159 @@ func AcceptTaskAny(c *gin.Context) {
   </body>
   </html>
 	`, executer[0]["name"], executer[0]["fam"], task[0]["number"])
+		json.To = []string{operator[0]["login"]}
+		api.MailSender(json)
 
-	json.To = []string{operator[0]["login"]}
+		//Письмо  Исполнителю
+		token = user.Refresher(executer[0])
+		json.Subject = fmt.Sprintf(`IT-%s: вы приняли заявку к исполнению.`, task[0]["number"])
 
-	api.MailSender(json)
+		json.HTML = fmt.Sprintf(`
 
-	inserttoken := fmt.Sprintf(`INSERT INTO public.logout
+	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+	  <meta charset="utf-8">
+	  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+	  <title>Письмо</title>
+	</head>
+	<body style="font-size: 16px;"> 
+	
+	<div style="margin-bottom: 20px;">Вы приняли к исполнению заявку IT-%s</div>
+	   
+	   
+	   <a href="http://portal.mgtniip.ru:4747/v1/api/accepttaskany?token=%s&id=%s&start=1" style="display: block; padding: 10px; background: #090; color: #fff; cursor: pointer; border: none; text-decoration: none; font-size: 24px; text-align: center;">Начать выполнение</a>
+	 
+	 </body>
+	 </html>
+`, task[0]["number"], token, id)
+		json.To = []string{executer[0]["login"]}
+		api.MailSender(json)
+
+		//занесение токена в блеклист
+		inserttoken := fmt.Sprintf(`INSERT INTO public.logout
 	("token")
 	VALUES('%s');`, token)
 
-	_, err = dbConnect.Exec(inserttoken)
+		_, err = dbConnect.Exec(inserttoken)
 
-	if err != nil {
-		log.Fatal("Insert token:" + err.Error())
+		if err != nil {
+			log.Fatal("Insert token:" + err.Error())
+		}
+		//
+		//
+		//Старт работы исполнителя
+	case start == "1":
+		//Письмо исполнителю
+		sql := fmt.Sprintf(`UPDATE public.tasks
+	SET execute_start_time='%s'
+	WHERE id='%s';`,
+			time.Now().Format("2006-01-02 15:04:05"), id)
+
+		_, err := dbConnect.Exec(sql)
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		token = user.Refresher(executer[0])
+		json.Subject = fmt.Sprintf(`IT-%s: вы приступили к выполнению заявки.`, task[0]["number"])
+
+		json.HTML = fmt.Sprintf(`
+
+	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+	  <meta charset="utf-8">
+	  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+	  <title>Письмо</title>
+	</head>
+	<body style="font-size: 16px;"> 
+	
+	<div style="margin-bottom: 20px;">Вы приступили к выполнению заявки IT-%s</div>
+	   
+	   
+	   <a href="http://portal.mgtniip.ru:4747/v1/api/accepttaskany?token=%s&id=%s&start=0" style="display: block; padding: 10px; background: #090; color: #fff; cursor: pointer; border: none; text-decoration: none; font-size: 24px; text-align: center;">Завершить</a>
+	 
+	 </body>
+	 </html>
+`, task[0]["number"], token, id)
+		json.To = []string{executer[0]["login"]}
+		api.MailSender(json)
+
+		//Письмо оператору
+		json.Subject = fmt.Sprintf(`IT-%s: %s %s начал выполнение заявки.`, task[0]["number"],
+			executer[0]["name"], executer[0]["fam"])
+		json.HTML = fmt.Sprintf(`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Письмо</title>
+</head>
+<body style="font-size: 16px;">
+
+<div>%s %s начал выполнение заявки IT-%s</div>
+
+
+<a href="http://portal.mgtniip.ru/tasks">Все заявки</a>
+
+</body>
+</html>
+`, executer[0]["name"], executer[0]["fam"], task[0]["number"])
+		json.To = []string{operator[0]["login"]}
+		api.MailSender(json)
+
+		//занесение токена в блеклист
+		inserttoken := fmt.Sprintf(`INSERT INTO public.logout
+	("token")
+	VALUES('%s');`, token)
+
+		_, err = dbConnect.Exec(inserttoken)
+
+		if err != nil {
+			log.Fatal("Insert token:" + err.Error())
+		}
+		//Остановка работы исполнителя
+	case start == "0":
+
+		sql := fmt.Sprintf(`UPDATE public.tasks
+	SET execute_end_time='%s'
+	WHERE id='%s';`,
+			time.Now().Format("2006-01-02 15:04:05"), id)
+
+		_, err := dbConnect.Exec(sql)
+		if err != nil {
+			fmt.Println(err)
+		}
+		//Письмо оператору
+		json.Subject = fmt.Sprintf(`IT-%s: %s %s завершил выполнение заявки.`, task[0]["number"],
+			executer[0]["name"], executer[0]["fam"])
+		json.HTML = fmt.Sprintf(`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Письмо</title>
+</head>
+<body style="font-size: 16px;">
+
+<div>%s %s завершил выполнение заявки IT-%s</div>
+
+
+<a href="http://portal.mgtniip.ru/tasks">Все заявки</a>
+
+</body>
+</html>
+`, executer[0]["name"], executer[0]["fam"], task[0]["number"])
+		json.To = []string{operator[0]["login"]}
+		api.MailSender(json)
+
 	}
 	loc := url.URL{Path: "http://newportal.mgtniip.ru/tasks"}
 	c.Redirect(http.StatusFound, loc.RequestURI())
