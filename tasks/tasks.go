@@ -130,7 +130,7 @@ func UpdateTasks(c *gin.Context) {
 		if err != nil {
 			c.String(http.StatusBadRequest, fmt.Sprintf("insert: %s", err.Error()))
 		}
-	case json.ExecutorID != "" && json.ExecuteStartTime != "" && json.ExecuteEndTime == "" && json.ExecuteAcceptTime == "" && json.OperatorAcceptTime != "":
+	case json.ExecutorID != "" && json.ExecuteStartTime != "" && json.ExecuteEndTime == "" && json.ExecuteAcceptTime != "" && json.OperatorAcceptTime != "":
 
 		var jsonMail api.SendMailITJSON
 		//Исполнитель
