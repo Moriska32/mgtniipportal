@@ -400,7 +400,7 @@ func AcceptTaskAny(c *gin.Context) {
 	//данные по испольнителю
 
 	//Исполнитель
-	sql = fmt.Sprintf(`select login,fam, name from public.tuser where
+	sql = fmt.Sprintf(`select login,fam, name, user_id, userrole, tasks_role from public.tuser where
 	user_id=%s;`, claims["user_id"])
 	executer, err := gosqljson.QueryDbToMap(dbConnect, theCase, sql)
 
