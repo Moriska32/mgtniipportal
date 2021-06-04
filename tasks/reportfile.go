@@ -51,6 +51,9 @@ func BuildReport(c *gin.Context) {
 		fmt.Println(err)
 	}
 	f, err := excelize.OpenFile("tasks\\Отчёт портал.xlsx")
+	if err != nil {
+		fmt.Println(err)
+	}
 	currentTime := time.Now()
 	for items := range pool {
 
@@ -74,7 +77,7 @@ func BuildReport(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
-		"file":   "/tasksreport/" + filename,
+		"file":   "http://172.20.0.82:4747/tasksreport/" + filename,
 	})
 
 	return
