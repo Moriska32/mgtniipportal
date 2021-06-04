@@ -33,8 +33,8 @@ func BuildReport(c *gin.Context) {
 	when execute_end_plan_time < execute_end_time then 'V'
 	else ''
 	end as mark),
-	(select case when execute_end_time is not null and (execute_decline_time is null and operator_decline_time is null) then 'В работе'
-	when execute_end_time is null and  (execute_decline_time is null and operator_decline_time is null) then 'Выполнена'
+	(select case when execute_end_time is null and (execute_decline_time is null and operator_decline_time is null) then 'В работе'
+	when execute_end_time is not null and  (execute_decline_time is null and operator_decline_time is null) then 'Выполнена'
 	when  execute_decline_time is not null or operator_decline_time is not null then 'Отклонена'
 	end as status),
 	(select fam from tuser where user_id = executor_id) as exfam,
