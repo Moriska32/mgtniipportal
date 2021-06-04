@@ -50,7 +50,7 @@ func BuildReport(c *gin.Context) {
 	if err != nil {
 		fmt.Println(err)
 	}
-	f, err := excelize.OpenFile("tasks\\Отчёт портал.xlsx")
+	f, err := excelize.OpenFile("tasks/Отчёт портал.xlsx")
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -71,7 +71,7 @@ func BuildReport(c *gin.Context) {
 		f.SetCellValue("report", fmt.Sprintf("K%d", 3+items), pool[items]["executor_comment"])
 	}
 	filename := fmt.Sprintf("Отчёт_портал_%s.xlsx", currentTime.Format("2006.01.02 15_04_05"))
-	if err := f.SaveAs(fmt.Sprintf("tasks\\reports\\%s", filename)); err != nil {
+	if err := f.SaveAs(fmt.Sprintf("tasks/reports/%s", filename)); err != nil {
 		fmt.Println(err)
 	}
 
