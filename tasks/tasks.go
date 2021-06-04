@@ -605,7 +605,16 @@ func AcceptTaskAny(c *gin.Context) {
 `, task[0]["number"], token, id)
 		json.To = []string{executer[0]["login"]}
 		api.MailSender(json)
+		tokenow, _ := c.Get("JWT_TOKEN")
+		inserttoken := fmt.Sprintf(`INSERT INTO public.logout
+	("token")
+	VALUES('%s');`, tokenow)
 
+		_, err = dbConnect.Exec(inserttoken)
+
+		if err != nil {
+			log.Fatal("Insert token:" + err.Error())
+		}
 		//Письмо оператору
 		json.Subject = fmt.Sprintf(`IT-%s: %s %s начал выполнение заявки.`, task[0]["number"],
 			executer[0]["name"], executer[0]["fam"])
