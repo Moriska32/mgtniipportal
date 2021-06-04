@@ -641,7 +641,7 @@ func AcceptTaskAny(c *gin.Context) {
 		api.MailSender(json)
 
 		//занесение токена в блеклист
-		inserttoken := fmt.Sprintf(`INSERT INTO public.logout
+		inserttoken = fmt.Sprintf(`INSERT INTO public.logout
 	("token")
 	VALUES('%s');`, token)
 
