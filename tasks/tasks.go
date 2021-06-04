@@ -556,9 +556,10 @@ func AcceptTaskAny(c *gin.Context) {
 		api.MailSender(json)
 
 		//занесение токена в блеклист
+		tokenow, _ := c.Get("JWT_TOKEN")
 		inserttoken := fmt.Sprintf(`INSERT INTO public.logout
 	("token")
-	VALUES('%s');`, token)
+	VALUES('%s');`, tokenow)
 
 		_, err = dbConnect.Exec(inserttoken)
 
