@@ -49,7 +49,7 @@ func BuildReport(c *gin.Context) {
 	executor_comment, 
 	to_char(execute_accept_time,'YYYY-MM-DD HH:MI:SS') as execute_accept_time,
 	to_char(execute_decline_time,'YYYY-MM-DD HH:MI:SS') as execute_decline_time
-	FROM public.tasks where id != '0'`)
+	FROM public.tasks where id is not null`)
 
 	switch {
 
