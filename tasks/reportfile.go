@@ -29,8 +29,8 @@ func BuildReport(c *gin.Context) {
 	(select fam from tuser where user_id = author_id) as fam,
 	(select "name" from tuser where user_id = author_id) as "name",
 	(select "otch" from tuser where user_id = author_id) as "otch",
-	(select case when execute_end_plan_time > execute_end_time then 'X'
-	when execute_end_plan_time < execute_end_time then 'V'
+	(select case when execute_end_plan_time < execute_end_time then 'X'
+	when execute_end_plan_time > execute_end_time then 'V'
 	else ''
 	end as mark),
 	(select case when execute_end_time is null and (execute_decline_time is null and operator_decline_time is null) then 'В работе'
