@@ -441,12 +441,24 @@ func AcceptTaskAny(c *gin.Context) {
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 
+	testtoken := c.Query("token")
+
+	inserttoken := fmt.Sprintf(`INSERT INTO public.logout
+	("token")
+	VALUES('%s');`, testtoken)
+
+	_, err := dbConnect.Exec(inserttoken)
+
+	if err != nil {
+		log.Fatal("Insert token:" + err.Error())
+	}
+
 	sql := fmt.Sprintf(`UPDATE public.tasks
 	SET execute_accept_time='%s', executor_id = %s
 	WHERE id='%s';`,
 		time.Now().Format("2006-01-02 15:04:05"), claims["user_id"], id)
 
-	_, err := dbConnect.Exec(sql)
+	_, err = dbConnect.Exec(sql)
 	if err != nil {
 		fmt.Println(err)
 	}
