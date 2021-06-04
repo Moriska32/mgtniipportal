@@ -78,6 +78,7 @@ func BuildReport(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status": http.StatusOK,
 		"file":   "http://172.20.0.82:4747/tasksreport/" + filename,
+		"data":   pool,
 	})
 
 	return
