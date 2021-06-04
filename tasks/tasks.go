@@ -554,6 +554,15 @@ func AcceptTaskAny(c *gin.Context) {
 `, task[0]["number"], token, id)
 		json.To = []string{executer[0]["login"]}
 		api.MailSender(json)
+		inserttoken := fmt.Sprintf(`INSERT INTO public.logout
+	("token")
+	VALUES('%s');`, token)
+
+		_, err = dbConnect.Exec(inserttoken)
+
+		if err != nil {
+			log.Fatal("Insert token:" + err.Error())
+		}
 
 		//
 		//
@@ -595,6 +604,16 @@ func AcceptTaskAny(c *gin.Context) {
 `, task[0]["number"], token, id)
 		json.To = []string{executer[0]["login"]}
 		api.MailSender(json)
+
+		inserttoken := fmt.Sprintf(`INSERT INTO public.logout
+		("token")
+		VALUES('%s');`, token)
+
+		_, err = dbConnect.Exec(inserttoken)
+
+		if err != nil {
+			log.Fatal("Insert token:" + err.Error())
+		}
 
 		//Письмо оператору
 		json.Subject = fmt.Sprintf(`IT-%s: %s %s начал выполнение заявки.`, task[0]["number"],
@@ -657,22 +676,19 @@ func AcceptTaskAny(c *gin.Context) {
 `, executer[0]["name"], executer[0]["fam"], task[0]["number"])
 		json.To = []string{operator[0]["login"]}
 		api.MailSender(json)
+		inserttoken := fmt.Sprintf(`INSERT INTO public.logout
+	("token")
+	VALUES('%s');`, token)
+
+		_, err = dbConnect.Exec(inserttoken)
+
+		if err != nil {
+			log.Fatal("Insert token:" + err.Error())
+		}
 
 	}
 	loc := url.URL{Path: "http://newportal.mgtniip.ru/tasks"}
 	c.Redirect(http.StatusFound, loc.RequestURI())
-
-	token, _ = c.Get("JWT_TOKEN")
-
-	inserttoken := fmt.Sprintf(`INSERT INTO public.logout
-	("token")
-	VALUES('%s');`, token)
-
-	_, err = dbConnect.Exec(inserttoken)
-
-	if err != nil {
-		log.Fatal("Insert token:" + err.Error())
-	}
 
 	return
 
