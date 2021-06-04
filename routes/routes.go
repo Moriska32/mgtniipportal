@@ -198,7 +198,7 @@ func Routes(router *gin.Engine) {
 			root.GET("/getabsencesdate", absence.GetAbsencesDate)
 
 			//TASKS
-			router.StaticFS("/tasksreport", http.Dir("tasks\\reports"))
+			router.StaticFS("/tasksreport", http.Dir("tasks/reports"))
 			root.GET("/tasks", tasks.GetTasks)
 			root.POST("/tasks", tasks.PostTasks)
 			root.PUT("/tasks", tasks.UpdateTasks)
