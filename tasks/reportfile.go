@@ -14,6 +14,14 @@ import (
 //BuildReport get pool from bd in to file
 func BuildReport(c *gin.Context) {
 
+	execute_start_plan_time := c.Query("execute_start_plan_time")
+	execute_end_plan_time := c.Query("execute_end_plan_time")
+
+	execute_start_time := c.Query("execute_start_time")
+	execute_end_time := c.Query("execute_end_time")
+	mark := c.Query("mark")
+	status := c.Query("status")
+
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 
@@ -41,9 +49,22 @@ func BuildReport(c *gin.Context) {
 	executor_comment, 
 	to_char(execute_accept_time,'YYYY-MM-DD HH:MI:SS') as execute_accept_time,
 	to_char(execute_decline_time,'YYYY-MM-DD HH:MI:SS') as execute_decline_time
-	FROM public.tasks;
-	
-	`)
+	FROM public.tasks where id != 0`)
+
+	switch {
+
+	case execute_start_plan_time != "" && execute_end_plan_time != "":
+		sql = sql + "and execute_start_plan_time >= " + execute_start_plan_time + " and execute_end_plan_time <= " + execute_end_plan_time
+	case mark != "":
+		sql = sql + " and mark = " + mark
+	case status != "":
+		sql = sql + " and status = " + status
+	case execute_start_time != "" && execute_end_time != "":
+		sql = sql + "and execute_start_time >= " + execute_start_time + " and execute_end_time <= " + execute_end_time
+	}
+
+	sql = sql + `;`
+
 	theCase := "lower"
 	pool, err := gosqljson.QueryDbToMap(dbConnect, theCase, sql)
 
