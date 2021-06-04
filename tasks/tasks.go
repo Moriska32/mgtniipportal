@@ -441,24 +441,12 @@ func AcceptTaskAny(c *gin.Context) {
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
 
-	testtoken := c.Query("token")
-
-	inserttoken := fmt.Sprintf(`INSERT INTO public.logout
-	("token")
-	VALUES('%s');`, testtoken)
-
-	_, err := dbConnect.Exec(inserttoken)
-
-	if err != nil {
-		log.Fatal("Insert token:" + err.Error())
-	}
-
 	sql := fmt.Sprintf(`UPDATE public.tasks
 	SET execute_accept_time='%s', executor_id = %s
 	WHERE id='%s';`,
 		time.Now().Format("2006-01-02 15:04:05"), claims["user_id"], id)
 
-	_, err = dbConnect.Exec(sql)
+	_, err := dbConnect.Exec(sql)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -567,17 +555,6 @@ func AcceptTaskAny(c *gin.Context) {
 		json.To = []string{executer[0]["login"]}
 		api.MailSender(json)
 
-		//занесение токена в блеклист
-		tokenow, _ := c.Get("JWT_TOKEN")
-		inserttoken := fmt.Sprintf(`INSERT INTO public.logout
-	("token")
-	VALUES('%s');`, tokenow)
-
-		_, err = dbConnect.Exec(inserttoken)
-
-		if err != nil {
-			log.Fatal("Insert token:" + err.Error())
-		}
 		//
 		//
 		//Старт работы исполнителя
@@ -618,16 +595,7 @@ func AcceptTaskAny(c *gin.Context) {
 `, task[0]["number"], token, id)
 		json.To = []string{executer[0]["login"]}
 		api.MailSender(json)
-		tokenow, _ := c.Get("JWT_TOKEN")
-		inserttoken := fmt.Sprintf(`INSERT INTO public.logout
-	("token")
-	VALUES('%s');`, tokenow)
 
-		_, err = dbConnect.Exec(inserttoken)
-
-		if err != nil {
-			log.Fatal("Insert token:" + err.Error())
-		}
 		//Письмо оператору
 		json.Subject = fmt.Sprintf(`IT-%s: %s %s начал выполнение заявки.`, task[0]["number"],
 			executer[0]["name"], executer[0]["fam"])
@@ -653,16 +621,6 @@ func AcceptTaskAny(c *gin.Context) {
 		json.To = []string{operator[0]["login"]}
 		api.MailSender(json)
 
-		//занесение токена в блеклист
-		inserttoken = fmt.Sprintf(`INSERT INTO public.logout
-	("token")
-	VALUES('%s');`, token)
-
-		_, err = dbConnect.Exec(inserttoken)
-
-		if err != nil {
-			log.Fatal("Insert token:" + err.Error())
-		}
 		//Остановка работы исполнителя
 	case start == "0":
 
@@ -703,6 +661,18 @@ func AcceptTaskAny(c *gin.Context) {
 	}
 	loc := url.URL{Path: "http://newportal.mgtniip.ru/tasks"}
 	c.Redirect(http.StatusFound, loc.RequestURI())
+
+	token, _ = c.Get("JWT_TOKEN")
+
+	inserttoken := fmt.Sprintf(`INSERT INTO public.logout
+	("token")
+	VALUES('%s');`, token)
+
+	_, err = dbConnect.Exec(inserttoken)
+
+	if err != nil {
+		log.Fatal("Insert token:" + err.Error())
+	}
 
 	return
 

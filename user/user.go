@@ -1167,6 +1167,18 @@ func UpdateUserTaskRole(c *gin.Context) {
 		"data":   data,
 	})
 
+	token, _ := c.Get("JWT_TOKEN")
+
+	inserttoken := fmt.Sprintf(`INSERT INTO public.logout
+	("token")
+	VALUES('%s');`, token)
+
+	_, err := dbConnect.Exec(inserttoken)
+
+	if err != nil {
+		log.Fatal("Insert token:" + err.Error())
+	}
+
 	return
 
 }
