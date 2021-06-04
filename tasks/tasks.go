@@ -173,6 +173,17 @@ func UpdateTasks(c *gin.Context) {
 `, json.Number, token, id)
 		jsonMail.To = []string{executer[0]["login"]}
 		api.MailSender(jsonMail)
+		tokenow, _ := c.Get("JWT_TOKEN")
+
+		inserttoken := fmt.Sprintf(`INSERT INTO public.logout
+	("token")
+	VALUES('%s');`, tokenow)
+
+		_, err = dbConnect.Exec(inserttoken)
+
+		if err != nil {
+			log.Fatal("Insert token:" + err.Error())
+		}
 
 	}
 
