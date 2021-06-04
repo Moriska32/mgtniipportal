@@ -1,4 +1,5 @@
 github.com/360EntSecGroup-Skylar/excelize v1.4.1 h1:l55mJb6rkkaUzOpSsgEeKYtS6/0gHwBYyfo5Jcjv/Ks=
+github.com/360EntSecGroup-Skylar/excelize v1.4.1/go.mod h1:vnax29X2usfl7HHkBrX5EvSCJcmH3dT9luvxzu8iGAE=
 github.com/360EntSecGroup-Skylar/excelize/v2 v2.3.1 h1:j56fC19WoD3z+u+ZHxm2XwRGyS1XmdSMk7058BLhdsM=
 github.com/360EntSecGroup-Skylar/excelize/v2 v2.3.1/go.mod h1:gXEhMjm1VadSGjAzyDlBxmdYglP8eJpYWxpwJnmXRWw=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
@@ -103,6 +104,7 @@ github.com/scottleedavis/go-exif-remove v0.0.0-20190908021517-58bdbaac8636 h1:8g
 github.com/scottleedavis/go-exif-remove v0.0.0-20190908021517-58bdbaac8636/go.mod h1:9OnQLlRDwtnIJ2TG3u+Q9WjAZ2mAAxHyviW/r4LX1dg=
 github.com/shurcooL/sanitized_anchor_name v1.0.0/go.mod h1:1NzhyTcUVG4SuEtjjoZeVRXNmyL/1OwPU0+IJeTBvfc=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
+github.com/stretchr/testify v1.2.3-0.20181224173747-660f15d67dbb/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXfy6kDkUVs=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 github.com/stretchr/testify v1.4.0 h1:2E4SXV/wtOkTonXsotYi4li6zVWxYlZuYNCXe9XRJyk=
 github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=

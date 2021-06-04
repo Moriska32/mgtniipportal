@@ -198,6 +198,7 @@ func Routes(router *gin.Engine) {
 			root.GET("/getabsencesdate", absence.GetAbsencesDate)
 
 			//TASKS
+			router.StaticFS("/tasksreport", http.Dir("tasks\\reports"))
 			root.GET("/tasks", tasks.GetTasks)
 			root.POST("/tasks", tasks.PostTasks)
 			root.PUT("/tasks", tasks.UpdateTasks)
@@ -206,6 +207,7 @@ func Routes(router *gin.Engine) {
 			root.GET("/accepttask", tasks.AcceptTask)
 			root.GET("/accepttaskany", tasks.AcceptTaskAny)
 			root.GET("/testestest", tasks.TestTest)
+			root.GET("/report", tasks.BuildReport)
 
 		}
 	}
