@@ -570,7 +570,7 @@ func AcceptTaskAny(c *gin.Context) {
 	case start == "1":
 		//Письмо исполнителю
 		sql := fmt.Sprintf(`UPDATE public.tasks
-	SET execute_accept_time='%s'
+	SET execute_start_time='%s'
 	WHERE id='%s';`,
 			time.Now().Format("2006-01-02 15:04:05"), id)
 
