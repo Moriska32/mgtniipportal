@@ -260,7 +260,7 @@ func Refresher(data map[string]string) string {
 	token, _, err := auth.TokenGenerator(pool)
 
 	if err != nil {
-		fmt.Sprintf("Error: %s", err.Error())
+		fmt.Println(err.Error())
 	}
 
 	return token

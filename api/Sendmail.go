@@ -38,6 +38,7 @@ type TasksJSON struct {
 	ExecutorComment      string `json:"executor_comment"`
 	ExecuteAcceptTime    string `json:"execute_accept_time"`
 	ExecuteDeclineTime   string `json:"execute_decline_time"`
+	Sourse               string `json:"sourse"`
 }
 
 // smtpServer data to smtp server
