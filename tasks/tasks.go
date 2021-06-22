@@ -93,7 +93,7 @@ func UpdateTasks(c *gin.Context) {
 
 	id := c.Query("id")
 	theCase := "lower"
-	var json TasksJSON
+	var json api.TasksJSON
 
 	pool, _ := c.GetRawData()
 
