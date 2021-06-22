@@ -41,7 +41,7 @@ type TasksJSON struct {
 	ExecutorComment      string `json:"executor_comment"`
 	ExecuteAcceptTime    string `json:"execute_accept_time"`
 	ExecuteDeclineTime   string `json:"execute_decline_time"`
-	Source               string `json:"sourсe"`
+	Source               string `json:"source"`
 }
 
 //Insert it tasks in bd
@@ -115,7 +115,8 @@ func UpdateTasks(c *gin.Context) {
 	WHERE id='%s';	
 	`, json.TypeID, json.OperatorID, json.ExecutorID, json.OperatorAcceptTime, json.OperatorDeclineTime,
 		json.ExecuteStartTime, json.ExecuteEndTime, json.ExecuteStartPlanTime, json.ExecuteEndPlanTime,
-		json.OperatorComment, json.ExecutorComment, json.ExecuteAcceptTime, json.ExecuteDeclineTime, json.Source, id)
+		json.OperatorComment, json.ExecutorComment, json.ExecuteAcceptTime, json.ExecuteDeclineTime,
+		json.Source, id)
 
 	sql = strings.ReplaceAll(sql, "=,", "= null,")
 	sql = strings.ReplaceAll(sql, "=''", "= null")
