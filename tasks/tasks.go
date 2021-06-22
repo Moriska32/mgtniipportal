@@ -41,7 +41,7 @@ type TasksJSON struct {
 	ExecutorComment      string `json:"executor_comment"`
 	ExecuteAcceptTime    string `json:"execute_accept_time"`
 	ExecuteDeclineTime   string `json:"execute_decline_time"`
-	Sourse               string `json:"sourse"`
+	Source               string `json:"sourse"`
 }
 
 //Insert it tasks in bd
@@ -62,7 +62,7 @@ func PostTasks(c *gin.Context) {
 	defer dbConnect.Close()
 
 	sql := fmt.Sprintf(`INSERT INTO public.tasks
-	(type_id, description, phone,author_id, create_time, sourse)
+	(type_id, description, phone,author_id, create_time, source)
 	VALUES('%d', '%s', '%s',%s, '%s', '%s')
 	RETURNING id;
 	`, json.TypeID, json.Description, json.Phone, data["user_id"], time.Now().Format("2006-01-02 15:04:05"), json.Sourse)
@@ -111,11 +111,11 @@ func UpdateTasks(c *gin.Context) {
 	  operator_decline_time='%s', execute_start_time='%s', execute_end_time='%s',
 	   execute_start_plan_time='%s', execute_end_plan_time='%s', operator_comment='%s',
 	    executor_comment='%s', execute_accept_time ='%s', execute_decline_time='%s',
-		sourse='%s'
+		source='%s'
 	WHERE id='%s';	
 	`, json.TypeID, json.OperatorID, json.ExecutorID, json.OperatorAcceptTime, json.OperatorDeclineTime,
 		json.ExecuteStartTime, json.ExecuteEndTime, json.ExecuteStartPlanTime, json.ExecuteEndPlanTime,
-		json.OperatorComment, json.ExecutorComment, json.ExecuteAcceptTime, json.ExecuteDeclineTime, json.OperatorComment, id)
+		json.OperatorComment, json.ExecutorComment, json.ExecuteAcceptTime, json.ExecuteDeclineTime, json.Source, id)
 
 	sql = strings.ReplaceAll(sql, "=,", "= null,")
 	sql = strings.ReplaceAll(sql, "=''", "= null")
