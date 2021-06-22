@@ -41,7 +41,7 @@ type TasksJSON struct {
 	ExecutorComment      string `json:"executor_comment"`
 	ExecuteAcceptTime    string `json:"execute_accept_time"`
 	ExecuteDeclineTime   string `json:"execute_decline_time"`
-	Source               string `json:"sourse"`
+	Source               string `json:"sourсe"`
 }
 
 //Insert it tasks in bd
