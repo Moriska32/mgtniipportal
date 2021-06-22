@@ -65,7 +65,7 @@ func PostTasks(c *gin.Context) {
 	(type_id, description, phone,author_id, create_time, source)
 	VALUES('%d', '%s', '%s',%s, '%s', '%s')
 	RETURNING id;
-	`, json.TypeID, json.Description, json.Phone, data["user_id"], time.Now().Format("2006-01-02 15:04:05"), json.Sourse)
+	`, json.TypeID, json.Description, json.Phone, data["user_id"], time.Now().Format("2006-01-02 15:04:05"), json.Source)
 
 	theCase := "lower"
 	id, err := gosqljson.QueryDbToMap(dbConnect, theCase, sql)
