@@ -17,7 +17,7 @@ import (
 	"gopkg.in/gomail.v2"
 )
 
-var Operatortasks [2]string = [2]string{"507", "703"}
+var Operatortasks [2]string = [2]string{"507", "713"}
 
 type TasksJSON struct {
 	ID                   string `json:"id"`
