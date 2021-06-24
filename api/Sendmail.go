@@ -254,31 +254,31 @@ func SendLongMail(task map[string]string) error {
 
 	dbConnect := config.Connect()
 	defer dbConnect.Close()
+	for i := range Operatortasks {
+		todo := fmt.Sprintf(`SELECT user_id, login, fam, "name", otch, tel, userrole, tasks_role
+	FROM public.tuser where user_id = %s;`, Operatortasks[i])
 
-	todo := fmt.Sprintf(`SELECT user_id, login, fam, "name", otch, tel, userrole, tasks_role
-	FROM public.tuser where user_id in (%s, %s);`, Operatortasks[0], Operatortasks[1])
+		theCase := "lower"
+		data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
 
-	theCase := "lower"
-	data, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+		if err != nil {
+			return err
 
-	if err != nil {
-		return err
+		}
 
-	}
-
-	todo = fmt.Sprintf(`SELECT fam, "name"
+		todo = fmt.Sprintf(`SELECT fam, "name"
 	FROM public.tuser where user_id = %s;`, task["user_id"])
 
-	usrname, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
+		usrname, err := gosqljson.QueryDbToMap(dbConnect, theCase, todo)
 
-	if err != nil {
-		return err
+		if err != nil {
+			return err
 
-	}
+		}
 
-	token := user.Refresher(data[0])
+		token := user.Refresher(data[0])
 
-	textmail := fmt.Sprintf(`
+		textmail := fmt.Sprintf(`
 
 	<!DOCTYPE html>
 	<html lang="en">
@@ -298,18 +298,19 @@ func SendLongMail(task map[string]string) error {
 	 </body>
 	 </html>
 `, usrname[0]["name"], usrname[0]["fam"], task["descr"],
-		data[0]["tel"], token, task["id"])
+			data[0]["tel"], token, task["id"])
 
-	log.Println(textmail)
+		log.Println(textmail)
 
-	var json SendMailITJSON
+		var json SendMailITJSON
 
-	json.HTML = textmail
-	json.To = []string{data[0]["login"], data[1]["login"]}
-	json.Subject = fmt.Sprintf(`Новая заявка %s от %s %s: %s`,
-		task["number"], usrname[0]["name"], usrname[0]["fam"], task["descr"])
+		json.HTML = textmail
+		json.To = []string{data[0]["login"]}
+		json.Subject = fmt.Sprintf(`Новая заявка %s от %s %s: %s`,
+			task["number"], usrname[0]["name"], usrname[0]["fam"], task["descr"])
 
-	MailSender(json)
+		MailSender(json)
+	}
 
 	// inserttoken := fmt.Sprintf(`INSERT INTO public.logout
 	// ("token")
