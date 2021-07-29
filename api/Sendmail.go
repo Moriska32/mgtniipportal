@@ -114,7 +114,7 @@ func SendRequest(c *gin.Context) {
 	from := "portal@mgtniip.ru"
 	password := "London106446"
 
-	emailDialer := gomail.NewDialer("exchange.mgtniip.ru", 25, from, password)
+	emailDialer := gomail.NewDialer("exchange.mgtniip.ru", 2525, from, password)
 	emailDialer.TLSConfig = &tls.Config{InsecureSkipVerify: true}
 
 	if err := emailDialer.DialAndSend(m); err != nil {
