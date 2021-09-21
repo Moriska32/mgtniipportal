@@ -250,7 +250,7 @@ func GetTasks(c *gin.Context) {
 		sql = fmt.Sprintf(`SELECT *
 		FROM public.tasks where create_time > (now() - INTERVAL '7 DAY') 
 		or 
-		(execute_end_time is not null and operator_decline_time is not null) order by create_time;
+		(execute_end_time is null and operator_decline_time is null) order by create_time;
 	`)
 
 	}
