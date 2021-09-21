@@ -248,7 +248,9 @@ func GetTasks(c *gin.Context) {
 	`, tmin, tmax)
 	case tmin == "" && tmax == "":
 		sql = fmt.Sprintf(`SELECT *
-	FROM public.tasks where create_time > (now() - INTERVAL '7 DAY') order by create_time;
+		FROM public.tasks where create_time > (now() - INTERVAL '7 DAY') 
+		or 
+		(execute_end_time is not null and operator_decline_time is not null) order by create_time;
 	`)
 
 	}
