@@ -20,7 +20,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var Operatortasks [3]string = api.Operatortasks
+var Operatortasks [2]string = api.Operatortasks
 
 type TasksJSON struct {
 	ID                   string `json:"id"`
